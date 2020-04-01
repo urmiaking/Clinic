@@ -7,13 +7,10 @@ namespace Clinic.Models.DomainClasses.Appointment
 {
     public class Reservation
     {
-        [Key, Column(Order = 0)]
         public int PatientId { get; set; }
 
-        [Key, Column(Order = 1)]
         public int DoctorId { get; set; }
 
-        [Key, Column(Order = 2)]
         [Display(Name = "تاریخ رزرو")]
         public DateTime ReserveDate { get; set; }
 

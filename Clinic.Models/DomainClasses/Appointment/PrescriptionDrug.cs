@@ -5,10 +5,8 @@ namespace Clinic.Models.DomainClasses.Appointment
 {
     public class PrescriptionDrug
     {
-        [Key, Column(Order = 0)]
         public int PrescriptionId { get; set; }
 
-        [Key, Column(Order = 1)]
         public int DrugId { get; set; }
 
         [Display(Name = "تعداد")]

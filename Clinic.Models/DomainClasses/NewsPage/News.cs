@@ -8,12 +8,6 @@ namespace Clinic.Models.DomainClasses.NewsPage
 {
     public class News
     {
-        public News()
-        {
-            this.Tags = new HashSet<Tag>();
-        }
-
-
         public int Id { get; set; }
 
         [Display(Name = "عنوان خبر")]
@@ -38,6 +32,6 @@ namespace Clinic.Models.DomainClasses.NewsPage
 
         public ICollection<Comment> Comments { get; set; }
 
-        public virtual ICollection<Tag> Tags { get; set; }
+        public virtual ICollection<NewsTag> NewsTags { get; set; }
     }
 }

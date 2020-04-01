@@ -30,6 +30,7 @@ namespace Clinic.DataContext
         public virtual DbSet<Administration> Administrations { get; set; }
 
         public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<NewsTag> NewsTags { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Reply> Replies { get; set; }
 
@@ -39,6 +40,15 @@ namespace Clinic.DataContext
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PrescriptionDrug>()
+                .HasKey(c => new {c.DrugId, c.PrescriptionId});
+
+            modelBuilder.Entity<Reservation>()
+                .HasKey(c => new { c.PatientId, c.DoctorId, c.ReserveDate });
+
+            modelBuilder.Entity<NewsTag>()
+                .HasKey(c => new { c.NewsId, c.TagId });
         }
     }
 }
