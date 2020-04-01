@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 {
     [Area("ClinicManager")]
+    [Authorize(Roles = "ClinicManager")]
     public class HomeController : Controller
     {
         public IActionResult Index()

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Clinic.DataContext;
+using Clinic.Services.LoginService;
+using Clinic.Services.MailService;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -29,6 +32,14 @@ namespace Clinic.WebApplication
             {
                 context.UseSqlServer(_configuration.GetConnectionString("AppConnectionString"));
             });
+            services.AddScoped<IMailService, MyMailService>();
+            services.AddScoped<ILoginService, MyLoginService>();
+            services.AddHttpContextAccessor();
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = "/Account/Login";
+                options.Cookie.Name = "_ua";
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,7 +52,8 @@ namespace Clinic.WebApplication
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

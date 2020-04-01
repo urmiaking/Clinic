@@ -23,15 +23,53 @@ namespace Clinic.WebApplication.Controllers
         {
             var news = _db.News.OrderByDescending(n => n.ReleaseDate).Take(6).ToList();
 
-            //TODO:Add RoleChecking
+            if (User.IsInRole("Patient"))
+            {
+                ViewBag.UserType = "patient";
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                ViewBag.UserType = "doctor";
+            }
+            else if (User.IsInRole("SiteAdmin"))
+            {
+                ViewBag.UserType = "admin";
+            }
+            else if (User.IsInRole("ClinicManager"))
+            {
+                ViewBag.UserType = "manager";
+            }
+            else if (User.IsInRole("Pharmacy"))
+            {
+                ViewBag.UserType = "pharmacy";
+            }
 
             return View(news);
         }
 
         public async Task<IActionResult> DoctorList(string searchString, string currentFilter, int? page)
         {
-            //TODO: Add RoleChecking
-            
+            if (User.IsInRole("Patient"))
+            {
+                ViewBag.UserType = "patient";
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                ViewBag.UserType = "doctor";
+            }
+            else if (User.IsInRole("SiteAdmin"))
+            {
+                ViewBag.UserType = "admin";
+            }
+            else if (User.IsInRole("ClinicManager"))
+            {
+                ViewBag.UserType = "manager";
+            }
+            else if (User.IsInRole("Pharmacy"))
+            {
+                ViewBag.UserType = "pharmacy";
+            }
+
             if (searchString != null)
             {
                 page = 1;
@@ -63,10 +101,28 @@ namespace Clinic.WebApplication.Controllers
         {
             return View();
         }
-
         public async Task<IActionResult> NewsArchive(string searchString, string currentFilter, int? page)
         {
-            //TODO: Add RoleChecking
+            if (User.IsInRole("Patient"))
+            {
+                ViewBag.UserType = "patient";
+            }
+            else if (User.IsInRole("Doctor"))
+            {
+                ViewBag.UserType = "doctor";
+            }
+            else if (User.IsInRole("SiteAdmin"))
+            {
+                ViewBag.UserType = "admin";
+            }
+            else if (User.IsInRole("ClinicManager"))
+            {
+                ViewBag.UserType = "manager";
+            }
+            else if (User.IsInRole("Pharmacy"))
+            {
+                ViewBag.UserType = "pharmacy";
+            }
 
             if (searchString != null)
             {

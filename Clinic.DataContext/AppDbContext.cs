@@ -4,6 +4,7 @@ using Clinic.Models.DomainClasses.Others;
 using Clinic.Models.DomainClasses.Users;
 using Microsoft.EntityFrameworkCore;
 using System;
+using Clinic.DataContext.ModelBuilderExt;
 
 namespace Clinic.DataContext
 {
@@ -63,6 +64,8 @@ namespace Clinic.DataContext
                 .HasValue<Patient>("Patient")
                 .HasValue<Pharmacy>("Pharmacy")
                 .HasValue<ClinicManager>("ClinicManager");
+
+            modelBuilder.Seed();
         }
     }
 }

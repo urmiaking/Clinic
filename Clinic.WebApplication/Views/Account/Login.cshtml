@@ -1,15 +1,68 @@
-﻿
+﻿@model LoginViewModel
+
 @{
-    Layout = null;
+    ViewBag.Title = "ورود به سیستم";
 }
+<div class="form-body">
+    <div class="website-logo">
+        <a asp-controller="Home" asp-action="Index">
+            <div class="logo">
+                <img class="logo-size" src="/Login/images/logo.png" alt="">
+            </div>
+        </a>
+    </div>
+    <div class="row">
+        <div class="img-holder">
 
-<!DOCTYPE html>
+            <div class="bg"></div>
+            <br>
+            <br>
+            <br>
+            <h3>بخش ورود</h3>
+            <div class="info-holder">
+                <img src="/Login/images/login2.png" alt="">
+            </div>
+        </div>
+        <div class="form-holder">
+            <div class="form-content">
+                <div class="form-items">
+                    <h3>
+                        لطفا برای دسترسی به پانل خود وارد شوید
+                    </h3>
+                    <br><br>
+                    <div class="page-links">
+                        <a href="#" class="active">ورود</a>
+                    </div>
+                    <form method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <input asp-for="Username" class="form-control" placeholder="نام کاربری"/>
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <input asp-for="Password" class="form-control" placeholder="رمز عبور"/>
+                        <div class="text-danger">@ViewBag.Error</div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Login</title>
-</head>
-<body>
-</body>
-</html>
+                        <div class="container">
+                            <label>مرا بخاطر بسپار</label>
+                            <input asp-for="RememberMe"/>
+                        </div>
+
+
+                        <div class="form-button">
+                            <button id="submit" type="submit" class="ibtn">ورود</button>
+
+                        </div>
+                        <div class="form-button">
+                            <a asp-controller="Account" asp-action="ForgetPassword" class="actions">رمز عبور خود را فراموش کرده اید؟</a><br />
+                            <a asp-controller="Account" asp-action="Register">هنوز ثبت نام نکرده اید؟</a>
+                        </div>
+                        <div class="other-links ">
+                            <a asp-controller="Home" asp-action="Index">بازگشت به صفحه ی اصلی</a><span class="fa fa-arrow-alt-circle-right"></span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

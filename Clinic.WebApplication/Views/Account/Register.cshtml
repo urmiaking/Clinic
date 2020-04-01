@@ -1,15 +1,113 @@
 ﻿
+@model Patient
+
 @{
-    Layout = null;
+    ViewBag.Title = "ثبت نام";
 }
 
-<!DOCTYPE html>
+<div class="form-body">
+    <div class="website-logo">
+        <a asp-action="Index" asp-controller="Home">
+            <div class="logo">
+                <img class="logo-size" src="/Login/images/logo.png" alt="">
+            </div>
+        </a>
+    </div>
+    <div class="row">
+        <div class="img-holder">
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Register</title>
-</head>
-<body>
-</body>
-</html>
+            <div class="bg"></div>
+            <br>
+            <br>
+            <br>
+            <h3>بخش ثبت نام بیماران</h3>
+            <div class="info-holder">
+                <br />
+                <img src="/Login/images/register.png" alt="">
+            </div>
+        </div>
+        <div class="form-holder">
+            <div class="form-content">
+                <div class="form-items">
+                    <h3>
+                        لطفا برای استفاده از خدمات کلینیک
+                        <br>
+                        .ثبت نام کنید
+                    </h3>
+                    <br><br>
+                    <div class="page-links">
+                        <a href="#" class="active">ثبت نام</a>
+                    </div>
+                    <form method="post" asp-action="Register" asp-controller="Account">
+                        @Html.ValidationMessageFor(model => Model.FullName, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.FullName,
+                            new { @class = "form-control", placeholder = "نام و نام خانوادگی  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.Email, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.Email,
+                            new { @class = "form-control", placeholder = "ایمیل  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.Username, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.Username,
+                            new { @class = "form-control", placeholder = "نام کاربری  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.Password, "", new { @class = "text-danger" })
+                        @Html.PasswordFor(model => Model.Password,
+                            new { @class = "form-control", placeholder = "رمز عبور  *", required = "", id = "password" })
+
+                        <span class="text-danger" id="confirmPassword_validation"></span>
+                        <input type="password" required="" id="confirmPassword" class="form-control" placeholder="تکرار رمز عبور  *" />
+
+                        @Html.ValidationMessageFor(model => Model.NationalCode, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.NationalCode,
+                            new { @class = "form-control", placeholder = "کد ملی  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.Age, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.Age
+                            , new { @class = "form-control", placeholder = "سن  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.PhoneNumber, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.PhoneNumber,
+                            new { @class = "form-control", placeholder = "شماره تلفن  *", required = "" })
+
+                        @Html.ValidationMessageFor(model => Model.Address, "", new { @class = "text-danger" })
+                        @Html.TextAreaFor(model => Model.Address,
+                            new { @class = "form-control", placeholder = "آدرس", style = "text-align:right;" })
+
+                        @Html.ValidationMessageFor(model => Model.ZipCode, "", new { @class = "text-danger" })
+                        @Html.TextBoxFor(model => Model.ZipCode,
+                            new { @class = "form-control", placeholder = "کد پستی" })
+
+                        @Html.ValidationMessageFor(model => Model.Gender, "", new { @class = "text-danger" })
+                        @Html.DropDownListFor(model => Model.Gender,
+                            new SelectList(Enum.GetValues(typeof(GenderEnum))),
+                            "*  جنسیت",
+                            new { dir = "rtl", @class = "form-control" })
+
+
+                        <div class="form-button">
+                            <button id="submit" type="submit" class="ibtn">ثبت نام</button>
+                            <a asp-controller="Account" asp-action="Login">قبلا ثبت نام کرده اید؟</a>
+                        </div>
+                    </form>
+                    <div class="other-links">
+                        <a asp-action="Index" asp-controller="Home">بازگشت به صفحه ی اصلی</a><span class="fa fa-arrow-alt-circle-right"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/Login/js/prevent-non-numbers.js"></script>
+<script>
+    $(function () {
+        $('#submit').click(function (event) {
+            if ($('#password').val() != $('#confirmPassword').val()) {
+                $('#confirmPassword_validation').text("رمز عبور با تکرار آن مطابقت ندارد");
+                // Prevent form submission
+                event.preventDefault();
+            }
+        });
+    });
+</script>
