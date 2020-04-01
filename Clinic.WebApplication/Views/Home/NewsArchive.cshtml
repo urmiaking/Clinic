@@ -1,0 +1,156 @@
+﻿@model PaginatedList<News>
+
+@{
+    ViewBag.Title = "آرشیو اخبار";
+}
+
+@section Head{
+    <link href="/HomePage/css/SearchBar.css" rel="stylesheet" />
+}
+
+@section Header
+{
+    <header class="header-area relative" id="home">
+        <!--Mainmenu-Area-->
+        <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
+            <div class="container">
+                <div class="navbar-header smoth-scroll">
+                    <a href="#home" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse " id="mainmenu">
+                    <ul class="nav navbar-nav navbar-right smoth-scroll">
+                        <li class="active"><a href="#">اخبار</a></li>
+                        <li><a href="/Home/Index">صفحه اصلی</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                        }
+                        else if (User.IsInRole("SiteAdmin"))
+                        {
+                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("ClinicManager"))
+                        {
+                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("Pharmacy"))
+                        {
+                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                        }
+                        else if (User.IsInRole("Patient"))
+                        {
+                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Mainmenu-Area / -->
+    </header>
+}
+<div class="space-50 hidden visible-xs"></div>
+<!--Blog-Area-->
+<section class="relative bg-white" id="news">
+    <div class="space-100"></div>
+    <div class="container">
+        <br />
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+                <h3>اخبار کلینیک</h3>
+                <hr>
+                <div class="searchBox">
+                    <form>
+                        <input class="searchInput" type="text" name="searchString" placeholder="     جستجو...">
+                        <button type="submit" class="searchButton">
+                            <i class="material-icons fa fa-search"></i>
+                        </button>
+                    </form>
+
+                </div>
+                <div class="space-60"></div>
+                <div class="space-60"></div>
+            </div>
+        </div>
+        <div class="space-60"></div>
+        <div class="row">
+            @if (!Model.Any())
+            {
+                <div class="text-center">
+                    <h4>خبری پیدا نشد</h4>
+                    <br />
+                </div>
+            }
+            else
+            {
+                foreach (var item in Model.Take(6))
+                {
+                    <div class="col-sm-4">
+                        <div class="single-blog">
+                            <div class="post-date">@item.ReleaseDate</div>
+                            <div class="blog-photo">
+                                <img src="/Administrators/assets/images/news/@item.ImageName" alt="">
+                            </div>
+                            <div class="space-30"></div>
+                            <div class="padding-30">
+                                <div class="sm-title">@item.Title</div>
+                            </div>
+                            <div class="space-30"></div>
+                            <div class="blog-overlay padding-30">
+                                <div class="right-text-effect">
+                                    <div class="sm-title">@item.ShortDescription</div>
+                                </div>
+                                <div class="blog-read-more-icon">
+                                    <a href="/Home/NewsList/@item.Id"><i class="flaticon-right-arrow"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="space-30"></div>
+                    </div>
+                }
+            }
+        </div>
+        @if (Model.Any())
+        {
+            <div class="text-center">
+                <br />
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                }
+                @if (Model.Any())
+                {
+                    <a asp-action="NewsArchive"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @prevDisabled">
+                        قبلی
+                    </a>
+                    <a asp-action="NewsArchive"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @nextDisabled">
+                        بعدی
+                    </a>
+                }
+            </div>
+        }
+    </div>
+    <div class="space-100"></div>
+</section>
+
+@section Footer{
+    <div class="space-15"></div>
+    <div class="pull-left col-xs-12 col-sm-6">
+        <img class="footer-logo" src="/HomePage/images/logo2.png" alt="">
+    </div>
+    <div class="space-15"></div>
+}
