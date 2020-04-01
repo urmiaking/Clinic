@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29920.165
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clinic.WebApplication", "Clinic.WebApplication\Clinic.WebApplication.csproj", "{36812777-2682-4402-A9C8-A13DB5835035}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clinic.Models", "Clinic.Models\Clinic.Models.csproj", "{05E21F4C-9C73-4828-99C9-7884777E7DA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{36812777-2682-4402-A9C8-A13DB5835035}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{36812777-2682-4402-A9C8-A13DB5835035}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{36812777-2682-4402-A9C8-A13DB5835035}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05E21F4C-9C73-4828-99C9-7884777E7DA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05E21F4C-9C73-4828-99C9-7884777E7DA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05E21F4C-9C73-4828-99C9-7884777E7DA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05E21F4C-9C73-4828-99C9-7884777E7DA2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
