@@ -1,0 +1,479 @@
+﻿
+@model News
+
+@{
+    ViewBag.Title = Model.Title;
+    int i = 0;
+    int totalComments = 0;
+}
+@section Head{
+    <!-- Notification css (Toastr) -->
+    <link href="/Administrators/assets/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="/HomePage/css/news-comments.css" rel="stylesheet" />
+    <script src="/HomePage/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <script src="/lib/jquery/jquery.js"></script>
+
+    <style>
+        h3 {
+            margin: 0 0 10px;
+            font-family: 'IRANSANS','league_spartanregular';
+            line-height: 1.5;
+            text-align: right;
+            color: #253b6e;
+        }
+
+        .news-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            float: none !important;
+        }
+
+        .col-md-12 {
+            border-top: 6px #009dad solid;
+            border-right: 2px #009dad solid;
+            border-left: 2px #009dad solid;
+            border-bottom: 2px #009dad solid;
+        }
+
+        .keywords {
+            border: 1px solid #dfdfdf;
+            margin-top: 20px;
+            padding: 10px
+        }
+
+            .keywords a {
+                padding: 2px 5px;
+                background-color: #f2f2f2;
+                line-height: 18px;
+                font-size: 14px;
+                color: #767676;
+                margin: 3px;
+                border-radius: 3px;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+            }
+
+                .keywords a:hover {
+                    background-color: #dfdfdf
+                }
+
+        .border-radius {
+            border-radius: 4px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+        }
+    </style>
+}
+
+@section Header
+{
+    <header class="header-area relative" id="profile.html">
+        <!--Mainmenu-Area-->
+        <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
+            <div class="container">
+                <div class="navbar-header smoth-scroll">
+                    <a href="/Home/Index" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse " id="mainmenu">
+                    <ul class="nav navbar-nav navbar-right smoth-scroll">
+                        <li><a href="/Home/DoctorList">لیست پزشکان</a></li>
+                        <li><a href="/Home/Index">صفحه اصلی</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                        }
+                        else if (User.IsInRole("SiteAdmin"))
+                        {
+                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("ClinicManager"))
+                        {
+                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("Pharmacy"))
+                        {
+                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                        }
+                        else if (User.IsInRole("Patient"))
+                        {
+                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Mainmenu-Area / -->
+    </header>
+}
+
+
+<!--Header-Area / -->
+<div class="space-50 hidden visible-xs"></div>
+<!-- Revolution Slider -->
+<div id="" class="tp-banner-container  clearfix">
+    <section class="appoinment-area">
+        <div class="container bg-white appoinment-form">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 padding-60">
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="relative appoinment-area" id="about">
+    <div class="space-40"></div>
+    <div class="container bg-white appoinment-form">
+        <div class="row relative">
+            <div class="col-xs-12 col-sm-12 col-md-12 padding-60">
+                <h3>@Model.Title</h3>
+                <div class="space-10"></div>
+                <div class="col-sm-12">
+                    <img class="news-img" ali src="/Administrators/assets/images/news/@Model.ImageName" alt="">
+                </div>
+                <div class="space-60"></div>
+                <div class="space-30"></div>
+                <div class="panel-group about-panel" id="accordion">
+                    <div class="panel">
+                        <div class="panel-body" style="text-align: justify;direction: rtl;">
+                            @Model.Description
+                        </div>
+                        <br />
+                        <label>برچسب ها</label>
+                        <div class="keywords border-radius">
+                            @foreach (var item in Model.NewsTags)
+                            {
+                                <a href="/Home/NewsArchive?searchString=@item.Tag.TagValue"> @item.Tag.TagValue </a>
+                            }
+                        </div>
+                        <hr />
+                        <label>به اشتراک گذاری خبر</label>
+                        <script type="text/javascript" src="https://platform-api.sharethis.com/js/sharethis.js#property=5e0a71425d165f0019951af6&product=inline-share-buttons" async="async"></script>
+                        <div class="sharethis-inline-share-buttons"></div>
+                        <div class="space-20"></div>
+                        <div class="space-20"></div>
+                        @foreach (var comment in Model.Comments.Where(a => a.IsConfirmed))
+                        {
+                            totalComments += 1;
+                            foreach (var reply in comment.Replies.Where(a => a.IsConfirmed))
+                            {
+                                totalComments += 1;
+                            }
+                        }
+                        <label>نظرات (@totalComments)</label>
+
+                        <div class="card-box">
+                            @foreach (var comment in Model.Comments.Where(a => a.IsConfirmed).OrderByDescending(a => a.DateTime))
+                            {
+                                var replyInput = "reply-input-" + i;
+                                var replyButton = "reply-button-" + i;
+                                var formId = "form-" + i;
+                                var replyReplyButton = "reply-reply-button-" + i;
+                                var formReplyId = "form-reply" + i;
+                                i++;
+                                var now_c = DateTime.Now;
+                                TimeSpan elapsed_c = now_c.Subtract(comment.DateTime);
+
+                                var result_c = "";
+                                if (elapsed_c.Days < 1)
+                                {
+                                    if (elapsed_c.Hours < 1)
+                                    {
+                                        result_c = "در " + Math.Round(elapsed_c.TotalMinutes) + " دقیقه قبل";
+                                    }
+                                    else
+                                    {
+                                        result_c = "در " + Math.Round(elapsed_c.TotalHours) + " ساعت قبل";
+                                    }
+                                }
+                                else
+                                {
+                                    result_c = "در " + Math.Round(elapsed_c.TotalDays) + " روز قبل";
+                                }
+                                <div class="comment">
+                                    @if (comment.User is SiteAdmin)
+                                    {
+                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/admin.png">
+                                    }
+                                    else if (comment.User is ClinicManager)
+                                    {
+                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
+                                    }
+                                    else if (comment.User is Pharmacy)
+                                    {
+                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
+                                    }
+                                    else if (comment.User is Doctor doctor)
+                                    {
+                                        var profilePic = doctor.ProfilePic;
+                                        <img src="/Administrators/assets/images/doctors/@profilePic" alt="64x64" class="comment-avatar">
+                                    }
+                                    else if (comment.User is Patient patient)
+                                    {
+                                        var profilePic = patient.ProfilePic;
+                                        <img src="/Administrators/assets/images/patients/@profilePic" alt="64x64" class="comment-avatar">
+                                    }
+                                    <div class="comment-body">
+                                        <div class="comment-text">
+                                            <div class="comment-header">
+                                                @if (comment.User is Doctor || comment.User is Pharmacy || comment.User is ClinicManager || comment.User is SiteAdmin)
+                                                {
+                                                    <i class="fa fa-check-circle">&nbsp;</i>
+                                                }<a href="#" title="">@comment.User.FullName </a><span>@result_c</span>
+                                            </div>@comment.Content
+                                        </div>
+
+                                        <div class="comment-footer">
+                                            @if (string.IsNullOrEmpty(ViewBag.UserType))
+                                            {
+                                                <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
+                                            }
+                                            else
+                                            {
+                                                <label id="@replyButton">جواب دادن</label>
+                                                <form id="@formId" action="/Home/AddReply" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="commentId" value="@comment.Id" />
+                                                    <input type="hidden" name="id" value="@ViewBag.UserId" />
+                                                    <input type="hidden" name="newsId" value="@Model.Id" />
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <input type="submit" class="btn btn-info btn-sm" value="ثبت" />
+                                                        </div>
+                                                        <div class="col-md-9">
+                                                            <input type="text" class="form-control" id="@replyInput" name="content" />
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                                <script>
+                                                    $(document).ready(function() {
+                                                        $("#@formId").hide();
+                                                        $("#@replyButton").on('click',
+                                                            function() {
+                                                                $("#@formId").toggle(1000);
+                                                            });
+                                                    });
+                                                </script>
+                                            }
+
+                                        </div>
+                                    </div>
+                                    @foreach (var reply in comment.Replies.Where(a => a.IsConfirmed).OrderByDescending(a => a.DateTime))
+                                    {
+                                        var now = DateTime.Now;
+                                        TimeSpan elapsed = now.Subtract(reply.DateTime);
+
+                                        var result = "";
+                                        if (elapsed.Days < 1)
+                                        {
+                                            if (elapsed.Hours < 1)
+                                            {
+                                                result = "در " + Math.Round(elapsed.TotalMinutes) + " دقیقه قبل";
+                                            }
+                                            else
+                                            {
+                                                result = "در " + Math.Round(elapsed.TotalHours) + " ساعت قبل";
+                                            }
+                                        }
+                                        else
+                                        {
+                                            result = "در " + Math.Round(elapsed.TotalDays) + " روز قبل";
+                                        }
+                                        <div class="comment">
+                                            @if (reply.User is SiteAdmin)
+                                            {
+                                                <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/admin.png">
+                                            }
+                                            else if (reply.User is ClinicManager)
+                                            {
+                                                <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
+                                            }
+                                            else if (reply.User is Pharmacy)
+                                            {
+                                                <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
+                                            }
+                                            else if (reply.User is Doctor doctor)
+                                            {
+                                                var profilePic = doctor.ProfilePic;
+                                                <img src="/Administrators/assets/images/doctors/@profilePic" alt="64x64" class="comment-avatar">
+                                            }
+                                            else if (reply.User is Patient patient)
+                                            {
+                                                var profilePic = patient.ProfilePic;
+                                                <img src="/Administrators/assets/images/patients/@profilePic" alt="64x64" class="comment-avatar">
+                                            }
+                                            <div class="comment-body">
+                                                <div class="comment-text">
+                                                    <div class="comment-header">
+                                                        @if (reply.User is Doctor || reply.User is Pharmacy || reply.User is ClinicManager || reply.User is SiteAdmin)
+                                                        {
+                                                            <i class="fa fa-check-circle">&nbsp;</i>
+                                                        }<a href="#" title="">@reply.User.FullName</a><span>@result</span>
+                                                    </div>@reply.Content
+                                                </div>
+                                                <div class="comment-footer">
+                                                    @if (string.IsNullOrEmpty(ViewBag.UserType))
+                                                    {
+                                                        <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
+                                                    }
+                                                    else
+                                                    {
+                                                        <label id="@replyReplyButton">جواب دادن</label>
+                                                        <form id="@formReplyId" action="/Home/AddReply" method="post">
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="commentId" value="@comment.Id" />
+                                                            <input type="hidden" name="id" value="@ViewBag.UserId" />
+                                                            <input type="hidden" name="newsId" value="@Model.Id" />
+                                                            <div class="row">
+                                                                <div class="col-md-3">
+                                                                    <input type="submit" class="btn btn-info btn-sm" value="ثبت" />
+                                                                </div>
+                                                                <div class="col-md-9">
+                                                                    <input type="text" class="form-control" id="@replyInput" name="content" />
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                        <script>
+                                                            $(document).ready(function() {
+                                                                $("#@formReplyId").hide();
+                                                                $("#@replyReplyButton").on('click',
+                                                                    function() {
+                                                                        $("#@formReplyId").toggle(1000);
+                                                                    });
+                                                            });
+                                                        </script>
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            }
+
+                            @if (string.IsNullOrEmpty(ViewBag.UserType))
+                            {
+                                <div class="m-t-30 text-center">
+                                    برای ثبت نظر باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید
+                                </div>
+                            }
+                            else
+                            {
+                                <br />
+                                <form method="post" class="card-box" action="/Home/AddComment">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="id" value="@ViewBag.UserId" />
+                                    <input type="hidden" name="newsId" value="@Model.Id" />
+                                    <label>
+                                        ...نظری بنویسید
+                                    </label>
+                                    <textarea name="content" rows="2" class="form-control" placeholder="نوشتن یک نظر"></textarea>
+
+                                    <br />
+                                    <div class="p-t-10 text-left">
+                                        <input type="submit" class="btn btn-sm btn-primary waves-effect waves-light" value="ارسال" />
+                                    </div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div><br>
+    </div>
+</section>
+
+
+
+@section Footer{
+    <footer class="bg-white">
+        <div class="space-15"></div>
+        <div class="container">
+            <div class="row xs-center">
+                <div class="col-xs-12 col-sm-6">
+                    <img class="footer-logo" src="/HomePage/images/logo2.png" alt="">
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="space-5"></div>
+                    <ul class="list-inline list-unstyled social-list text-right xs-center">
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="space-15"></div>
+    </footer>
+    <!--Footer-Area / -->
+}
+
+@section Scripts {
+
+    <!-- Toastr js -->
+    <script src="/Administrators/assets/plugins/toastr/toastr.min.js"></script>
+
+    <script>
+        $(function() {
+            if ("@TempData["Error"]" != "")
+            {
+                toastr["error"]("@TempData["Error"]", "خطا");
+
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-bottom-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+            }
+            if ("@TempData["Success"]" != "") {
+                toastr["success"]("@TempData["Success"]", "موفق");
+
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-bottom-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+            }
+        });
+    </script>
+
+}

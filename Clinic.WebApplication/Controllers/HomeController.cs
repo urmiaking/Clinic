@@ -153,5 +153,39 @@ namespace Clinic.WebApplication.Controllers
 
             return View(await PaginatedList<News>.CreateAsync(newsResult,pageNumber, pageSize));
         }
+
+        public async Task<IActionResult> News(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var news = await _db.News
+                .Include(a => a.NewsTags)
+                    .ThenInclude(a => a.Tag)
+                .Include(a => a.Comments)
+                    .ThenInclude(a => a.Replies)
+                .Include(a => a.Comments)
+                    .ThenInclude(a => a.User)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            if (news == null)
+            {
+                return NotFound();
+            }
+            news.VisitCount += 1;
+            _db.News.Update(news);
+            await _db.SaveChangesAsync();
+
+            var username = User.Identity.Name;
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username.Equals(username));
+            if (user != null)
+            {
+                ViewBag.UserId = user.Id;
+            }
+
+            return View(news);
+        }
     }
 }

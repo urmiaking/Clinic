@@ -29,7 +29,7 @@ namespace Clinic.WebApplication.Controllers
             _db = db;
             _loginService = loginService;
         }
-
+        #region Login
         public IActionResult Login(string returnUrl)
         {
             if (User.Identity.IsAuthenticated)
@@ -104,6 +104,9 @@ namespace Clinic.WebApplication.Controllers
             ViewBag.Error = "نام کاربری یا رمز عبور شما اشتباه است";
             return View();
         }
+        #endregion
+
+        #region Register
 
         public IActionResult Register()
         {
@@ -166,7 +169,7 @@ namespace Clinic.WebApplication.Controllers
 
             if (!isSucceed)
             {
-                TempData["Error"] = 
+                TempData["Error"] =
                     "مشکلی در ارسال لینک فعالسازی پیش آمد، لطفا با مدیر کلینیک تماس بگیرید.";
                 return RedirectToAction("Login", "Account");
             }
@@ -175,12 +178,6 @@ namespace Clinic.WebApplication.Controllers
                 "ثبت نام با موفقیت انجام شد. لطفا برای تکمیل مراحل ثبت نام لینک فعالسازی ارسال شده به ایمیلتان را چک کنید";
 
             return RedirectToAction("Login", "Account");
-        }
-
-        public async Task<IActionResult> LogOut()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> ActivateAccount(string id)
@@ -205,6 +202,10 @@ namespace Clinic.WebApplication.Controllers
             await _loginService.CreateCookieAsync(patient);
             return RedirectToAction("Index", "Home", new { area = "Patient" });
         }
+
+        #endregion
+
+        #region ResetPassword
 
         public IActionResult ForgetPassword()
         {
@@ -257,26 +258,31 @@ namespace Clinic.WebApplication.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid) return View(model);
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.ResetPasswordCode == model.ResetCode);
+
+            if (user != null)
             {
-                var user = await _db.Users.FirstOrDefaultAsync(a => a.ResetPasswordCode == model.ResetCode);
+                var hashedPassword = _loginService.GetHash(model.NewPassword);
+                user.Password = hashedPassword;
+                user.ResetPasswordCode = null;
+                await _db.SaveChangesAsync();
 
-                if (user != null)
-                {
-                    var hashedPassword = _loginService.GetHash(model.NewPassword);
-                    user.Password = hashedPassword;
-                    user.ResetPasswordCode = null;
-                    await _db.SaveChangesAsync();
-
-                    ViewBag.Success = "رمز عبور شما با موفقیت تغییر یافت";
-                    return View(model);
-                }
-
-                ViewBag.Error = "کد نامعتبر است";
+                ViewBag.Success = "رمز عبور شما با موفقیت تغییر یافت";
                 return View(model);
             }
 
+            ViewBag.Error = "کد نامعتبر است";
             return View(model);
         }
+
+        #endregion
+
+        public async Task<IActionResult> LogOut()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home");
+        }
+
     }
 }
