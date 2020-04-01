@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Clinic.DataContext\Clinic.DataContext.csproj" />
+    <ProjectReference Include="..\Clinic.Utilities\Clinic.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

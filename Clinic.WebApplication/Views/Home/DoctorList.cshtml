@@ -1,0 +1,194 @@
+﻿@model Clinic.Utilities.Pagination.PaginatedList<Clinic.Models.DomainClasses.Users.Doctor>
+
+@{
+    ViewBag.Title = "لیست پزشکان";
+}
+
+@section Head
+{
+    <link href="/HomePage/css/SearchBar.css" rel="stylesheet" />
+    <style>
+        .w1 {
+            float: right;
+        }
+    </style>
+}
+
+@section Header
+{
+    <div class="poreloader">
+        <div class="sk-rotating-plane"></div>
+    </div>
+    <header class="header-area relative" id="home">
+        <!--Mainmenu-Area-->
+        <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
+            <div class="container">
+                <div class="navbar-header smoth-scroll">
+                    <a href="#home" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse " id="mainmenu">
+                    <ul class="nav navbar-nav navbar-right smoth-scroll">
+                        <li class="active"><a href="#">لیست پزشکان</a></li>
+                        <li><a href="/Home/Index">صفحه اصلی</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                        }
+                        else if (User.IsInRole("SiteAdmin"))
+                        {
+                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("ClinicManager"))
+                        {
+                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("Pharmacy"))
+                        {
+                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                        }
+                        else if (User.IsInRole("Patient"))
+                        {
+                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Mainmenu-Area / -->
+    </header>
+}
+
+<div class="space-50 hidden visible-xs"></div>
+<!-- Revolution Slider -->
+<div id="" class="tp-banner-container  clearfix">
+    <section class="appoinment-area">
+        <div class="container bg-white appoinment-form">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 padding-60">
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="relative appoinment-area" id="about">
+    <div class="space-40"></div>
+    <div class="container bg-white appoinment-form">
+        <div class="row relative">
+            <br>
+            <br>
+            <div class="row ">
+                <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+                    <h3>لیست پزشکان کلینیک بهار</h3>
+                    <hr>
+                    <div class="searchBox">
+                        <form>
+                            <input class="searchInput" type="text" name="searchString" placeholder="     جستجو...">
+                            <button type="submit" class="searchButton" href="#">
+                                <i class="material-icons fa fa-search">
+
+                                </i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="space-60"></div>
+                    <div class="space-60"></div>
+                </div>
+            </div>
+            <div class="space-60"></div>
+            <section class="relative bg-white" id="blog">
+                <div class="space-100"></div>
+                <div class="container">
+                    @{
+                        if (!Model.Any())
+                        {
+                            <div class="text-center">
+                                <h4>پزشکی یافت نشد</h4>
+                            </div>
+                        }
+                        else
+                        {
+                            foreach (var doctor in Model)
+                            {
+                                <div class="text-center col-md-4">
+                                    <div class="single-team">
+                                        <div class="team-photo">
+                                            <img src="~/Content/Administrators/assets/images/doctors/@doctor.ProfilePic" alt="">
+                                        </div>
+                                        <div class="space-50"></div>
+                                        <div class="sm-title">دکتر @doctor.FullName</div>
+                                        <p class="team-pos">@doctor.Specialty</p>
+                                        <div class="text-center">
+                                            <a href="/Home/ProfileDetails/@doctor.Id" class="btn btn-primary sh-hover">معرفی پزشک</a>
+                                        </div>
+                                        <div class="space-50"></div>
+                                    </div>
+                                    <div class="space-30"></div>
+                                </div>
+                            }
+                        }
+
+                    }
+                </div>
+
+            </section>
+            <div class="text-center">
+                <br />
+                @{
+                    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+                }
+                @if (Model.Any())
+                {
+                    <a asp-action="DoctorList"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @prevDisabled">
+                        قبلی
+                    </a>
+                    <a asp-action="DoctorList"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @nextDisabled">
+                        بعدی
+                    </a>
+                }
+                
+            </div>
+
+        </div><br>
+    </div>
+</section>
+
+@section Footer{ 
+    <footer class="relative lbg-white">
+        <div class="space-15"></div>
+        <div class="container">
+            <div class="row xs-center">
+                <div class="col-xs-12 col-sm-6">
+                    <img src="/HomePage/images/logo4.png" alt="">
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="space-5"></div>
+                    <ul class="list-inline list-unstyled social-list text-right xs-center">
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="space-15"></div>
+    </footer>
+}
