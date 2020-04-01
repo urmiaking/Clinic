@@ -1,0 +1,33 @@
+﻿h6 {
+    margin: 0 0 10px;
+    font-size: 33px;
+    font-family: 'IRANSans','league_spartanregular';
+    line-height: 0.5;
+    color: #253b6e;
+    text-align: right;
+}
+
+.footer-logo {
+    max-width: 100%;
+    height: auto;
+    width: 25%;
+    float: left;
+    margin-left: 61px;
+}
+
+.about-area {
+    height: 750px;
+}
+
+.about-text {
+    float: right;
+    text-align: right;
+}
+
+.about-header-title {
+    color: #253b6e;
+}
+
+.about-header {
+    font-size: 17px;
+}

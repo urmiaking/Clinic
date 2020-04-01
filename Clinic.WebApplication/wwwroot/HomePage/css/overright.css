@@ -1,0 +1,131 @@
+.well {
+    background-color: #ffffff;
+    border: medium none;
+    border-radius: 2px;
+    padding: 10px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.well-ef {
+    -webkit-box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 1px 0 rgba(0, 0, 0, 0.1);
+    -webkit-transition: 0.5s;
+    transition: 0.5s;
+    -webkit-transform: translateY(0);
+    transform: translateY(0);
+    margin: 10px 0;
+}
+
+.well-ef:hover {
+    -webkit-transform: translateY(-5px);
+    transform: translateY(-5px);
+    -webkit-box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.well-lg {
+    padding: 30px;
+}
+
+
+
+
+/*------------------
+Button-Edit
+--------------------*/
+
+.btn {
+    line-height: 1.7;
+    font-weight: 700;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+}
+
+.btn:hover {
+    color: #5097a7;
+}
+
+.btn.btn-default {
+    color: #5097a7
+}
+.btn.btn-default:hover {
+    background-color: #5097a7;
+    color: #ffffff;
+}
+
+.btn.btn-primary {
+    background-color: #253b6e;
+}
+
+.btn.btn-primary:hover {
+    color: #ffffff;
+}
+
+.navbar-brand {
+    padding: 10px 0;
+}
+
+.navbar-brand img {
+width: 133px;
+    max-height: 60px;
+}
+
+hr {
+    border-color: #cfd6d7;
+}
+
+
+/*-----------------
+Form-Style
+------------------*/
+
+.form-control {
+	text-align: right;
+    border: none;
+    color: #40818f;
+    background-color: #eaf4f4;
+    height: auto;
+    padding: 12px 15px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.form-control::-webkit-input-placeholder {
+    color: #40818f;
+}
+
+
+/* WebKit, Blink, Edge */
+
+.form-control:-moz-placeholder {
+    color: #40818f;
+}
+
+
+/* Mozilla Firefox 4 to 18 */
+
+.form-control::-moz-placeholder {
+    color: #40818f;
+}
+
+
+/* Mozilla Firefox 19+ */
+
+.form-control:-ms-input-placeholder {
+    color: #40818f;
+}
+
+
+/* Internet Explorer 10-11 */
+
+.form-control::-ms-input-placeholder {
+    color: #40818f;
+}
+
+.form-group label {
+    margin-bottom: 10px;
+}
+
+
+/* Microsoft Edge */

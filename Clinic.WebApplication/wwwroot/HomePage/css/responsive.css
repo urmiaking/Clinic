@@ -1,0 +1,52 @@
+/* Medium Layout: 1280px. */
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {}
+
+
+/* Tablet Layout: 768px. */
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+    
+    .team-member .owl-controls .owl-nav {
+        display: none;
+    }
+}
+
+
+/* Mobile Layout: 320px. */
+
+@media only screen and (max-width: 767px) {
+    .padding-60,
+    .single-service-text {
+        padding: 20px !important;
+    }
+    .team-member .owl-controls {
+        display: none;
+    }
+    .xs-center {
+        text-align: center !important;
+    }
+    .mainmenu-area {
+        background-color: #2b4f53;
+    }
+    .mainmenu-area .navbar-toggle {
+        border: 2px solid #ffffff;
+        border-radius: 0;
+    }
+    .mainmenu-area .navbar-toggle .icon-bar {
+        background-color: #ffffff;
+        border-radius: 0;
+    }
+    .tparrows  {
+        display: none;
+    }
+    
+    .appoinment-area {
+        margin-top: 50px;
+    }
+}
+
+
+/* Wide Mobile Layout: 480px. */
+
+@media only screen and (min-width: 480px) and (max-width: 767px) {}
