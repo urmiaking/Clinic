@@ -14,7 +14,7 @@ namespace Clinic.DataContext
 
         public virtual DbSet<Visit> Visits { get; set; }
         public virtual DbSet<Drug> Drugs { get; set; }
-        public virtual DbSet<InsuranceCard> InsuranceCards { get; set; }
+        public virtual DbSet<InsuranceProvider> InsuranceProviders { get; set; }
         public virtual DbSet<News> News { get; set; }
         public virtual DbSet<Prescription> Prescriptions { get; set; }
         public virtual DbSet<PrescriptionDrug> PrescriptionDrugs { get; set; }
@@ -49,6 +49,20 @@ namespace Clinic.DataContext
 
             modelBuilder.Entity<NewsTag>()
                 .HasKey(c => new { c.NewsId, c.TagId });
+
+            modelBuilder.Entity<Reservation>()
+                .HasOne(a => a.Visit)
+                .WithOne(a => a.Reservation)
+                .OnDelete(DeleteBehavior.NoAction)
+                .HasForeignKey<Visit>(c => new { c.ReservationPatientId, c.ReservationDoctorId, c.ReservationReserveDate});
+
+            modelBuilder.Entity<User>()
+                .HasDiscriminator(b => b.UserType)
+                .HasValue<SiteAdmin>("SiteAdmin")
+                .HasValue<Doctor>("Doctor")
+                .HasValue<Patient>("Patient")
+                .HasValue<Pharmacy>("Pharmacy")
+                .HasValue<ClinicManager>("ClinicManager");
         }
     }
 }

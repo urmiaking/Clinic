@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Clinic.Models.DomainClasses.Appointment
 {
-    public class InsuranceCard
+    public class InsuranceProvider
     {
         public int Id { get; set; }
 

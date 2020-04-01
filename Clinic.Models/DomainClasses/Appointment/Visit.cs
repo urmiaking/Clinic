@@ -24,9 +24,11 @@ namespace Clinic.Models.DomainClasses.Appointment
         public virtual Report Report { get; set; }
         public virtual Prescription Prescription { get; set; }
 
-        public InsuranceCard InsuranceCard { get; set; }
+        public InsuranceProvider InsuranceProvider { get; set; }
 
-        public int ReservationId { get; set; }
+        public int ReservationDoctorId { get; set; }
+        public int ReservationPatientId { get; set; }
+        public DateTime ReservationReserveDate { get; set; }
         public virtual Reservation Reservation { get; set; }
     }
 }

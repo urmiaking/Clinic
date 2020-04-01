@@ -30,6 +30,8 @@ namespace Clinic.Models.DomainClasses.Users
         [MaxLength(100, ErrorMessage = "لطفا حداکثر 100 کاراکتر وارد نمایید")]
         public string FullName { get; set; }
 
+        public string UserType { get; set; }
+
         public string ResetPasswordCode { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
