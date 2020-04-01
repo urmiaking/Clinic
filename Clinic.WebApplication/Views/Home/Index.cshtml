@@ -1,15 +1,537 @@
-﻿
+﻿@model IEnumerable<News>
+
 @{
-    Layout = null;
+    ViewBag.Title = "صفحه اصلی";
 }
 
-<!DOCTYPE html>
+@section Head
+{
+    <script src="https://www.google.com/recaptcha/api.js?hl=fa" async defer></script>
+}
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+@section Header
+{
+    <div class="poreloader">
+        <div class="sk-rotating-plane"></div>
+    </div>
+    <header class="header-area relative" id="home">
+        <!--Mainmenu-Area-->
+        <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
+            <div class="container">
+                <div class="navbar-header smoth-scroll">
+                    <a href="#home" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse " id="mainmenu">
+                    <ul class="nav navbar-nav navbar-right smoth-scroll">
+                        <li><a href="#contact">تماس با ما</a></li>
+                        <li><a href="#news">اخبار</a></li>
+                        <li><a href="#about">درباره ی کلینیک</a></li>
+                        <li><a href="/Home/DoctorList">لیست پزشکان</a></li><!--TODO-->
+                        <li class="active"><a href="#home">صفحه اصلی</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                        }
+                        else if (User.IsInRole("SiteAdmin"))
+                        {
+                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("ClinicManager"))
+                        {
+                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("Pharmacy"))
+                        {
+                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                        }
+                        else if (User.IsInRole("Patient"))
+                        {
+                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!--Mainmenu-Area / -->
+    </header>
+}
+<div class="space-50 hidden visible-xs"></div>
+<!-- Revolution Slider -->
+<div id="slider" class="tp-banner-container index-rev-slider clearfix">
+    <div class="tp-banner">
+        <ul>
+            <!-- Fade
+                ============================================= -->
+            <li data-transition="fade" data-slotamount="10" data-thumb="">
+                <img src="/HomePage/images/rs/1.jpg" alt="image" />
+                <div class="caption sft big_white" data-x="0" data-y="200" data-speed="1000" data-start="1700" data-easing="easeOutExpo">
+                    <strong>کلینیک فوق تخصصی بهار</strong>
+                </div>
+                <div class="caption sfr medium_grey" data-x="80" data-y="300" data-speed="1000" data-start="2500" data-easing="easeOutExpo">
+                    کلینیک تخصصی و فوق تخصصی بهار
+                    <br>
+                    .به ارائه بیش از دو دهه خدمات مفتخر است
+
+                </div>
+                <div class="caption sfb" data-x="0" data-y="410" data-speed="2500" data-start="2500" data-easing="easeOutExpo">
+                </div>
+            </li>
+            <!-- Slide Right
+                ============================================= -->
+            <li data-transition="slideright" data-slotamount="6" data-thumb="">
+                <img src="/HomePage/images/rs/3.jpg" alt="image" />
+                <div class="caption sft big_white" data-x="400" data-y="260" data-speed="1500" data-start="1700" data-easing="easeOutExpo"><strong>ارائه بهترین خدمات پزشکی</strong></div>
+                <div class="caption sfb medium_grey text-center" data-x="400" data-y="380" data-speed="1500" data-start="2500" data-easing="easeOutExpo">
+                    دارای با تجربه ترین و قابل اعتمادترین کادر پزشکی وخدماتی
+
+                </div>
+                <div class="caption sfb" data-x="492" data-y="440" data-speed="2000" data-start="3000" data-easing="easeOutExpo"></div>
+            </li>
+            <!-- Slide Up
+                ============================================= -->
+            <li data-transition="slideup" data-slotamount="15" data-thumb="">
+                <img src="/HomePage/images/rs/1.jfif" alt="image" />
+                <div class="caption sft big_white" data-x="350" data-y="100" data-speed="1500" data-start="1700" data-easing="easeOutExpo"><strong>دارای مجهز ترین امکانات تخصصی</strong></div>
+                <div class="caption sfr medium_grey" data-x="500" data-y="200" data-speed="1500" data-start="3000" data-easing="easeOutExpo">
+                    کلینیک تخصصی و فوق تخصصی بهار
+                    همراه با مجهزترین و به روزترین
+                    <br>
+                    .امکانات پزشکی در خدمت شما می باشد
+                </div>
+                <div class="caption sfb" data-x="0" data-y="400" data-speed="300" data-start="2500" data-easing="easeOutExpo">
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<!--Service-Area-->
+<section class="relative bg-white" id="service">
+    <div class="space-100"></div>
+    <div class="container">
+        <div class="row ">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+                <h3>خدمات کلینیک فوق تخصصی بهار</h3>
+                <hr>
+                <div class="space-60"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/1.jpg'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">پزشکان عمومی</h6>
+                            <div class="space-20"></div>
+                            <p>
+                                پزشکان عمومی کادر
+                                <br>
+                                .این مجموعه را شامل می شوند و در خدمت شما می باشند
+
+                            </p>
+                            <div class="space-20"></div>
+                            <div class="service-read-more-icon">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">پزشکان عمومی</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/service-02.jpg'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">متخصصین داخلی</h6>
+                            <div class="space-20"></div>
+                            <p text-align="right">
+                                متخصصین داخلی مجرب کادر این بخش را تشکیل می دهند که همواره
+                                <br>
+                                .در خدمت مراجعه کنندگان محترم می باشند                                <div class="space-20"></div>
+                                <div class="service-read-more-icon">
+                                </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">متخصصین داخلی</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/3.jfif'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">چشم پزشکی</h6>
+                            <div class="space-20"></div>
+                            <p>
+                                معاینه چشم و تعیین شماره چشم همچنین معاینات تخصصی
+                                چشم و تشخیص
+                                بیماری های چشمی
+                                <br />
+                                <br />
+                            </p>
+                            <div class="space-20"></div>
+                            <div class="service-read-more-icon">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">چشم پزشکی</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/4.jpg'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">دندانپزشکی</h6>
+                            <div class="space-20"></div>
+                            <p>
+                                بخش دندانپزشکی با امکانات فوق پیشرفته و دندانپزشکان ماهر در خدمت
+                                <br>
+                                .شما می باشد
+
+                                <br>
+                                <br>
+                            </p>
+
+                            <div class="space-20"></div>
+                            <div class="service-read-more-icon">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">دندانپزشکی</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+
+
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/5.jpg'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">داروخانه</h6>
+                            <div class="space-20"></div>
+                            <p>
+                                بخش داروخانه یکی دیگر از بخش های کلینیک است که همواره در خدمت مراجعه کنندگان کلینیک می باشد در صورتی که پزشک کلینیک برای شما دارویی تجویز
+                                .کند دارو برای شما ارسال خواهد شد
+
+
+                            </p>
+                            <div class="space-20"></div>
+                            <div class="service-read-more-icon">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">داروخانه</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+
+
+
+            <div class="col-xs-12 col-sm-6">
+                <div class="single-service" style="background-image: url('/Content/HomePage/images/service/6.jpg'); ">
+                    <div class="single-service-text">
+                        <div class="right-text-effect">
+                            <h6 class="text-uppercase text-white">متخصص زنان</h6>
+                            <div class="space-20"></div>
+                            <p>
+                                .بخش متخصص بانوان نیز با کادر مجرب در خدمت بانوان عزیز می باشد
+                                <br>
+                                <br>
+                                <br>
+                            </p>
+                            <div class="space-20"></div>
+                            <div class="service-read-more-icon">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-title">
+                        <h5 class="text-uppercase">متخصص زنان</h5>
+                    </div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="space-100"></div>
+</section>
+<!--Service-Area / -->
+<!--Facilities-Area-->
+<section class="relative" id="facilites">
+    <div class="space-100"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+                <h3>امکانات کلینیک</h3>
+                <hr>
+                <div class="space-60"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-tooth"></span>
+                    </div>
+                    <div class="sm-title">اتاق پیشرفته دندانپزشکی</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-tablet-and-pill"></span>
+                    </div>
+                    <div class="sm-title">داروخانه با تنوع دارویی بالا</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-disability"></span>
+                    </div>
+                    <div class="sm-title">بخش فیزیولوژی</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-technology"></span>
+                    </div>
+                    <div class="sm-title">آزمایشگاه</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-hospital-ambulance"></span>
+                    </div>
+                    <div class="sm-title">اورژانس</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+            <div class="col-xs-12 col-sm-4">
+                <div class="single-facilities">
+                    <div class="facilities-icon">
+                        <span class="flaticon-medical"></span>
+                    </div>
+                    <div class="sm-title">رادیولوژی</div>
+                </div>
+                <div class="space-30"></div>
+            </div>
+        </div>
+        <div class="space-30"></div>
+        <div class="text-center">
+        </div>
+    </div>
+    <div class="space-100"></div>
+</section>
+<!--Facilities-Area / -->
+<!--About-Area-->
+<section class="about-area relative text-white" id="about">
+    <div class="section-bg color" id="about">
+        <div class="section-bg bg-2"></div>
+    </div>
+    <div class="container" id="about">
+
+        <div class="row text-white relative">
+            <div class="about-text col-xs-12 col-sm-6">
+                <div class="space-100"></div>
+                <br>
+                <br>
+                <h3 class="about-header-title">کلینیک فوق تخصصی بهار</h3>
+                <div class="space-60"></div>
+                <div class="testimonials">
+                    <div class="item">
+                        <div class="about-header sm-title">درباره ی رییس کلینیک</div>
+                        <p class="ff">
+
+                            دکتر ... یکی از برجسته ترین پزشکان ایران هستند که در سال 1395 اقدام به ساخت
+                            <br>
+                            .کلینیک فوق تخصصی بهار نمودند
+                        </p>
+                    </div>
+                    <div class="ff">
+                        <div class="ff sm-title">کارکنان کلینیک فوق تخصصی بهار</div>
+                        <p class="ff">
+                            کارکنان کلینیک از حاذق ترین و با تجربه ترین افراد
+                            <br>
+                            در زمینه خدمات پزشکی هستند که مدت ها برای خدمت رسانی
+                            <br>
+                            .به مراجه کنندگان محترم آموزش دیده اند
+
+                        </p>
+                    </div>
+                    <div class="ff item">
+                        <div class="sm-title">حوزه ی آموزشی کلینیک</div>
+                        <p class="ff">
+                            کلینیک فوق تخصی بهار از دانش آمختگان و دانشجویان پزشکی
+                            <br>
+                            دعوت به عمل می آورد تا دوران طرح خودشان را در این
+                            <br>
+                            .کلینیک بگذرانند
+                        </p>
+                    </div>
+
+                </div>
+                <div class="space-100"></div>
+            </div>
+            <div class="hidden-xs col-sm-4 col-sm-offset-2 right-side-image">
+            </div>
+        </div>
+    </div>
+</section>
+<!--About-Area / -->
+<!--News-Area-->
+<section class="relative bg-white" id="news">
+    <div class="space-100"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-12 col-sm-8 col-sm-offset-2 col-md-6 col-md-offset-3 text-center">
+                <h3>آخرین اخبار کلینیک</h3>
+                <hr>
+                <div class="space-60"></div>
+            </div>
+        </div>
+        <div class="space-60"></div>
+        <div class="row blog-post">
+            @foreach (var item in Model)
+            {
+                <div class="col-xs-12">
+                    <div class="single-blog">
+                        <div class="post-date">@item.ReleaseDate</div>
+                        <div class="blog-photo">
+                            <img src="/Administrators/assets/images/news/@item.ImageName" alt="">
+                        </div>
+                        <div class="space-30"></div>
+                        <div class="padding-30">
+                            <div class="sm-title">@item.Title</div>
+                        </div>
+                        <div class="space-30"></div>
+                        <div class="blog-overlay padding-30">
+                            <div class="right-text-effect">
+                                <div class="sm-title">@item.ShortDescription</div>
+                            </div>
+                            <div class="blog-read-more-icon">
+                                <a href="/Home/NewsList/@item.Id"><i class="flaticon-right-arrow"></i></a> <!--TODO-->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-30"></div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a class="btn btn-info" href="/Home/NewsArchive">آرشیو اخبار</a>
+        </div>
+    </div>
+    <div class="space-100"></div>
+</section>
+
+@section Footer{
+    <!--Footer-Area-->
+    <footer class="relative lbg-white" id="contact">
+        <section class="">
+            <br>
+            <br>
+            <br>
+            <div class="container  appoinment-form">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-6 padding-60">
+                        <h6>ارسال سوالات</h6>
+                        <hr>
+                        <form action="/Home/Index" method="post">
+                            @Html.AntiForgeryToken()
+                            <div class="form-group">
+                                <label for="name">.نام و نام خانوادگی خود را وارد کنید</label>
+                                <input type="text" required="" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">.ایمیل خود را وارد کنید</label>
+                                <input type="email" required="" class="form-control" placeholder="ایمیل" name="email" id="email">
+                            </div>
+                            <div class="form-group">
+                                <label for="message">.پیام مورد نظر خود را بنویسید</label>
+                                <textarea name="message" required="" id="message" rows="5" class="form-control" placeholder="...متن مورد نظر خود را بنویسید"></textarea>
+                            </div>
+                            <div class="space-15"></div>
+                            <div class="form-group" style="display: flex; justify-content: flex-end">
+                                <div class="g-recaptcha" data-sitekey="6LdHnNkUAAAAAM8jypNXDSZTwZgwhcrms23_Ihnr"></div>
+                                <span class="text-danger">@ViewBag.Message</span>
+                            </div>
+                            <button type="submit" class="btn btn-primary sh-hover">ارسال</button>
+                        </form>
+                    </div>
+                    <div class="col-xs-12 col-sm-6 padding-60 contact-details">
+                        <h6>راه های ارتباطی</h6>
+                        <hr>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <div class="icon-sm"><i class="fa fa-phone"></i></div>
+                                </td>
+                                <td><a href="#">044-32556558</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="icon-sm"><i class="fa fa-envelope"></i></div>
+                                </td>
+                                <td><a href="#">example@example.com</a></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="icon-sm"><i class="fa fa-map-marker"></i></div>
+                                </td>
+                                <td>ارومیه - مدرس - کلینیک فوق تخصصی بهار
+                            </tr>
+                        </table>
+                        <div class="space-20"></div>
+                        <h6>ساعت های کاری درمانگاه</h6>
+                        <hr>
+                        <table class="table">
+                            <tbody>
+                                <tr>
+                                    <td>08:00 - 16:00</td>
+                                    <td>شنبه تا پنج شنبه</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="space-15"></div>
+
+        <div class="pull-left col-xs-12 col-sm-6">
+            <img class="footer-logo" src="/HomePage/images/logo2.png" alt="">
+        </div>
+        <div class="space-15"></div>
+    </footer>
+}

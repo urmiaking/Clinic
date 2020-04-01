@@ -1,0 +1,59 @@
+﻿<!DOCTYPE html>
+
+<html class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="apple-touch-icon" href="/HomePage/images/logo1.png">
+    <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,700" rel="stylesheet">
+    <link href="/HomePage/css/leaguespartan.css" rel="stylesheet">
+    <!-- Plugin-CSS -->
+    <link rel="stylesheet" href="/HomePage/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/HomePage/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="/HomePage/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/HomePage/css/flaticon.css">
+    <link rel="stylesheet" href="/HomePage/css/animate.css">
+    <link rel="stylesheet" href="/HomePage/css/revolution_style.css">
+    <link rel="stylesheet" href="/HomePage/css/rs-settings.css">
+    <!-- Main-Stylesheets -->
+    <link rel="stylesheet" href="/HomePage/css/normalize.css">
+    <link rel="stylesheet" href="/HomePage/css/space.css">
+    <link rel="stylesheet" href="/HomePage/css/overright.css">
+    <link rel="stylesheet" href="/HomePage/style.css">
+    <link rel="stylesheet" href="/HomePage/css/responsive.css">
+    <link href="/HomePage/css/home-page-custom.css" rel="stylesheet" />
+    @RenderSection("Head", false)
+    <script src="/HomePage/js/vendor/modernizr-2.8.3.min.js"></script>
+    <title>@ViewBag.Title</title>
+</head>
+<body data-spy="scroll" data-target=".mainmenu-area">
+    <!--[if lt IE 8]>
+        <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+    @RenderSection("Header", true)
+
+    @RenderBody()
+
+    @RenderSection("Footer", true)
+    <!--Vendor-JS-->
+    <script src="/HomePage/js/vendor/jquery-1.12.4.min.js"></script>
+    <script src="/HomePage/js/vendor/bootstrap.min.js"></script>
+    <!--Plugin-JS-->
+    <script src="/HomePage/js/owl.carousel.min.js"></script>
+    <script src="/HomePage/js/contact-form.js"></script>
+    <script src="/HomePage/js/scrollUp.min.js"></script>
+    <script src="/HomePage/js/wow.min.js"></script>
+    <script src="/HomePage/js/plugins.js"></script>
+
+    <!--Themepunce-Plugin-->
+    <script src="/HomePage/js/themepunch.plugins.min.js"></script>
+    <script src="/HomePage/js/themepunch.revolution.min.js"></script>
+    <!--Main-active-JS-->
+    <script src="/HomePage/js/main.js"></script>
+    @RenderSection("Scripts", false);
+</body>
+</html>
