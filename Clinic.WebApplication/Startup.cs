@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Clinic.DataContext;
+using Clinic.Services.CaptchaService;
+using Clinic.Services.FeedBackService;
 using Clinic.Services.LoginService;
 using Clinic.Services.MailService;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -34,6 +36,8 @@ namespace Clinic.WebApplication
             });
             services.AddScoped<IMailService, MyMailService>();
             services.AddScoped<ILoginService, MyLoginService>();
+            services.AddScoped<IReCaptchaService, MyReCaptchaService>();
+            services.AddScoped<IFeedBackService, MyFeedBackService>();
             services.AddHttpContextAccessor();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
             {

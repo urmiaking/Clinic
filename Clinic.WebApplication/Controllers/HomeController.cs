@@ -1,23 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.NewsPage;
+using Clinic.Models.DomainClasses.Others;
 using Clinic.Models.DomainClasses.Users;
+using Clinic.Services.CaptchaService;
+using Clinic.Services.FeedBackService;
+using Clinic.Services.MailService;
 using Clinic.Utilities.Pagination;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Clinic.WebApplication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly IMailService _mailService;
+        private readonly IReCaptchaService _reCaptchaService;
+        private readonly IFeedBackService _feedBackService;
 
-        public HomeController(AppDbContext db)
+        public HomeController(AppDbContext db, IMailService mailService, IReCaptchaService reCaptchaService, IFeedBackService feedBackService)
         {
             this._db = db;
+            _mailService = mailService;
+            _reCaptchaService = reCaptchaService;
+            _feedBackService = feedBackService;
         }
         public IActionResult Index()
         {
@@ -45,6 +60,31 @@ namespace Clinic.WebApplication.Controllers
             }
 
             return View(news);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Index(string name, string email, string message, IFormCollection form)
+        {
+            string gRecaptchaResponse = form["g-recaptcha-response"];
+
+            var success = await _reCaptchaService.ValidateRecaptchaAsync(gRecaptchaResponse);
+            
+            if (!success)
+            {
+                ViewBag.Message = "مشکلی پیش آمد! لطفا گزینه من ربات نیستم را انتخاب کنید";
+                return RedirectToAction("Index");
+            }
+
+            var isSucceed = await _feedBackService.SendFeedBackAsync(name, email, message);
+
+            if (isSucceed)
+            {
+                return RedirectToAction("Index");
+            }
+
+            ViewBag.Message = "مشکلی پیش آمد لطفا دوباره امتحان کنید";
+            return RedirectToAction("Index");
         }
 
         public async Task<IActionResult> DoctorList(string searchString, string currentFilter, int? page)

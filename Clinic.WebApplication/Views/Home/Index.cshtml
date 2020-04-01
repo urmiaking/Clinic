@@ -31,31 +31,31 @@
                         <li><a href="#contact">تماس با ما</a></li>
                         <li><a href="#news">اخبار</a></li>
                         <li><a href="#about">درباره ی کلینیک</a></li>
-                        <li><a href="/Home/DoctorList">لیست پزشکان</a></li><!--TODO-->
+                        <li><a asp-controller="Home" asp-action="DoctorList">لیست پزشکان</a></li>
                         <li class="active"><a href="#home">صفحه اصلی</a></li>
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                            <a asp-controller="Home" asp-action="LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
                         }
                         else if (User.IsInRole("SiteAdmin"))
                         {
-                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="SiteAdmin" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("ClinicManager"))
                         {
-                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("Pharmacy"))
                         {
-                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                            <a asp-area="Pharmacy" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
                         }
                         else if (User.IsInRole("Doctor"))
                         {
-                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                            <a asp-area="Doctor" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
                         }
                         else if (User.IsInRole("Patient"))
                         {
-                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                            <a asp-area="Patient" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
                         }
                     </ul>
                 </div>
@@ -438,7 +438,7 @@
                                 <div class="sm-title">@item.ShortDescription</div>
                             </div>
                             <div class="blog-read-more-icon">
-                                <a href="/Home/News/@item.Id"><i class="flaticon-right-arrow"></i></a> <!--TODO-->
+                                <a asp-controller="Home" asp-action="News" asp-route-id="@item.Id"><i class="flaticon-right-arrow"></i></a> <!--TODO-->
                             </div>
                         </div>
                     </div>
@@ -447,7 +447,7 @@
             }
         </div>
         <div class="text-center">
-            <a class="btn btn-info" href="/Home/NewsArchive">آرشیو اخبار</a>
+            <a class="btn btn-info" asp-controller="Home" asp-action="NewsArchive">آرشیو اخبار</a>
         </div>
     </div>
     <div class="space-100"></div>
@@ -465,8 +465,8 @@
                     <div class="col-xs-12 col-sm-6 padding-60">
                         <h6>ارسال سوالات</h6>
                         <hr>
-                        <form action="/Home/Index" method="post">
-                            @Html.AntiForgeryToken()
+                        <form asp-controller="Home" asp-action="Index" method="post">
+                            
                             <div class="form-group">
                                 <label for="name">.نام و نام خانوادگی خود را وارد کنید</label>
                                 <input type="text" required="" class="form-control" id="name" name="name" placeholder="نام و نام خانوادگی">
