@@ -22,6 +22,8 @@ namespace Clinic.Models.DomainClasses.Appointment
         [Display(Name = "پاسخ شکایت")]
         public string Response { get; set; }
 
+        public int VisitId { get; set; }
+
         public virtual Visit Visit { get; set; }
     }
 }

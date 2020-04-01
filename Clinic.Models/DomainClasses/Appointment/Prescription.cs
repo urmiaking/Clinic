@@ -16,6 +16,7 @@ namespace Clinic.Models.DomainClasses.Appointment
 
         public ICollection<PrescriptionDrug> PrescriptionDrugs { get; set; }
 
+        public int VisitId { get; set; }
         public virtual Visit Visit { get; set; }
     }
 }
