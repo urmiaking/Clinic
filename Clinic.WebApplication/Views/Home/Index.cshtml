@@ -1,4 +1,5 @@
-﻿@model IEnumerable<News>
+﻿@using Clinic.Utilities.Convertors
+@model IEnumerable<News>
 
 @{
     ViewBag.Title = "صفحه اصلی";
@@ -424,7 +425,7 @@
             {
                 <div class="col-xs-12">
                     <div class="single-blog">
-                        <div class="post-date">@item.ReleaseDate</div>
+                        <div class="post-date">@item.ReleaseDate.ToHijriFarsi()</div>
                         <div class="blog-photo">
                             <img src="/Administrators/assets/images/news/@item.ImageName" alt="">
                         </div>

@@ -1,4 +1,5 @@
 ﻿
+@using Clinic.Utilities.Convertors
 @model News
 
 @{
@@ -156,7 +157,7 @@
                         <div class="keywords border-radius">
                             @foreach (var item in Model.NewsTags)
                             {
-                                <a href="/Home/NewsArchive?searchString=@item.Tag.TagValue"> @item.Tag.TagValue </a>
+                                <a asp-controller="Home" asp-action="NewsArchive" asp-route-searchString="@item.Tag.TagValue"> @item.Tag.TagValue </a>
                             }
                         </div>
                         <hr />
@@ -184,25 +185,7 @@
                                 var replyReplyButton = "reply-reply-button-" + i;
                                 var formReplyId = "form-reply" + i;
                                 i++;
-                                var now_c = DateTime.Now;
-                                TimeSpan elapsed_c = now_c.Subtract(comment.DateTime);
-
-                                var result_c = "";
-                                if (elapsed_c.Days < 1)
-                                {
-                                    if (elapsed_c.Hours < 1)
-                                    {
-                                        result_c = "در " + Math.Round(elapsed_c.TotalMinutes) + " دقیقه قبل";
-                                    }
-                                    else
-                                    {
-                                        result_c = "در " + Math.Round(elapsed_c.TotalHours) + " ساعت قبل";
-                                    }
-                                }
-                                else
-                                {
-                                    result_c = "در " + Math.Round(elapsed_c.TotalDays) + " روز قبل";
-                                }
+                                
                                 <div class="comment">
                                     @if (comment.User is SiteAdmin)
                                     {
@@ -232,20 +215,19 @@
                                                 @if (comment.User is Doctor || comment.User is Pharmacy || comment.User is ClinicManager || comment.User is SiteAdmin)
                                                 {
                                                     <i class="fa fa-check-circle">&nbsp;</i>
-                                                }<a href="#" title="">@comment.User.FullName </a><span>@result_c</span>
+                                                }<a href="#" title="">@comment.User.FullName </a><span>@comment.DateTime.ElapsedTime()</span>
                                             </div>@comment.Content
                                         </div>
 
                                         <div class="comment-footer">
                                             @if (!User.Identity.IsAuthenticated)
                                             {
-                                                <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
+                                                <label>برای جواب دادن باید <a style="color:#009dad" asp-controller="Home" asp-action="LoginRegisterPanel">وارد</a> شوید</label>
                                             }
                                             else
                                             {
                                                 <label id="@replyButton">جواب دادن</label>
-                                                <form id="@formId" action="/Home/AddReply" method="post">
-                                                    @Html.AntiForgeryToken()
+                                                <form id="@formId" asp-controller="Home" asp-action="AddReply" method="post">
                                                     <input type="hidden" name="commentId" value="@comment.Id" />
                                                     <input type="hidden" name="id" value="@ViewBag.UserId" />
                                                     <input type="hidden" name="newsId" value="@Model.Id" />
@@ -273,25 +255,7 @@
                                     </div>
                                     @foreach (var reply in comment.Replies.Where(a => a.IsConfirmed).OrderByDescending(a => a.DateTime))
                                     {
-                                        var now = DateTime.Now;
-                                        TimeSpan elapsed = now.Subtract(reply.DateTime);
-
-                                        var result = "";
-                                        if (elapsed.Days < 1)
-                                        {
-                                            if (elapsed.Hours < 1)
-                                            {
-                                                result = "در " + Math.Round(elapsed.TotalMinutes) + " دقیقه قبل";
-                                            }
-                                            else
-                                            {
-                                                result = "در " + Math.Round(elapsed.TotalHours) + " ساعت قبل";
-                                            }
-                                        }
-                                        else
-                                        {
-                                            result = "در " + Math.Round(elapsed.TotalDays) + " روز قبل";
-                                        }
+                                        
                                         <div class="comment">
                                             @if (reply.User is SiteAdmin)
                                             {
@@ -321,19 +285,18 @@
                                                         @if (reply.User is Doctor || reply.User is Pharmacy || reply.User is ClinicManager || reply.User is SiteAdmin)
                                                         {
                                                             <i class="fa fa-check-circle">&nbsp;</i>
-                                                        }<a href="#" title="">@reply.User.FullName</a><span>@result</span>
+                                                        }<a href="#" title="">@reply.User.FullName</a><span>@reply.DateTime.ElapsedTime()</span>
                                                     </div>@reply.Content
                                                 </div>
                                                 <div class="comment-footer">
                                                     @if (!User.Identity.IsAuthenticated)
                                                     {
-                                                        <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
+                                                        <label>برای جواب دادن باید <a style="color:#009dad" asp-controller="Home" asp-action="LoginRegisterPanel">وارد</a> شوید</label>
                                                     }
                                                     else
                                                     {
                                                         <label id="@replyReplyButton">جواب دادن</label>
-                                                        <form id="@formReplyId" action="/Home/AddReply" method="post">
-                                                            @Html.AntiForgeryToken()
+                                                        <form id="@formReplyId" asp-controller="Home" asp-action="AddReply" method="post">
                                                             <input type="hidden" name="commentId" value="@comment.Id" />
                                                             <input type="hidden" name="id" value="@ViewBag.UserId" />
                                                             <input type="hidden" name="newsId" value="@Model.Id" />
@@ -367,14 +330,13 @@
                             @if (!User.Identity.IsAuthenticated)
                             {
                                 <div class="m-t-30 text-center">
-                                    برای ثبت نظر باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید
+                                    برای ثبت نظر باید <a style="color:#009dad" asp-controller="Home" asp-action="LoginRegisterPanel">وارد</a> شوید
                                 </div>
                             }
                             else
                             {
                                 <br />
-                                <form method="post" class="card-box" action="/Home/AddComment">
-                                    @Html.AntiForgeryToken()
+                                <form method="post" class="card-box" asp-controller="Home" asp-action="AddComment">
                                     <input type="hidden" name="id" value="@ViewBag.UserId" />
                                     <input type="hidden" name="newsId" value="@Model.Id" />
                                     <label>
