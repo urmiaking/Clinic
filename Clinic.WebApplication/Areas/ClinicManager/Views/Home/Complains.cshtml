@@ -1,0 +1,111 @@
+﻿@model IEnumerable<Report>
+@{
+    ViewBag.Title = "لیست گزارش ها";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">شکایات بیماران</h4>
+                <div class="table-responsive">
+                    @if (!Model.Any())
+                    {
+                        <div class="text-center">
+                            گزارشی تا به الان به ثبت نرسیده است
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>عنوان شکایت</th>
+                                    <th>تاریخ شکایت</th>
+                                    <th>نام بیمار</th>
+                                    <th>وضعیت</th>
+                                    <th>رسیدگی</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+
+                                    foreach (var item in Model)
+                                    {
+                                        var spanClass = "";
+                                        var aClass = "";
+                                        @if (item.Status.Equals("در انتظار بررسی"))
+                                        {
+                                            spanClass = "label label-warning";
+                                            aClass = "btn btn-success label label-success";
+                                        }
+                                        else if (item.Status.Equals("رد شده"))
+                                        {
+                                            spanClass = "label label-danger";
+                                            aClass = "btn btn-danger label label-danger";
+                                        }
+                                        else if (item.Status.Equals("بررسی شده"))
+                                        {
+                                            spanClass = "label label-success";
+                                            aClass = "btn btn-success label label-success";
+                                        }
+                                        <tr>
+                                            <td>@item.Title</td>
+                                            <td>@item.ComplainDate.ToHijriFarsi()</td>
+                                            <td>@item.Visit.Reservation.Patient.FullName</td>
+                                            <td>
+                                                <span class=@spanClass>
+                                                    @item.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <a asp-action="CheckComplain" asp-route-id="@item.Id" class=@aClass>
+                                                    <i class="fa fa-pencil">&nbsp;</i>
+                                                    مشاهده
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- content -->
+@section Scripts {
+    <!-- Datatables-->
+    <script src="/Administrators/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/jszip.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/pdfmake.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/vfs_fonts.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.print.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.fixedHeader.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.keyTable.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/responsive.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.scroller.min.js"></script>
+
+    <!-- Datatable init js -->
+    <script src="/Administrators/assets/pages/datatables.init.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+            $('#datatable-keytable').DataTable({ keys: true });
+            $('#datatable-responsive').DataTable();
+            var table = $('#datatable-fixed-header').DataTable({ fixedHeader: true });
+        });
+        TableManageButtons.init();
+
+    </script>
+
+
+}

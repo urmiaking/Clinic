@@ -1,0 +1,61 @@
+﻿@model Report
+@{
+    ViewBag.Title = "بررسی شکایت";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box task-detail">
+                <div class="media m-b-20">
+                    <div class="media-left">
+                        <a href="#"> <img class="media-object img-circle" alt="64x64" src="/Administrators/assets/images/users/avatat-11.png" style="width: 48px; height: 48px;"> </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading m-b-0">@Model.Visit.Reservation.Patient.FullName</h4>
+                        @if (Model.Status.Equals("در انتظار بررسی"))
+                        {
+                            <span class="label label-warning">@Model.Status</span>
+                        }
+                        else if (Model.Status.Equals("رد شده"))
+                        {
+                            <span class="label label-danger">@Model.Status</span>
+                        }
+                        else if (Model.Status.Equals("بررسی شده"))
+                        {
+                            <span class="label label-success">@Model.Status</span>
+                        }
+                    </div>
+                </div>
+                <h4 class="font-600 m-b-20">@Model.Title</h4>
+                <p class="text-dark">
+                    @Model.Description
+                </p>
+                <br />
+                <h5 class="font-600 m-b-5">تاریخ ارسال شکایت</h5>
+                <p> @Model.ComplainDate.ToHijriFarsi()</p>
+                <div class="clearfix"></div>
+                @if (Model.Status.Equals("در انتظار بررسی"))
+                {
+                    <form method="post">
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        <h5 class="font-600 m-b-5">پاسخ به شکایت</h5>
+                        <textarea class="form-control" data-parsley-id="50" name="reportResponse"></textarea>
+                        <br />
+                        <span>
+                            <button type="submit" class="btn btn-success btn-rounded w-md waves-effect waves-light m-b-5">پاسخ به شکایت</button>
+                        </span>
+                        <span>
+                            <button type="submit" class="btn btn-danger btn-rounded w-md waves-effect waves-light m-b-5">رد شکایت</button>
+                        </span>
+                    </form>
+                }
+                else if (Model.Status.Equals("بررسی شده"))
+                {
+                    <h5 class="font-600 m-b-5">پاسخ شکایت</h5>
+                    <textarea readonly="" required="" class="form-control" data-parsley-id="50" name="reportResponse">@Model.Response</textarea>
+                }
+            </div>
+        </div>
+    </div>
+</div>

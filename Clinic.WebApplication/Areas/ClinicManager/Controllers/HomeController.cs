@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Clinic.DataContext;
+using Clinic.Models.DomainClasses.Others;
 using Clinic.Services.InitService;
 using Clinic.Services.LoginService;
 using Clinic.Utilities.ModelBinders;
@@ -217,25 +218,197 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Search(string searchQuery)
+        public async Task<IActionResult> Search(string searchQuery)
         {
             if (string.IsNullOrEmpty(searchQuery))
             {
                 return RedirectToAction("DoctorsList");
             }
 
-            var doctors = _db.Doctors
+            var doctors = await _db.Doctors
                 .Include(a => a.Reservations)
                     .ThenInclude(a => a.Visit)
                 .Where(a =>
                     a.FullName.Contains(searchQuery) ||
                     a.Specialty.Contains(searchQuery))
-                .ToList();
+                .ToListAsync();
 
             TempData["doctors"] = JsonConvert.SerializeObject(doctors);
             return RedirectToAction("DoctorsList");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendMessage(string msgTitle, string msgDesc)
+        {
+            if (string.IsNullOrEmpty(msgTitle) || string.IsNullOrEmpty(msgDesc))
+            {
+                TempData["Error"] = "لطفا عنوان و شرح پیام را وارد کنید";
+                return RedirectToAction("Index");
+            }
 
+            var message = new ManagerMessage()
+            {
+                Description = msgDesc,
+                Title = msgTitle,
+                Seen = false,
+                DateTime = DateTime.Now
+            };
+
+            await _db.ManagerMessages.AddAsync(message);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "پیغام شما با موفقیت به مدیر سایت ارسال گردید";
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Complains()
+        {
+            var reports = await _db.Reports
+                .Include(a => a.Visit)
+                    .ThenInclude(a => a.Reservation)
+                    .ThenInclude(a => a.Patient)
+                .OrderByDescending(a => a.Status.Equals("در انتظار بررسی"))
+                .ToListAsync();
+            return View(reports);
+        }
+
+        public async Task<IActionResult> CheckComplain(int id = 0)
+        {
+            if (id == 0)
+            {
+                return RedirectToAction("Complains");
+            }
+            var report = await _db.Reports
+                .Include(a => a.Visit)
+                    .ThenInclude(a => a.Reservation)
+                    .ThenInclude(a => a.Patient)
+                .OrderByDescending(a => a.Status.Equals("در انتظار بررسی"))
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            if (report == null)
+            {
+                return RedirectToAction("Complains");
+            }
+
+            return View(report);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> CheckComplain(string reportResponse, int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var report = await _db.Reports.FindAsync(id);
+            if (report == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(reportResponse))
+            {
+                report.Status = "رد شده";
+                _db.Reports.Update(report);
+                await _db.SaveChangesAsync();
+                TempData["Error"] = "شکایت رد شد";
+            }
+            else
+            {
+                report.Response = reportResponse;
+                report.Status = "بررسی شده";
+                TempData["Success"] = "شکایت بررسی شد";
+            }
+
+            _db.Reports.Update(report);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("Complains");
+        }
+
+        public async Task<IActionResult> EditProfile()
+        {
+            string username = User.Identity.Name;
+
+            var clinicManager = await _db.ClinicManagers.FirstOrDefaultAsync(a => a.Username.Equals(username));
+            if (clinicManager == null)
+            {
+                return RedirectToAction("Login", "Account", new { area = "" });
+            }
+
+            return View(clinicManager);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEmail(string newEmail, int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var clinicManager = await _db.ClinicManagers.FindAsync(id);
+            if (clinicManager == null)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrEmpty(newEmail))
+            {
+                TempData["ErrorEmail"] = "لطفا ایمیل را وارد کنید!";
+                return RedirectToAction("EditProfile");
+            }
+
+            clinicManager.Email = newEmail;
+
+            _db.ClinicManagers.Update(clinicManager);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessEmail"] = "آدرس ایمیل با موفقیت تغییر یافت!";
+            return RedirectToAction("EditProfile");
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditPassword(string newPass, string newPassConfirm, int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var clinicManager = await _db.ClinicManagers.FindAsync(id);
+
+            if (clinicManager == null)
+            {
+                return NotFound();
+            }
+
+            if (newPass != newPassConfirm)
+            {
+                TempData["ErrorPassword"] = "رمز عبور شما با تکرار رمز عبور مطابقت ندارد!";
+                return RedirectToAction("EditProfile");
+            }
+
+            if (newPass.Length < 6)
+            {
+                TempData["ErrorPassword"] = "کلمه عبور باید حداقل شامل ۶ کاراکتر باشد!";
+                return RedirectToAction("EditProfile");
+            }
+
+            clinicManager.Password = _loginService.GetHash(newPass);
+
+            _db.ClinicManagers.Update(clinicManager);
+            await _db.SaveChangesAsync();
+
+            TempData["SuccessPassword"] = "رمز عبور شما با موفقیت تغییر یافت!";
+            return RedirectToAction("EditProfile");
+        }
     }
 }
