@@ -157,6 +157,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
                     }
                     catch (Exception ex)
                     {
+                        //TODO: log error
                         Console.WriteLine(ex.Message);
                     }
                 else
@@ -170,6 +171,47 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             await _db.SaveChangesAsync();
 
             TempData["Success"] = "پروفایل دکتر " + doctorVm.Doctor.FullName + " با موفقیت ویرایش شد";
+            return RedirectToAction("DoctorsList");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteDoctor(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var doctor = await _db.Doctors
+                .Include(a => a.Reservations)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+            
+            if (doctor == null)
+            {
+                return new StatusCodeResult(404);
+            }
+
+            var docWeekDay = _db.WeekDays.Where(a => a.DoctorId.Equals(id)).ToList();
+
+            if (doctor.Reservations.Any())
+            {
+                return new StatusCodeResult(403);
+            }
+
+            if (docWeekDay.Count == 0)
+            {
+                _db.Users.Remove(doctor);
+            }
+            else
+            {
+                foreach (var weekDay in docWeekDay)
+                {
+                    _db.WeekDays.Remove(weekDay);
+                }
+                _db.Users.Remove(doctor);
+            }
+
+            await _db.SaveChangesAsync();
             return RedirectToAction("DoctorsList");
         }
     }
