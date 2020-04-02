@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 {
@@ -97,20 +98,19 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 
         public async Task<IActionResult> DoctorsList()
         {
-            var searchDocs = (List<Models.DomainClasses.Users.Doctor>)TempData["doctors"];
-
-            if (searchDocs == null)
+            if (TempData["doctors"] != null)
             {
-                var doctorList = await _db.Doctors.Include(a => a.Reservations)
-                    .ThenInclude(a => a.Doctor)
-                    .OrderByDescending(a => a.Id)
-                    .ToListAsync();
-                DoctorListDoctorViewModel doctorsViewModel = new DoctorListDoctorViewModel(doctorList);
-                return View(doctorsViewModel);
-            }
+                var searchDocs = JsonConvert.DeserializeObject<List<Models.DomainClasses.Users.Doctor>>((string)TempData["doctors"]);
+                DoctorListDoctorViewModel doctors = new DoctorListDoctorViewModel(searchDocs);
+                return View(doctors);
 
-            DoctorListDoctorViewModel doctors = new DoctorListDoctorViewModel(searchDocs);
-            return View(doctors);
+            }
+            var doctorList = await _db.Doctors.Include(a => a.Reservations)
+                .ThenInclude(a => a.Doctor)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync();
+            DoctorListDoctorViewModel doctorsViewModel = new DoctorListDoctorViewModel(doctorList);
+            return View(doctorsViewModel);
         }
 
         [HttpPost]
@@ -185,7 +185,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             var doctor = await _db.Doctors
                 .Include(a => a.Reservations)
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
-            
+
             if (doctor == null)
             {
                 return new StatusCodeResult(404);
@@ -214,5 +214,28 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             await _db.SaveChangesAsync();
             return RedirectToAction("DoctorsList");
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Search(string searchQuery)
+        {
+            if (string.IsNullOrEmpty(searchQuery))
+            {
+                return RedirectToAction("DoctorsList");
+            }
+
+            var doctors = _db.Doctors
+                .Include(a => a.Reservations)
+                    .ThenInclude(a => a.Visit)
+                .Where(a =>
+                    a.FullName.Contains(searchQuery) ||
+                    a.Specialty.Contains(searchQuery))
+                .ToList();
+
+            TempData["doctors"] = JsonConvert.SerializeObject(doctors);
+            return RedirectToAction("DoctorsList");
+        }
+
+
     }
 }
