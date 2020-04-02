@@ -1,36 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.NewsPage;
-using Clinic.Models.DomainClasses.Others;
 using Clinic.Models.DomainClasses.Users;
 using Clinic.Services.CaptchaService;
 using Clinic.Services.FeedBackService;
-using Clinic.Services.MailService;
 using Clinic.Utilities.Pagination;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace Clinic.WebApplication.Controllers
 {
     public class HomeController : Controller
     {
         private readonly AppDbContext _db;
-        private readonly IMailService _mailService;
         private readonly IReCaptchaService _reCaptchaService;
         private readonly IFeedBackService _feedBackService;
 
-        public HomeController(AppDbContext db, IMailService mailService, IReCaptchaService reCaptchaService, IFeedBackService feedBackService)
+        public HomeController(AppDbContext db, IReCaptchaService reCaptchaService, IFeedBackService feedBackService)
         {
-            this._db = db;
-            _mailService = mailService;
+            _db = db;
             _reCaptchaService = reCaptchaService;
             _feedBackService = feedBackService;
         }
@@ -141,6 +132,7 @@ namespace Clinic.WebApplication.Controllers
         {
             return View();
         }
+
         public async Task<IActionResult> NewsArchive(string searchString, string currentFilter, int? page)
         {
             if (User.IsInRole("Patient"))
@@ -226,6 +218,132 @@ namespace Clinic.WebApplication.Controllers
             }
 
             return View(news);
+        }
+
+        public async Task<IActionResult> ProfileDetails(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var doctor = await _db.Doctors
+                .Include(a => a.WeekDays)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+            return View(doctor);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddComment(string content, int id = 0, int newsId = 0)
+        {
+            if (newsId == 0)
+            {
+                return RedirectToAction("NewsArchive");
+            }
+
+            if (id == 0 || string.IsNullOrEmpty(content))
+            {
+                return RedirectToAction("News", new { id = newsId });
+            }
+
+            var news = await _db.News.FindAsync(newsId);
+            if (news == null)
+            {
+                return RedirectToAction("NewsArchive");
+            }
+
+            var user = await _db.Users.FindAsync(id);
+
+            bool isConfirmed = !(user is Patient);
+
+            if (user == null)
+            {
+                return RedirectToAction("News", new { id = newsId });
+            }
+
+            var comment = new Comment()
+            {
+                Content = content,
+                DateTime = DateTime.Now,
+                News = news,
+                User = user,
+                IsConfirmed = isConfirmed
+            };
+
+            if (!isConfirmed)
+            {
+                TempData["Success"] = "نظر شما پس از تایید منتشر خواهد شد";
+            }
+            else
+            {
+                TempData["Success"] = "نظر شما ثبت شد";
+            }
+
+            await _db.Comments.AddAsync(comment);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("News", new { id = newsId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddReply(string content, int id = 0, int commentId = 0, int newsId = 0)
+        {
+            if (newsId == 0)
+            {
+                return RedirectToAction("NewsArchive");
+            }
+
+            if (id == 0 || string.IsNullOrEmpty(content) || commentId == 0)
+            {
+                return RedirectToAction("News", new { id = newsId });
+            }
+
+            var user = await _db.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return RedirectToAction("News", new { id = newsId });
+            }
+
+            var comment = await _db.Comments.FindAsync(commentId);
+
+            if (comment == null)
+            {
+                return RedirectToAction("News", new { id = newsId });
+            }
+
+            bool isConfirmed = !(user is Patient);
+
+            var reply = new Reply()
+            {
+                Comment = comment,
+                Content = content,
+                DateTime = DateTime.Now,
+                User = user,
+                IsConfirmed = isConfirmed
+            };
+
+            if (!isConfirmed)
+            {
+                TempData["Success"] = "نظر شما پس از تایید منتشر خواهد شد";
+            }
+            else
+            {
+                TempData["Success"] = "نظر شما ثبت شد";
+            }
+
+            await _db.Replies.AddAsync(reply);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("News", new { id = newsId });
         }
     }
 }

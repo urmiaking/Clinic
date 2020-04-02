@@ -75,7 +75,7 @@
         <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
             <div class="container">
                 <div class="navbar-header smoth-scroll">
-                    <a href="/Home/Index" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
@@ -84,31 +84,31 @@
                 </div>
                 <div class="collapse navbar-collapse " id="mainmenu">
                     <ul class="nav navbar-nav navbar-right smoth-scroll">
-                        <li><a href="/Home/DoctorList">لیست پزشکان</a></li>
-                        <li><a href="/Home/Index">صفحه اصلی</a></li>
+                        <li><a asp-controller="Home" asp-action="DoctorList">لیست پزشکان</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">صفحه اصلی</a></li>
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                            <a asp-controller="Home" asp-action="LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
                         }
                         else if (User.IsInRole("SiteAdmin"))
                         {
-                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="SiteAdmin" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("ClinicManager"))
                         {
-                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("Pharmacy"))
                         {
-                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                            <a asp-area="Pharmacy" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
                         }
                         else if (User.IsInRole("Doctor"))
                         {
-                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                            <a asp-area="Doctor" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
                         }
                         else if (User.IsInRole("Patient"))
                         {
-                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                            <a asp-area="Patient" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
                         }
                     </ul>
                 </div>
@@ -237,7 +237,7 @@
                                         </div>
 
                                         <div class="comment-footer">
-                                            @if (string.IsNullOrEmpty(ViewBag.UserType))
+                                            @if (!User.Identity.IsAuthenticated)
                                             {
                                                 <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
                                             }
@@ -325,7 +325,7 @@
                                                     </div>@reply.Content
                                                 </div>
                                                 <div class="comment-footer">
-                                                    @if (string.IsNullOrEmpty(ViewBag.UserType))
+                                                    @if (!User.Identity.IsAuthenticated)
                                                     {
                                                         <label>برای جواب دادن باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید</label>
                                                     }
@@ -364,7 +364,7 @@
                                 </div>
                             }
 
-                            @if (string.IsNullOrEmpty(ViewBag.UserType))
+                            @if (!User.Identity.IsAuthenticated)
                             {
                                 <div class="m-t-30 text-center">
                                     برای ثبت نظر باید <a style="color:#009dad" href="/Home/LoginRegisterPanel">وارد</a> شوید

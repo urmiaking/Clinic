@@ -18,7 +18,7 @@
                 </div>
                 <div class="collapse navbar-collapse " id="mainmenu">
                     <ul class="nav navbar-nav navbar-right smoth-scroll">
-                        <li class=""><a href="/Home/Index">صفحه اصلی</a></li>
+                        <li class=""><a asp-controller="Home" asp-action="Index">صفحه اصلی</a></li>
                         <a href="#" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
                     </ul>
                 </div>
@@ -56,7 +56,7 @@
                             </p>
                             <div class="space-20"></div>
                             <div class="blog-read-more-icon">
-                                <a href="/Account/Register" class="btn btn-primary sh-hover">بزن بریم</a>
+                                <a asp-controller="Account" asp-action="Register" class="btn btn-primary sh-hover">بزن بریم</a>
                             </div>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                             </p>
                             <div class="space-20"></div>
                             <div class="blog-read-more-icon">
-                                <a href="/Account/Login" class="btn btn-primary sh-hover">ورود به پانل</a>
+                                <a asp-controller="Account" asp-action="Login" class="btn btn-primary sh-hover">ورود به پانل</a>
                             </div>
                         </div>
                     </div>

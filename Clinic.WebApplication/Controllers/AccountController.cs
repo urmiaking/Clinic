@@ -1,19 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.Users;
 using Clinic.Services.LoginService;
-using Clinic.Services.MailService;
 using Clinic.ViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,6 +82,7 @@ namespace Clinic.WebApplication.Controllers
                         return RedirectToAction("Index", "Home", new { area = "Patient" });
                     case Patient patient:
                         ViewBag.Error = "اکانت غیر فعال است";
+                        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
                         return View();
                     case ClinicManager _:
                         return RedirectToAction("Index", "Home", new { area = "ClinicManager" });
@@ -162,7 +156,7 @@ namespace Clinic.WebApplication.Controllers
                 return View(patient);
             }
 
-            _db.Patients.Add(patient);
+            await _db.Patients.AddAsync(patient);
             await _db.SaveChangesAsync();
 
             var isSucceed = await _loginService.SendActivationLinkAsync(patient.Email);

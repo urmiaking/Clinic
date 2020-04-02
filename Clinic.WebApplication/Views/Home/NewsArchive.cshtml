@@ -25,30 +25,30 @@
                 <div class="collapse navbar-collapse " id="mainmenu">
                     <ul class="nav navbar-nav navbar-right smoth-scroll">
                         <li class="active"><a href="#">اخبار</a></li>
-                        <li><a href="/Home/Index">صفحه اصلی</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">صفحه اصلی</a></li>
                         @if (!User.Identity.IsAuthenticated)
                         {
-                            <a href="/Home/LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                            <a asp-controller="Home" asp-action="LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
                         }
                         else if (User.IsInRole("SiteAdmin"))
                         {
-                            <a href="/SiteAdmin/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="SiteAdmin" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("ClinicManager"))
                         {
-                            <a href="/ClinicManager/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
                         }
                         else if (User.IsInRole("Pharmacy"))
                         {
-                            <a href="/Pharmacy/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                            <a asp-area="Pharmacy" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
                         }
                         else if (User.IsInRole("Doctor"))
                         {
-                            <a href="/Doctor/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                            <a asp-area="Doctor" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
                         }
                         else if (User.IsInRole("Patient"))
                         {
-                            <a href="/Patient/Home/Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                            <a asp-area="Patient" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
                         }
                     </ul>
                 </div>

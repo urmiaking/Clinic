@@ -1,0 +1,245 @@
+﻿@model Doctor
+
+@{
+    ViewBag.Title = Model.FullName;
+}
+
+@section Head
+{
+    <style>
+
+        .w1 {
+            position: relative;
+            font-weight: 700;
+            margin-left: 31px;
+            float: left;
+            font-size: 17px;
+        }
+
+        h3 {
+            margin: 0 0 10px;
+            font-family: 'IRANSANS','league_spartanregular';
+            line-height: 1.5;
+            text-align: right;
+            color: #253b6e;
+        }
+
+        .img2 {
+            vertical-align: middle;
+            margin-top: 90px;
+        }
+
+        .col-md-6 {
+            border-top: 6px #009dad solid;
+            border-right: 2px #009dad solid;
+            border-left: 2px #009dad solid;
+            border-bottom: 2px #009dad solid;
+        }
+    </style>
+}
+@section Header
+{
+    <header class="header-area relative" id="profile.html">
+        <nav class="navbar mainmenu-area navbar-fixed-top" data-spy="affix" data-offset-top="100">
+            <div class="container">
+                <div class="navbar-header smoth-scroll">
+                    <a asp-controller="Home" asp-action="Index" class="navbar-brand"><img src="/HomePage/images/logo2.png" alt=""><br></a>
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#mainmenu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                </div>
+                <div class="collapse navbar-collapse " id="mainmenu">
+                    <ul class="nav navbar-nav navbar-right smoth-scroll">
+
+
+                        <li class=""><a asp-controller="Home" asp-action="DoctorList">لیست پزشکان</a></li>
+                        <li><a asp-controller="Home" asp-action="Index">صفحه اصلی</a></li>
+                        @if (!User.Identity.IsAuthenticated)
+                        {
+                            <a asp-controller="Home" asp-action="LoginRegisterPanel" class="btn btn-default navbar-btn navbar-right">ورود / ثبت نام</a>
+                        }
+                        else if (User.IsInRole("SiteAdmin"))
+                        {
+                            <a asp-area="SiteAdmin" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("ClinicManager"))
+                        {
+                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل مدیریت</a>
+                        }
+                        else if (User.IsInRole("Pharmacy"))
+                        {
+                            <a asp-area="Pharmacy" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل داروخانه</a>
+                        }
+                        else if (User.IsInRole("Doctor"))
+                        {
+                            <a asp-area="Doctor" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل پزشک</a>
+                        }
+                        else if (User.IsInRole("Patient"))
+                        {
+                            <a asp-area="Patient" asp-controller="Home" asp-action="Index" class="btn btn-default navbar-btn navbar-right">ورود به پنل بیمار</a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+}
+
+<div class="space-50 hidden visible-xs"></div>
+<!-- Revolution Slider -->
+<div id="" class="tp-banner-container  clearfix">
+    <section class="appoinment-area">
+        <div class="container bg-white appoinment-form">
+            <div class="row">
+                <div class="col-xs-12 col-sm-6 padding-60">
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<section class="relative appoinment-area" id="about">
+    <div class="space-40"></div>
+    <div class="container bg-white appoinment-form">
+        <div class="row relative">
+            <div class=" col-sm-4 left-side-image">
+                <img class="img2" src="/Administrators/assets/images/doctors/@Model.ProfilePic" alt="">
+            </div>
+            <br><br><br><br>
+            <div class="col-sm-4">
+                <button id="myBtn" class="btn btn-primary sh-hover">مشاهده ی برنامه هفتگی دکتر @Model.FullName</button>
+                <div id="modal">
+                    <div id="modal-content">
+                        <span class="close">&times;</span>
+                        <div class="table-responsive">
+                            <table class="w1 mb-0 table table-hover table-dark">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">8-10</th>
+                                        <th scope="col">10-12</th>
+                                        <th scope="col">12-14</th>
+                                        <th scope="col">14-16</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var day in Model.WeekDays)
+                                    {
+                                        <tr>
+                                            <th>@day.DayName</th>
+                                            <td>@day.EightTen</td>
+                                            <td>@day.TenTwelve</td>
+                                            <td>@day.TwelveFourteen</td>
+                                            <td>@day.FourteenSixteen</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-8 col-md-6 padding-60">
+                <h3>دکتر @Model.FullName</h3>
+                <div class="space-10"></div>
+                <div class="space-60"></div>
+                <div class="space-30"></div>
+                <div class="panel-group about-panel" id="accordion">
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <p class="panel-title">
+                                <span class="gr-icon icon-md pull-right flaticon-medal"></span>
+                                <a class="w1 pull-left" data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                            <p class="pull-right">پروفایل دکتر @Model.FullName</p></a></p>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                @Model.Biography
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <p class="panel-title">
+                                <span class="gr-icon icon-md pull-right flaticon-hospital-buildings"></span>
+                                <a class="w1 pull-left collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+
+                            <p class="pull-right"> کتاب های دکتر @Model.FullName</p>
+                            </a></p>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                @Model.Articles
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-heading">
+                            <p class="panel-title">
+                                <span class="gr-icon icon-md pull-right flaticon-medal"></span>
+                                <a class="w1 pull-left collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+
+                            <p class="pull-right">مقالات دکتر @Model.FullName</p>
+                            </a></p>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div text-align="ltr" class="panel-body">
+                                @Model.Books
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="space-20"></div>
+            </div>
+        </div><br>
+    </div>
+</section>
+
+@section Footer{
+
+    <footer class="bg-white">
+        <div class="space-15"></div>
+        <div class="container">
+            <div class="row xs-center">
+                <div class="col-xs-12 col-sm-6">
+                    <img src="/HomePage/images/blue-logo.png" alt="">
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                    <div class="space-5"></div>
+                    <ul class="list-inline list-unstyled social-list text-right xs-center">
+                        <li><a href="#"><i class="fa fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fa fa-google-plus"></i></a></li>
+                        <li><a href="#"><i class="fa fa-instagram"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="space-15"></div>
+    </footer>
+} 
+
+@section Scripts {
+    <script>
+        var modal = document.getElementById('modal');
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+}

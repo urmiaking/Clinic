@@ -10,6 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/Login/css/iofrm-style.css">
     <link rel="stylesheet" type="text/css" href="/Login/css/iofrm-theme7.css">
     <title>@ViewBag.Title</title>
+    @RenderSection("Head", false)
 </head>
 <body>
 
@@ -20,6 +21,7 @@
     <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="/Login/js/popper.min.js"></script>
     <script src="/Login/js/bootstrap.min.js"></script>
-    <script src="/Login/js/main.js"></script>
+<script src="/Login/js/main.js"></script>
+@RenderSection("Scripts", false)
 </body>
 </html>

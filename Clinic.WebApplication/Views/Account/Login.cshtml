@@ -36,14 +36,14 @@
                     <form method="post">
                         <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
                         <span asp-validation-for="Username" class="text-danger"></span>
-                        <input asp-for="Username" class="form-control" placeholder="نام کاربری"/>
+                        <input asp-for="Username" class="form-control" placeholder="نام کاربری" />
                         <span asp-validation-for="Password" class="text-danger"></span>
-                        <input asp-for="Password" class="form-control" placeholder="رمز عبور"/>
+                        <input asp-for="Password" class="form-control" placeholder="رمز عبور" />
                         <div class="text-danger">@ViewBag.Error</div>
 
                         <div class="container">
                             <label>مرا بخاطر بسپار</label>
-                            <input asp-for="RememberMe"/>
+                            <input asp-for="RememberMe" />
                         </div>
 
 
@@ -66,3 +66,62 @@
 </div>
 
 
+@section Head
+{
+    <!-- Notification css (Toastr) -->
+    <link href="/Administrators/assets/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
+}
+
+@section Scripts
+{
+    <!-- Toastr js -->
+    <script src="/Administrators/assets/plugins/toastr/toastr.min.js"></script>
+
+    <script>
+        $(function() {
+            if ("@TempData["Error"]" != "")
+            {
+                toastr["error"]("@TempData["Error"]", "خطا");
+
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-bottom-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+            }
+            if ("@TempData["Success"]" != "") {
+                toastr["success"]("@TempData["Success"]", "موفق");
+
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
+            }
+        });
+    </script>
+}
