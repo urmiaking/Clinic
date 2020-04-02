@@ -1,0 +1,191 @@
+﻿@model IEnumerable<InsuranceProvider>
+
+@{
+    ViewBag.Title = "شرکت های بیمه تحت پوشش کلینیک";
+    int i = 0;
+}
+
+@section Links{
+    <script src="/Administrators/assets/js/jquery.min.js"></script>
+
+    <!-- Sweet Alert css -->
+    <link href="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+    <script src="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.min.js"></script>
+}
+
+<div class="container">
+    <div id="add-insurance-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form method="post" asp-action="AddInsurance">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title">اضافه کردن شرکت بیمه تحت پوشش کلینیک</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="insuranceName" class="control-label">نام</label>
+                                    <input type="text" class="form-control" id="insuranceName" required="" name="insuranceName" placeholder="نام شرکت بیمه">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="discount" class="control-label">درصد تخفیف</label>
+                                    <input type="tel" class="form-control" id="discount" name="discount" required="" placeholder="10">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                        <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div><!-- /.modal -->
+    <div class="text-center">
+        <button class="btn btn-rounded btn-info btn-block" data-toggle="modal" data-target="#add-insurance-modal"><i class="fa fa-pencil">&nbsp;</i> اضافه کردن بیمه </button>
+        <br />
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">لیست بیمه ها</h4>
+                @if (Model.Any())
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.InsuranceName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(model => model.Discount)
+                                </th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                var deleteButtonId = "delete-btn-" + i;
+                                var editButtonId = "edit-btn-" + i;
+                                var editModalId = "edit-modal-" + i;
+                                <tr id="row-@i">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.InsuranceName)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Discount) درصد
+                                    </td>
+                                    <td>
+                                        <a id="@editButtonId" class="btn btn-sm btn-success" data-toggle="modal" data-target="#@editModalId">ویرایش</a> |
+
+                                        <a id="@deleteButtonId" class="btn btn-sm btn-danger">حذف</a>
+                                    </td>
+                                    <script>
+                                    $('#@deleteButtonId').click(function() {
+                                        swal({
+                                                title: "مطمئنی ؟؟",
+                                                text: "",
+                                                type: "error",
+                                                showCancelButton: true,
+                                                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                confirmButtonText: 'بله!',
+                                                closeOnConfirm: false
+                                            },
+                                            function(isConfirm) {
+                                                if (isConfirm) {
+                                                    $.ajax({
+                                                        url: "/ClinicManager/Home/DeleteInsuranceProvider/",
+                                                        type: "POST",
+                                                        data: {
+                                                            id: @item.Id
+                                                        },
+                                                        dataType: "html",
+                                                        success: function() {
+                                                            swal("انجام شد!",
+                                                                "بیمه مورد نظر با موفقت حذف شد!",
+                                                                "success");
+                                                            $("#row-@i").hide("slow",
+                                                                function() {
+                                                                    $("#row-@i").remove();
+                                                                });
+                                                        },
+                                                        error: function() {
+                                                            swal({
+                                                                title: "خطا",
+                                                                text: "دسترسی غیر مجاز",
+                                                                type: "error",
+                                                                showCancelButton: false,
+                                                                confirmButtonClass:
+                                                                    'btn-danger waves-effect waves-light',
+                                                                confirmButtonText: 'باشه!',
+                                                                closeOnConfirm: true
+                                                            });
+                                                        }
+                                                    });
+                                                }
+                                            });
+                                    });
+                                    </script>
+                                    <div id="@editModalId" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="post" asp-action="EditInsurance">
+                                                    <input type="hidden" value="@item.Id" name="id" />
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title">اضافه کردن شرکت بیمه تحت پوشش کلینیک</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="insuranceName" class="control-label">نام</label>
+                                                                    <input type="text" class="form-control" id="insuranceName" value="@item.InsuranceName" required="" name="insuranceName" placeholder="نام شرکت بیمه">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <div class="form-group">
+                                                                    <label for="discount" class="control-label">درصد تخفیف</label>
+                                                                    <input type="tel" class="form-control" id="discount" name="discount" value="@item.Discount" required="" placeholder="10">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                                                        <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
+                                                    </div>
+                                                </form>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">
+                        هیچ بیمه ای وجود ندارد
+                    </div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+

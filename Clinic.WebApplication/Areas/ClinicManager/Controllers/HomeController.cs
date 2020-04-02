@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Clinic.DataContext;
+using Clinic.Models.DomainClasses.Appointment;
 using Clinic.Models.DomainClasses.Others;
 using Clinic.Services.InitService;
 using Clinic.Services.LoginService;
@@ -313,8 +314,6 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             if (string.IsNullOrEmpty(reportResponse))
             {
                 report.Status = "رد شده";
-                _db.Reports.Update(report);
-                await _db.SaveChangesAsync();
                 TempData["Error"] = "شکایت رد شد";
             }
             else
@@ -409,6 +408,100 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 
             TempData["SuccessPassword"] = "رمز عبور شما با موفقیت تغییر یافت!";
             return RedirectToAction("EditProfile");
+        }
+
+        public async Task<ActionResult> InsuranceProviders()
+        {
+            return View(await _db.InsuranceProviders.ToListAsync());
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteInsuranceProvider(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var insurance = await _db.InsuranceProviders.FindAsync(id);
+
+            if (insurance == null)
+            {
+                return NotFound();
+            }
+            _db.InsuranceProviders.Remove(insurance);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("InsuranceProviders");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> AddInsurance(string insuranceName, int discount = 0)
+        {
+            if (discount == 0)
+            {
+                TempData["Error"] = "درصد تخفیف صحیح نمی باشد";
+                return RedirectToAction("InsuranceProviders");
+            }
+
+            if (!(discount > 0 && discount <= 100))
+            {
+                TempData["Error"] = "درصد تخفیف صحیح نمی باشد";
+                return RedirectToAction("InsuranceProviders");
+            }
+
+            var insurance = new InsuranceProvider()
+            {
+                Discount = discount,
+                InsuranceName = insuranceName
+            };
+
+            await _db.InsuranceProviders.AddAsync(insurance);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "شرکت بیمه با موفقیت افزوده شد";
+            return RedirectToAction("InsuranceProviders");
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditInsurance(string insuranceName, int discount = 0, int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            if (discount == 0)
+            {
+                TempData["Error"] = "درصد تخفیف صحیح نمی باشد";
+                return RedirectToAction("InsuranceProviders");
+            }
+
+            if (!(discount > 0 && discount <= 100))
+            {
+                TempData["Error"] = "درصد تخفیف صحیح نمی باشد";
+                return RedirectToAction("InsuranceProviders");
+            }
+
+            var insurance = await _db.InsuranceProviders.FindAsync(id);
+
+            if (insurance == null)
+            {
+                TempData["Error"] = "شرکت بیمه یافت نشد";
+                return RedirectToAction("InsuranceProviders");
+            }
+
+            insurance.InsuranceName = insuranceName;
+            insurance.Discount = discount;
+
+            _db.InsuranceProviders.Update(insurance);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "بیمه " + insuranceName + " با موفقیت ویرایش شد";
+            return RedirectToAction("InsuranceProviders");
         }
     }
 }
