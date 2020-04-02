@@ -1,15 +1,318 @@
-﻿
+﻿@model DoctorListDoctorViewModel
 @{
-    Layout = null;
+    ViewBag.Title = "صفحه اصلی";
+    List<Visit> visits = ViewBag.Visits as List<Visit>;
 }
 
-<!DOCTYPE html>
+@section Links{
+    <!-- form Uploads -->
+    <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+}
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.VisitCount
+                    </h3>
+                    <p>تعداد کل ویزیت های انجام شده</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-area-chart"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.DoctorCount
+                    </h3>
+                    <p>تعداد پزشکان کلینیک</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-stethoscope"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.PatientCount
+                    </h3>
+                    <p>تعداد بیماران ثبت نام کرده</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+
+
+    <!-- container -->
+
+    <div class="row" style="margin: 10px 20px;">
+        <div class="col-md-6">
+            <a href="#custom-modal" style="margin-bottom: 10px;" class="btn btn-block btn-rounded btn-primary btn-md waves-effect waves-light m-b-30" data-animation="fadein" data-plugin="custommodal"
+               data-overlaySpeed="200" data-overlayColor="#36404a">
+                <i class="fa fa-plus m-l-5"></i>
+                <span style="margin-right: 5px;">افزودن پزشک</span>
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="#custom-modal-message" style="margin-bottom: 10px;" class="btn btn-block btn-rounded btn-primary btn-md waves-effect waves-light m-b-30" data-animation="fadein" data-plugin="custommodal"
+               data-overlaySpeed="200" data-overlayColor="#36404a">
+                <i class="fa fa-envelope m-l-5"></i>
+                <span style="margin-right: 5px;">ارسال پیام به مدیر سایت</span>
+            </a>
+        </div>
+    </div>
+
+    <div id="custom-modal" class="modal-demo">
+        <button type="button" class="close" onclick="Custombox.close();">
+            <span>&times;</span><span class="sr-only">بستن</span>
+        </button>
+        <h4 class="custom-modal-title">افزودن پزشک</h4>
+        <div class="custom-modal-text text-left">
+
+            @using (Html.BeginForm("AddDoctor", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label>نام و نام خانوادگی</label>
+                    @Html.TextBoxFor(model => model.Doctor.FullName, new { @class = "form-control", placeholder = "نام و نام خانوادگی پزشک را بنویسید", required = "" })
+                </div>
+                <div class="form-group">
+                    <label>ایمیل</label>
+                    @Html.TextBoxFor(model => model.Doctor.Email, new { type = "email", @class = "form-control", required = "", placeholder = "آدرس ایمیل" })
+                </div>
+                <div class="form-group">
+                    <label>نام کاربری</label>
+                    @Html.TextBoxFor(model => model.Doctor.Username, new { @class = "form-control", required = "", placeholder = "نام کاربری" })
+                </div>
+                <div class="form-group">
+                    <label>رمز عبور</label>
+                    @Html.PasswordFor(model => model.Doctor.Password, new { @class = "form-control", id = "password", required = "", placeholder = "رمز عبور" })
+                </div>
+                <div class="form-group">
+                    <label>تکرار رمز عبور</label>
+                    <input type="password" id="confirmPassword" class="form-control" required="" placeholder="تکرار رمز عبور" />
+                    <span class="text-danger" id="confirmPassword_validation"></span>
+                </div>
+                <div class="form-group">
+                    <label>شماره نظام پزشکی</label>
+                    @Html.TextBoxFor(model => model.Doctor.MedicalNumber, new { @class = "form-control", required = "", placeholder = "شماره نظام پزشکی" })
+                </div>
+                <div class="form-group">
+                    <label>کد ملی</label>
+                    @Html.TextBoxFor(model => model.Doctor.NationalCode, new { @class = "form-control", placeholder = "کد ملی", required = "" })
+                </div>
+                <div class="form-group">
+                    <label>شماره تلفن</label>
+                    @Html.TextBoxFor(model => model.Doctor.PhoneNumber, new { type = "tel", @class = "form-control", required = "", placeholder = "شماره تلفن" })
+                </div>
+                <div class="form-group">
+                    <label>جنسیت</label><br />
+                    @Html.DropDownListFor(model => model.Doctor.Gender,
+                        new SelectList(Enum.GetValues(typeof(GenderEnum))), "انتخاب کنید", new { @class = "form-control" })
+                </div>
+                <div class="form-group">
+                    <label>سن</label>
+                    @Html.TextBoxFor(model => model.Doctor.Age, new { @class = "form-control", required = "", placeholder = "سن" })
+                </div>
+                <div class="form-group">
+                    <label>تخصص</label><br />
+                    @Html.DropDownListFor(model => model.Doctor.Specialty, new SelectList(
+                        new List<SelectListItem>
+                        {
+                            new SelectListItem { Text = "پزشک عمومی", Value = "پزشک عمومی"},
+                            new SelectListItem { Text = "متخصص اطفال", Value = "متخصص اطفال"},
+                            new SelectListItem { Text = "متخصص زنان", Value = "متخصص زنان"},
+                            new SelectListItem { Text = "چشم پزشک", Value = "چشم پزشک"},
+                            new SelectListItem { Text = "دندان پزشک", Value = "دندان پزشک"},
+                        }, "Value", "Text"), "انتخاب کنید", new { @class = "form-control" })
+                </div>
+
+                <div class="form-group">
+                    <label for="docImage">عکس پروفایل</label>
+                    <input type="file" class="dropify" data-height="200" accept="image/x-png,image/gif,image/jpeg" required name="docImage" />
+                </div>
+
+                <button type="submit" id="submit" class="btn btn-default waves-effect waves-light">ذخیره</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light m-l-10" onclick="Custombox.close();">لغو</button>
+            }
+
+        </div>
+    </div>
+
+
+    <div id="custom-modal-message" class="modal-demo">
+        <button type="button" class="close" onclick="Custombox.close();">
+            <span>&times;</span><span class="sr-only">بستن</span>
+        </button>
+        <h4 class="custom-modal-title">ارسال پیام</h4>
+        <div class="custom-modal-text text-left">
+
+            @using (Html.BeginForm("SendMessage", "Home", FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <div class="form-group">
+                    <label for="msgTitle">عنوان پیام</label>
+                    <input type="text" class="form-control" name="msgTitle" required id="msgTitle" placeholder="عنوان پیام خود را بنویسید...">
+                </div>
+
+                <div class="form-group">
+                    <label for="msgDesc">شرح پیام</label>
+                    <textarea class="form-control" name="msgDesc" required id="msgDesc" placeholder="شرح پیام خود را بنویسید"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-success waves-effect waves-light">ارسال</button>
+                <button type="button" class="btn btn-danger waves-effect waves-light m-l-10" onclick="Custombox.close();">لغو</button>
+            }
+
+        </div>
+    </div>
+    <!-- End row -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-area="ClinicManager" asp-controller="Home" asp-action="DoctorsList"
+                   style="margin-bottom: 10px;" class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+
+                <h4 class="header-title m-t-0 m-b-30">پزشکان محبوب کلینیک</h4>
+
+                <table class="table table table-hover m-0">
+                    <thead>
+                        <tr>
+                            <th>رتبه</th>
+                            <th>نام پزشک</th>
+                            <th>تعداد ویزیت</th>
+                            <th>امتیاز</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            var i = 1;
+                            foreach (var doctor in Model.Doctors)
+                            {
+                                int visitCount = 0;
+                                if (visits.Count > 0)
+                                {
+                                    foreach (var visit in visits)
+                                    {
+                                        if (visit.Reservation.Doctor.Equals(doctor))
+                                        {
+                                            visitCount++;
+                                        }
+                                    }
+                                }
+
+                                <tr>
+                                    <th>@i</th>
+                                    <td>@doctor.FullName</td>
+                                    <td>@visitCount</td>
+                                    <td>
+                                        @if (doctor.Score > 4)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                        }
+                                        else if (doctor.Score > 3 && doctor.Score <= 4)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star"></span>
+                                        }
+                                        else if (doctor.Score > 2 && doctor.Score <= 3)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        }
+                                        else if (doctor.Score > 1 && doctor.Score <= 2)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        }
+                                        else if (doctor.Score > 0 && doctor.Score <= 1)
+                                        {
+                                            <span class="fa fa-star checked"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        }
+                                        else if (Math.Abs(doctor.Score) < 0.001)
+                                        {
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                            <span class="fa fa-star"></span>
+                                        }
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div> <!-- content -->
+
+@section Scripts {
+    <!-- file uploads js -->
+    <script src="/Administrators/assets/plugins/fileuploads/js/dropify.min.js"></script>
+    <script type="text/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'فایل را به اینجا بکشید یا کلیک کنید',
+                'replace': 'برای جایگزینی فایل را به اینجا بکشید یا کلیک کنید',
+                'remove': 'پاک کردن',
+                'error': 'با پوزش فراوان، خطایی رخ داده'
+            },
+            error: {
+                'fileSize': 'حجم فایل بیشتر از حد مجاز است (1M).'
+            }
+        });
+    </script>
+    <script>
+        $(function () {
+            $('#submit').click(function (event) {
+                if ($('#password').val() != $('#confirmPassword').val()) {
+                    $('#confirmPassword_validation').text("رمز عبور با تکرار آن مطابقت ندارد");
+                    // Prevent form submission
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}

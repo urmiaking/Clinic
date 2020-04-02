@@ -58,5 +58,30 @@ namespace Clinic.Utilities.Convertors
 
             return result;
         }
+
+        public static string ElapsedTimeNotification(this DateTime value)
+        {
+            var now = DateTime.Now;
+            TimeSpan elapsed = now.Subtract(value);
+
+            var result = "";
+            if (elapsed.Days < 1)
+            {
+                if (elapsed.Hours < 1)
+                {
+                    result = Math.Round(elapsed.TotalMinutes) + " دقیقه قبل";
+                }
+                else
+                {
+                    result = Math.Round(elapsed.TotalHours) + " ساعت قبل";
+                }
+            }
+            else
+            {
+                result = Math.Round(elapsed.TotalDays) + " روز قبل";
+            }
+
+            return result;
+        }
     }
 }
