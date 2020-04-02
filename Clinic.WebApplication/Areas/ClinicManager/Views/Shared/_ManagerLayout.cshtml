@@ -1,4 +1,4 @@
-﻿@inject AppDbContext _db
+﻿@inject AppDbContext Context
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -10,7 +10,7 @@
 
     <!-- App Favicon -->
     <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
-    <!-- Ionicons -->
+    <!-- Ion icons -->
     <link rel="stylesheet" href="/Administrators/assets/css/ionicons.min.css">
     <!-- App title -->
     <title>@ViewBag.Title</title>
@@ -72,7 +72,7 @@
                         </li>
                     </ul>
 
-                    <!-- Right(Notification and Searchbox -->
+                    <!-- Right(Notification and Search box -->
                     <ul class="nav navbar-nav navbar-right">
                         <li>
                             <!-- Notification -->
@@ -183,7 +183,7 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            List<Report> reports = await _db.Reports.Where(a => a.Status.Equals("در انتظار بررسی")).ToListAsync();
+                            List<Report> reports = await Context.Reports.Where(a => a.Status.Equals("در انتظار بررسی")).ToListAsync();
 
                             if (reports.Count > 0)
                             {
@@ -210,17 +210,11 @@
                                 </div>
                             }
                         }
-
-
                     </ul>
                 </div>
             </div>
-            <!-- /Right-bar -->
-
         </div>
-        <!-- END wrapper -->
     </div>
-
     <script>
         var resizefunc = [];
     </script>
