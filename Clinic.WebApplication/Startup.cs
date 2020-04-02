@@ -1,6 +1,7 @@
 using Clinic.DataContext;
 using Clinic.Services.CaptchaService;
 using Clinic.Services.FeedBackService;
+using Clinic.Services.InitService;
 using Clinic.Services.LoginService;
 using Clinic.Services.MailService;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -33,6 +34,7 @@ namespace Clinic.WebApplication
             services.AddScoped<ILoginService, MyLoginService>();
             services.AddScoped<IReCaptchaService, MyReCaptchaService>();
             services.AddScoped<IFeedBackService, MyFeedBackService>();
+            services.AddScoped<IInitializerService, MyInitializerService>();
             services.AddHttpContextAccessor();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
             {

@@ -9,4 +9,9 @@
     <PackageReference Include="PersianDateTime" Version="1.1.5082.36395" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Clinic.DataContext\Clinic.DataContext.csproj" />
+    <ProjectReference Include="..\Clinic.Services\Clinic.Services.csproj" />
+  </ItemGroup>
+
 </Project>

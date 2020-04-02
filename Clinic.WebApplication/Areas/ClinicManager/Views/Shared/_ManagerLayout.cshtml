@@ -53,7 +53,7 @@
 
             <!-- LOGO -->
             <div class="topbar-left">
-                <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="logo"><span>کلینیک <span>بهار</span></span><i class="zmdi zmdi-layers"></i></a>
+                <a asp-action="Index" class="logo"><span>کلینیک <span>بهار</span></span><i class="zmdi zmdi-layers"></i></a>
             </div>
 
             <!-- Button mobile view to collapse sidebar menu -->
@@ -111,13 +111,13 @@
                     <h5><a href="#">مدیر کلینیک</a> </h5>
                     <ul class="list-inline">
                         <li>
-                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="EditProfile">
+                            <a asp-action="EditProfile">
                                 <i class="zmdi zmdi-settings"></i>
                             </a>
                         </li>
 
                         <li>
-                            <a asp-controller="Account" asp-action="LogOut" class="text-custom">
+                            <a asp-area="" asp-controller="Account" asp-action="LogOut" class="text-custom">
                                 <i class="zmdi zmdi-power"></i>
                             </a>
                         </li>
@@ -130,22 +130,22 @@
                         <li class="text-muted menu-title">دسته بندی ها</li>
 
                         <li>
-                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Index" class="waves-effect"><i class="zmdi zmdi-view-dashboard"></i> <span> داشبورد </span> </a>
+                            <a asp-action="Index" class="waves-effect"><i class="zmdi zmdi-view-dashboard"></i> <span> داشبورد </span> </a>
                         </li>
                         <li>
-                            <a class="waves-effect"><i class="fa fa-user-md"></i> <span> لیست پزشکان </span> </a>
-                        </li>
-
-                        <li>
-                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="Complains" class="waves-effect"><i class="fa fa-edit"></i> <span> رسیدگی به شکایات </span> </a>
+                            <a asp-action="DoctorsList" class="waves-effect"><i class="fa fa-user-md"></i> <span> لیست پزشکان </span> </a>
                         </li>
 
                         <li>
-                            <a asp-area="ClinicManager" asp-controller="Home" asp-action="InsuranceProviders" class="waves-effect"><i class="fa fa-shield"></i> <span> بیمه های تحت پوشش </span> </a>
+                            <a asp-action="Complains" class="waves-effect"><i class="fa fa-edit"></i> <span> رسیدگی به شکایات </span> </a>
                         </li>
 
                         <li>
-                            <a asp-controller="Home" asp-action="Index" class="waves-effect"><i class="fa fa-home"></i> <span> بازگشت به صفحه اصلی </span> </a>
+                            <a asp-action="InsuranceProviders" class="waves-effect"><i class="fa fa-shield"></i> <span> بیمه های تحت پوشش </span> </a>
+                        </li>
+
+                        <li>
+                            <a asp-area="" asp-controller="Home" asp-action="Index" class="waves-effect"><i class="fa fa-home"></i> <span> بازگشت به صفحه اصلی </span> </a>
                         </li>
                     </ul>
                     <div class="clearfix"></div>
@@ -190,7 +190,7 @@
                                 foreach (var report in reports)
                                 {
                                     <li class="list-group-item">
-                                        <a asp-area="ClinicManager" asp-controller="Home" asp-action="CheckComplain" asp-route-id="@report.Id" class="user-list-item">
+                                        <a asp-action="CheckComplain" asp-route-id="@report.Id" class="user-list-item">
                                             <div class="icon bg-pink">
                                                 <i class="zmdi zmdi-flag"></i>
                                             </div>
@@ -241,6 +241,10 @@
     <!-- App js -->
     <script src="/Administrators/assets/js/jquery.core.js"></script>
     <script src="/Administrators/assets/js/jquery.app.js"></script>
+
+    <!-- Validation -->
+    <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <!-- Toaster js -->
     <script src="/Administrators/assets/plugins/toastr/toastr.min.js"></script>
 
