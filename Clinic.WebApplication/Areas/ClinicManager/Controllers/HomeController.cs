@@ -181,7 +181,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
         {
             if (id == 0)
             {
-                return NotFound();
+                return StatusCode(404);
             }
 
             var doctor = await _db.Doctors
@@ -190,14 +190,15 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
 
             if (doctor == null)
             {
-                return new StatusCodeResult(404);
+
+                return StatusCode(404);
             }
 
             var docWeekDay = _db.WeekDays.Where(a => a.DoctorId.Equals(id)).ToList();
 
             if (doctor.Reservations.Any())
             {
-                return new StatusCodeResult(403);
+                return StatusCode(403);
             }
 
             if (docWeekDay.Count == 0)
@@ -214,7 +215,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             }
 
             await _db.SaveChangesAsync();
-            return RedirectToAction("DoctorsList");
+            return StatusCode(200);
         }
 
         [HttpPost]
@@ -420,19 +421,19 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
         {
             if (id == 0)
             {
-                return NotFound();
+                return StatusCode(404);
             }
 
             var insurance = await _db.InsuranceProviders.FindAsync(id);
 
             if (insurance == null)
             {
-                return NotFound();
+                return StatusCode(404);
             }
             _db.InsuranceProviders.Remove(insurance);
             await _db.SaveChangesAsync();
 
-            return RedirectToAction("InsuranceProviders");
+            return StatusCode(200);
         }
 
         [HttpPost]

@@ -107,17 +107,19 @@
                                                                     $("#@cardBoxId").remove();
                                                                 });
                                                             },
-                                                            error: function() {
-                                                                swal({
-                                                                    title: "خطا",
-                                                                    text: "نمی توان پزشکی را که در سیستم سابقه دارد حذف کرد",
-                                                                    type: "error",
-                                                                    showCancelButton: false,
-                                                                    confirmButtonClass:
-                                                                        'btn-danger waves-effect waves-light',
-                                                                    confirmButtonText: 'باشه!',
-                                                                    closeOnConfirm: true
-                                                                });
+                                                            statusCode: {
+                                                                404: function () {
+                                                                    swal({
+                                                                            title: "دسترسی غیر مجاز!",
+                                                                            text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه ببخشید!',
+                                                                            closeOnConfirm: true
+                                                                        }
+                                                                    );
+                                                                }
                                                             }
                                                         });
                                                     }
