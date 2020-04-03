@@ -35,11 +35,10 @@ namespace Clinic.Models.DomainClasses.NewsPage
         [Display(Name = "تعداد بازدید")]
         public int VisitCount { get; set; }
 
-        public int SiteAdminId { get; set; }
-        public SiteAdmin SiteAdmin { get; set; }
-
         public ICollection<Comment> Comments { get; set; }
 
-        public virtual ICollection<NewsTag> NewsTags { get; set; }
+        [Display(Name = "برچسب ها")]
+        [Required(ErrorMessage = "لطفا حداقل یک برچسب برای خبر وارد کنید")]
+        public string Tags { get; set; }
     }
 }

@@ -1,0 +1,144 @@
+﻿@model IEnumerable<ManagerMessage>
+
+@{
+    ViewBag.Title = "پیام ها";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">آخرین پیام های مدیر کلینیک</h4>
+                <div class="table-responsive">
+                    @if (Model.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Title)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.DateTime)
+                                    </th>
+                                    <th>
+                                        @Html.DisplayNameFor(model => model.Seen)
+                                    </th>
+                                    <th>مشاهده</th>
+                                </tr>
+                            </thead>
+                            @foreach (var item in Model)
+                            {
+                                var modalId = "edit-modal" + item.Id;
+                                var dataTarget = "#" + modalId;
+
+                                <!--Begin Modal-->
+                                <div id=@modalId class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                <h4 class="modal-title">مشاهده پیام</h4>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="msgTitle" class="control-label">عنوان پیام</label>
+                                                            <input type="text" readonly="" class="form-control" id="msgTitle" value="@item.Title">
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label for="msgDesc" class="control-label">شرح پیام</label>
+                                                            <textarea disabled="" rows="3" id="msgDesc" class="form-control">@item.Description</textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <label class="control-label">تاریخ ارسال پیام</label>
+                                                            <h5>@item.DateTime.ToHijriFarsiWithHour()</h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+
+
+                                                <span>
+                                                    @if (item.Seen.Equals(false))
+                                                    {
+                                                        using (Html.BeginForm("Message", "Home", FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <button type="submit" class="btn btn-success waves-effect waves-light">خوانده شد</button>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        using (Html.BeginForm("DeleteMessage", "Home", FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="id" value="@item.Id" />
+                                                            <button type="submit" class="btn btn-danger waves-effect waves-light">حذف پیام</button>
+                                                        }
+                                                    }
+                                                </span>
+
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                                <!--End Modal-->
+
+                                <tr>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Title)
+                                    </td>
+                                    <td>
+                                        @item.DateTime.ToHijriFarsi()
+                                    </td>
+                                    <td>
+                                        @if (item.Seen.Equals(false))
+                                        {
+                                            <span class="label label-warning">
+                                                خوانده نشده
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="label label-success">
+                                                خوانده شده
+                                            </span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <a href="#" data-toggle="modal" data-target=@dataTarget class="btn btn-success label label-success">
+                                            <i class="fa fa-pencil">&nbsp;</i>
+                                            مشاهده
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center">پیغامی برای نمایش وجود ندارد.</div>
+                    }
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

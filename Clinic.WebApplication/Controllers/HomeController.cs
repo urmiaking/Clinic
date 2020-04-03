@@ -167,7 +167,7 @@ namespace Clinic.WebApplication.Controllers
 
             ViewBag.CurrentFilter = searchString;
 
-            int pageSize = 9;
+            int pageSize = 6;
             int pageNumber = (page ?? 1);
 
             if (string.IsNullOrEmpty(searchString))
@@ -176,10 +176,10 @@ namespace Clinic.WebApplication.Controllers
                 return View(await PaginatedList<News>.CreateAsync(news.AsNoTracking(), pageNumber, pageSize));
             }
 
-            var newsResult = _db.NewsTags.Where(a =>
-                    a.Tag.TagValue.Equals(searchString) || a.News.Description.Contains(searchString) ||
-                    a.News.Title.Contains(searchString) ||
-                    a.News.ShortDescription.Contains(searchString)).Select(n => n.News)
+            var newsResult = _db.News.Where(a =>
+                    a.Tags.Contains(searchString) || a.Description.Contains(searchString) ||
+                    a.Title.Contains(searchString) ||
+                    a.ShortDescription.Contains(searchString))
                 .Distinct()
                 .OrderByDescending(a => a.ReleaseDate);
 
@@ -194,12 +194,8 @@ namespace Clinic.WebApplication.Controllers
             }
 
             var news = await _db.News
-                .Include(a => a.NewsTags)
-                    .ThenInclude(a => a.Tag)
                 .Include(a => a.Comments)
                     .ThenInclude(a => a.Replies)
-                .Include(a => a.Comments)
-                    .ThenInclude(a => a.User)
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
             if (news == null)

@@ -30,8 +30,6 @@ namespace Clinic.DataContext
         public virtual DbSet<Pharmacy> Pharmacies { get; set; }
         public virtual DbSet<Administration> Administrations { get; set; }
 
-        public virtual DbSet<Tag> Tags { get; set; }
-        public virtual DbSet<NewsTag> NewsTags { get; set; }
         public virtual DbSet<Comment> Comments { get; set; }
         public virtual DbSet<Reply> Replies { get; set; }
 
@@ -47,9 +45,6 @@ namespace Clinic.DataContext
 
             modelBuilder.Entity<Reservation>()
                 .HasKey(c => new { c.PatientId, c.DoctorId, c.ReserveDate });
-
-            modelBuilder.Entity<NewsTag>()
-                .HasKey(c => new { c.NewsId, c.TagId });
 
             modelBuilder.Entity<Reservation>()
                 .HasOne(a => a.Visit)

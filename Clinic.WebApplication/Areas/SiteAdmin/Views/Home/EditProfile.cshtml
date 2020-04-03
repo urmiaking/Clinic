@@ -1,0 +1,61 @@
+﻿@model Clinic.Models.DomainClasses.Users.User
+@{
+    ViewBag.Title = "تغییر پروفایل";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">تغییر ایمیل و رمز عبور</h4>
+                <form method="post" asp-action="EditEmail">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="form-group">
+                        <label for="email">آدرس ایمیل جدید</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input type="email" id="email" name="newEmail" parsley-trigger="change" required="" placeholder="ایمیل جدید خود را وارد کنید" class="form-control" id="newEmail" data-parsley-id="4">
+                        </div>
+                    </div>
+                    <div class="text-success">
+                        @TempData["SuccessEmail"]
+                    </div>
+                    <div class="form-group text-right m-b-0">
+                        <button class="btn btn-primary waves-effect waves-light" type="submit">
+                            ذخیره
+                        </button>
+                    </div>
+                </form>
+                <br />
+                <form method="post" asp-action="EditPassword">
+                    <input type="hidden" name="id" value="@Model.Id" />
+                    <div class="form-group">
+                        <label for="pass1">رمز عبور جدید</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                            <input type="password" id="pass1" name="newPass" placeholder="رمز عبور جدید خود را وارد کنید" required="" class="form-control" data-parsley-id="8">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="passWord2">تکرار رمز عبور جدید</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
+                            <input data-parsley-equalto="#pass1" name="newPassConfirm" type="password" required="" placeholder="تکرار رمز عبور جدید خود را وارد کنید" class="form-control" id="passWord2" data-parsley-id="10">
+                        </div>
+                    </div>
+                    <div class="text-success">
+                        @TempData["SuccessPassword"]
+                    </div>
+                    <div class="text-danger">
+                        @TempData["ErrorPassword"]
+                    </div>
+                    <div class="form-group text-right m-b-0">
+                        <button class="btn btn-primary waves-effect waves-light" type="submit">
+                            ذخیره
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

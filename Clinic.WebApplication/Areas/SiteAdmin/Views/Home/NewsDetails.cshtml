@@ -1,0 +1,619 @@
+﻿
+@using Clinic.Models.DomainClasses.Users
+@model News
+@{
+    ViewBag.Title = "جزییات خبر";
+    var totalComments = 0;
+    int i = 0;
+    int j = 0;
+}
+
+@section Head{
+    <script src="/Administrators/assets/js/jquery.min.js"></script>
+    <!-- Sweet Alert css -->
+    <link href="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+    <script src="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.min.js"></script>
+
+    <style>
+        .keywords {
+            margin-top: 20px;
+            padding: 10px
+        }
+
+            .keywords a {
+                padding: 2px 5px;
+                background-color: #f2f2f2;
+                line-height: 18px;
+                font-size: 14px;
+                color: #767676;
+                margin: 3px;
+                border-radius: 3px;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+            }
+
+                .keywords a:hover {
+                    background-color: #dfdfdf
+                }
+
+        .border-radius {
+            border-radius: 4px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card-box task-detail">
+                <div class="dropdown pull-right">
+                    <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+                        <i class="zmdi zmdi-more-vert"></i>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li>
+                            <a id="delete-button">
+                                حذف
+                            </a>
+                        </li>
+                    </ul>
+                    <script>
+                        $('#delete-button').click(function () {
+                            swal({
+                                    title: "مطمئنی ؟؟",
+                                    text: "",
+                                    type: "error",
+                                    showCancelButton: true,
+                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                    confirmButtonText: 'بله!',
+                                    closeOnConfirm: false
+                                },
+                                function(isConfirm) {
+                                    if (isConfirm) {
+                                        $.ajax({
+                                            url: "/SiteAdmin/Home/DeleteNews/",
+                                            type: "POST",
+                                            data: {
+                                                id : @Model.Id
+                                            },
+                                            dataType: "html",
+                                            success: function() {
+                                                swal({
+                                                    title: "خبر حذف شد!",
+                                                    text: "در حال انتقال به صفحه اخبار...",
+                                                    timer: 2000,
+                                                    showConfirmButton: false
+                                                });
+                                                window.location.href =
+                                                    '@Url.Action("News", "Home")';
+                                            },
+                                            statusCode: {
+                                                404: function () {
+                                                    swal({
+                                                            title: "دسترسی غیر مجاز!",
+                                                            text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                            type: "error",
+                                                            showCancelButton: false,
+                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                            confirmButtonText: 'باشه ببخشید!',
+                                                            closeOnConfirm: true
+                                                        }
+                                                    );
+                                                },
+                                                402: function () {
+                                                    swal({
+                                                            title: "خطا!",
+                                                            text: "عکس خبر پاک نشد!",
+                                                            type: "error",
+                                                            showCancelButton: false,
+                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                            confirmButtonText: 'باشه!',
+                                                            closeOnConfirm: true
+                                                        }
+                                                    );
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                        });
+                    </script>
+                </div>
+                <div class="media m-b-20">
+                    <div class="media-left">
+                        <a href="#"> <img class="media-object img-circle" alt="64x64" src="/Administrators/assets/images/users/admin.png" style="width: 48px; height: 48px;"> </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading m-b-0">مدیر سایت</h4>
+                        <span class="label label-info">مدیر سایت کلینیک تخصصی بهار</span>
+                    </div>
+                </div>
+                <h3 class="font-600 m-b-20">@Model.Title</h3>
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <img src="/Administrators/assets/images/news/@Model.ImageName"
+                             class="img-thumbnail" alt="profile-image">
+                    </div>
+                </div>
+                <br />
+
+                <p class="text-dark">
+                    @Model.Description
+                </p>
+
+                <ul class="list-inline task-dates m-b-0 m-t-20">
+                    <li>
+                        <h5 class="font-600 m-b-5">تعداد بازدید ها</h5>
+
+                        <p> @Model.VisitCount </p>
+                    </li>
+
+                    <li>
+                        <h5 class="font-600 m-b-5">تاریخ انتشار خبر</h5>
+                        <p> @Model.ReleaseDate.ToHijriFarsiWithHour() </p>
+                    </li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="keywords">
+                    <h5 class="font-600">برچسب ها</h5>
+                    <hr />
+                    @foreach (var tag in Model.Tags.Split(','))
+                    {
+                        <a asp-action="News" asp-route-searchString="@tag"> @tag </a>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card-box">
+                @foreach (var comment in Model.Comments)
+                {
+                    totalComments += 1;
+                    foreach (var reply in comment.Replies)
+                    {
+                        totalComments += 1;
+                    }
+                }
+                <script>
+                    var totalCm = @totalComments;
+                </script>
+                <h4 id="comment-count" class="header-title m-t-0 m-b-30">نظرات (@totalComments)</h4>
+                <div>
+                    @{
+                        foreach (var comment in Model.Comments.OrderByDescending(a => a.DateTime))
+                        {
+                            var commentModal = "comment-modal-" + i;
+                            var commentUserId = "comment-user-" + i;
+                            var replyCount = comment.Replies.Count + 1;
+                            var confirmCommentButton = "confirm-comment-button-" + i;
+                            var confirmReplyButton = "confirm-Reply-button-" + i;
+                            i++;
+                            <div id="@commentUserId" class="media m-b-10">
+                                <div class="media-left">
+                                    @if (comment.User is SiteAdmin)
+                                    {
+                                        <a href="#">
+                                            <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/admin.png">
+                                        </a>
+                                    }
+                                    else if (comment.User is ClinicManager)
+                                    {
+                                        <a href="#">
+                                            <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
+                                        </a>
+                                    }
+                                    else if (comment.User is Pharmacy)
+                                    {
+                                        <a href="#">
+                                            <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
+                                        </a>
+                                    }
+                                    else if (comment.User is Doctor doctor)
+                                    {
+                                        var profilePic = doctor.ProfilePic;
+                                        <a href="#">
+                                            <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/doctors/@profilePic">
+                                        </a>
+                                    }
+                                    else if (comment.User is Patient patient)
+                                    {
+                                        var profilePic = patient.ProfilePic;
+                                        <a href="#">
+                                            <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/patients/@profilePic">
+                                        </a>
+                                    }
+                                </div>
+                                <div class="media-body">
+                                    <h4 class="media-heading">@comment.User.FullName</h4>
+                                    <p class="font-13 text-muted m-b-0">
+                                        <a href="" class="text-primary">@comment.User.Username@@: </a>
+                                        @comment.Content
+                                    </p>
+                                    <a href="#@commentModal" class="text-success font-13" data-animation="flash" data-plugin="custommodal"
+                                       data-overlaySpeed="100" data-overlayColor="#36404a">جواب دادن</a>
+                                    <div id="@commentModal" class="modal-demo">
+                                        <button type="button" class="close" onclick="Custombox.close();">
+                                            <span>&times;</span><span class="sr-only">بستن</span>
+                                        </button>
+                                        <h4 class="custom-modal-title">در پاسخ به @comment.User.FullName چیزی بنویسید</h4>
+                                        <div class="custom-modal-text">
+                                            <form method="post" asp-action="AddReply">
+                                                <div class="form-group">
+                                                    <input type="hidden" name="commentId" value="@comment.Id" />
+                                                    <div class="modal-body">
+                                                        <label class="pull-left" for="content">متن نظر:</label>
+                                                        <textarea required="" class="form-control" rows="5" name="content" id="content"></textarea>
+                                                    </div>
+
+                                                    <div class="modal-footer" style="text-align: center;">
+                                                        <button type="submit" class="btn btn-success waves-effect waves-light">
+                                                            ثبت
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <a id="@i" style="cursor: pointer;" class="text-danger font-13">پاک کردن</a>
+                                    <script>
+                                        $("#@i").click(function() {
+                                            swal({
+                                                    title: "مطمئنی ؟؟",
+                                                    text: "",
+                                                    type: "error",
+                                                    showCancelButton: true,
+                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                    confirmButtonText: 'بله!',
+                                                    closeOnConfirm: false
+                                                },
+                                                function(isConfirm) {
+                                                    if (isConfirm) {
+                                                        $.ajax({
+                                                            url: "/SiteAdmin/Home/DeleteComment/",
+                                                            type: "POST",
+                                                            data: {
+                                                                id: @comment.Id
+                                                            },
+                                                            dataType: "html",
+                                                            success: function() {
+                                                                swal({
+                                                                    title: "نظر با موفقیت حذف شد!",
+                                                                    text: "تمامی پاسخ های نظر نیز در صورت وجود حذف شدند!",
+                                                                    type: "success",
+                                                                    showConfirmButton: true
+                                                                });
+                                                                $('#@commentUserId').hide("slow",
+                                                                    function() {
+                                                                        $('#@commentUserId').remove();
+                                                                    });
+
+                                                                totalCm -= @replyCount;
+
+                                                                $('#comment-count').text('نظرات (' + totalCm + ')');
+                                                            },
+                                                            statusCode: {
+                                                                404: function () {
+                                                                    swal({
+                                                                            title: "دسترسی غیر مجاز!",
+                                                                            text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه ببخشید!',
+                                                                            closeOnConfirm: true
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                        });
+                                    </script>
+                                    @if (!comment.IsConfirmed)
+                                    {
+                                        <a id="@confirmCommentButton" style="cursor: pointer;" class="text-info font-13">تایید</a>
+                                        <script>
+                                        $("#@confirmCommentButton").click(function() {
+                                            swal({
+                                                    title: "تایید میکنی ؟؟",
+                                                    text: "",
+                                                    type: "info",
+                                                    showCancelButton: true,
+                                                    confirmButtonClass: 'btn-info waves-effect waves-light',
+                                                    confirmButtonText: 'بله!',
+                                                    closeOnConfirm: false
+                                                },
+                                                function(isConfirm) {
+                                                    if (isConfirm) {
+                                                        $.ajax({
+                                                            url: "/SiteAdmin/Home/ConfirmComment/",
+                                                            type: "POST",
+                                                            data: {
+                                                                id: @comment.Id
+                                                            },
+                                                            dataType: "html",
+                                                            success: function() {
+                                                                swal({
+                                                                    title: "کامنت با موفقیت تایید شد!",
+                                                                    text: "از حالا به بعد این کامنت در صفحه اصلی قابل مشاهده است!",
+                                                                    type: "success",
+                                                                    showConfirmButton: true
+                                                                });
+                                                                $('#@confirmCommentButton').hide("slow");
+                                                            },
+                                                            statusCode: {
+                                                                404: function () {
+                                                                    swal({
+                                                                            title: "دسترسی غیر مجاز!",
+                                                                            text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه ببخشید!',
+                                                                            closeOnConfirm: true
+                                                                        }
+                                                                    );
+                                                                }
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                        });
+                                        </script>
+                                    }
+
+                                    @foreach (var reply in comment.Replies.OrderByDescending(a => a.DateTime))
+                                    {
+                                        var replyAId = "reply-a-" + j;
+                                        var replyUserId = "reply-user-" + j;
+
+                                        <div id="@replyUserId" class="media">
+                                            <div class="media-left">
+                                                @if (reply.User is SiteAdmin)
+                                                {
+                                                    <a href="#">
+                                                        <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/admin.png">
+                                                    </a>
+                                                }
+                                                else if (reply.User is ClinicManager)
+                                                {
+                                                    <a href="#">
+                                                        <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
+                                                    </a>
+                                                }
+                                                else if (reply.User is Pharmacy)
+                                                {
+                                                    <a href="#">
+                                                        <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
+                                                    </a>
+                                                }
+                                                else if (reply.User is Doctor doctor)
+                                                {
+                                                    var profilePic = doctor.ProfilePic;
+                                                    <a href="#">
+                                                        <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/doctors/@profilePic">
+                                                    </a>
+                                                }
+                                                else if (reply.User is Patient patient)
+                                                {
+                                                    var profilePic = patient.ProfilePic;
+                                                    <a href="#">
+                                                        <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/patients/@profilePic">
+                                                    </a>
+                                                }
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading">@reply.User.FullName</h4>
+                                                <p class="font-13 text-muted m-b-0">
+                                                    <a href="" class="text-primary">@reply.User.Username@@: </a>
+                                                    @reply.Content
+                                                </p>
+                                                <a href="#@commentModal" class="text-success font-13" data-animation="flash" data-plugin="custommodal"
+                                                   data-overlaySpeed="100" data-overlayColor="#36404a">جواب دادن</a>
+                                                <a id="@replyAId" style="cursor: pointer;" class="text-danger font-13">پاک کردن</a>
+                                                <script>
+                                                    $("#@replyAId").click(function() {
+                                                        swal({
+                                                                title: "مطمئنی ؟؟",
+                                                                text: "",
+                                                                type: "error",
+                                                                showCancelButton: true,
+                                                                confirmButtonClass:
+                                                                    'btn-danger waves-effect waves-light',
+                                                                confirmButtonText: 'بله!',
+                                                                closeOnConfirm: false
+                                                            },
+                                                            function(isConfirm) {
+                                                                if (isConfirm) {
+                                                                    $.ajax({
+                                                                        url: "/SiteAdmin/Home/DeleteReply/",
+                                                                        type: "POST",
+                                                                        data: {
+                                                                            id: @reply.Id
+                                                                        },
+                                                                        dataType: "html",
+                                                                        success: function() {
+                                                                            swal({
+                                                                                title:
+                                                                                    "نظر با موفقیت حذف شد!",
+                                                                                text: "",
+                                                                                type: "success",
+                                                                                showConfirmButton: true
+                                                                            });
+                                                                            $('#@replyUserId').hide("slow",
+                                                                                function() {
+                                                                                    $('#@replyUserId').remove();
+                                                                                });
+
+                                                                            totalCm -= 1;
+
+                                                                            $('#comment-count')
+                                                                                .text('نظرات (' + totalCm + ')');
+                                                                        },
+                                                                        statusCode: {
+                                                                            404: function () {
+                                                                                swal({
+                                                                                        title: "دسترسی غیر مجاز!",
+                                                                                        text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                                        type: "error",
+                                                                                        showCancelButton: false,
+                                                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                                        confirmButtonText: 'باشه ببخشید!',
+                                                                                        closeOnConfirm: true
+                                                                                    }
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
+                                                </script>
+                                                @if (!reply.IsConfirmed)
+                                                {
+                                                    <a id="@confirmReplyButton" style="cursor: pointer;" class="text-info font-13">تایید</a><!--TODO-->
+                                                    <script>
+                                                    $("#@confirmReplyButton").click(function() {
+                                                        swal({
+                                                                title: "تایید میکنی ؟؟",
+                                                                text: "",
+                                                                type: "info",
+                                                                showCancelButton: true,
+                                                                confirmButtonClass: 'btn-info waves-effect waves-light',
+                                                                confirmButtonText: 'بله!',
+                                                                closeOnConfirm: false
+                                                            },
+                                                            function(isConfirm) {
+                                                                if (isConfirm) {
+                                                                    $.ajax({
+                                                                        url: "/SiteAdmin/Home/ConfirmReply/",
+                                                                        type: "POST",
+                                                                        data: {
+                                                                            id: @reply.Id
+                                                                        },
+                                                                        dataType: "html",
+                                                                        success: function() {
+                                                                            swal({
+                                                                                title: "کامنت با موفقیت تایید شد!",
+                                                                                text: "از حالا به بعد این کامنت در صفحه اصلی قابل مشاهده است!",
+                                                                                type: "success",
+                                                                                showConfirmButton: true
+                                                                            });
+                                                                            $('#@confirmReplyButton').hide("slow");
+                                                                        },
+                                                                        statusCode: {
+                                                                            404: function () {
+                                                                                swal({
+                                                                                        title: "دسترسی غیر مجاز!",
+                                                                                        text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                                        type: "error",
+                                                                                        showCancelButton: false,
+                                                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                                        confirmButtonText: 'باشه ببخشید!',
+                                                                                        closeOnConfirm: true
+                                                                                    }
+                                                                                );
+                                                                            }
+                                                                        }
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
+                                                    </script>
+                                                }
+                                            </div>
+                                        </div>
+                                        j++;
+                                    }
+
+                                </div>
+                            </div>
+                        }
+                    }
+
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="#"> <img class="media-object img-circle thumb-sm" alt="64x64" src="/Administrators/assets/images/users/admin.png"> </a>
+                        </div>
+                        <div class="media-body">
+                            <input id="submitComment" type="text" required="" name="commentContent" class="form-control input-sm" placeholder="دیدگاهی جدید بنویسید">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div><!-- end col -->
+    </div>
+
+</div>
+@section Scripts {
+    <script>
+        $('#submitComment').keypress(function (e) {
+            if (e.which == 13) {
+                $.ajax({
+                    type: "POST",
+                    url: '/SiteAdmin/Home/AddComment/',
+                    dataType: "html",
+                    data: {
+                        commentContent: $('#submitComment').val(),
+                        id: @Model.Id
+                    },
+                    success: function() {
+                        swal({
+                            title: "نظر شما با موفقیت ثبت شد!",
+                            text: "",
+                            type: "success",
+                            showCancelButton: false,
+                            confirmButtonClass: 'btn-success waves-effect waves-light',
+                            confirmButtonText: 'باشه!',
+                            closeOnConfirm: false
+                        }, function (isConfirm) {
+                                if (isConfirm) {
+                                    swal({
+                                        title: "کامنت اضافه شد!",
+                                        text: "در حال به روز رسانی صفحه...",
+                                        timer: 2000,
+                                        showConfirmButton: false
+                                    });
+                                    window.location.href = '@Url.Action("NewsDetails", "Home",new {id = Model.Id})';
+                                }
+                            }
+                        );
+                    },
+                    statusCode: {
+                        401: function() {
+                            swal({
+                                    title: "خطا!",
+                                    text: "لطفا قبل از ارسال نظر، آن را بنویسید!",
+                                    type: "error",
+                                    showCancelButton: false,
+                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                    confirmButtonText: 'باشه ببخشید!',
+                                    closeOnConfirm: true
+                                }
+                            );
+                        },
+                        404: function () {
+                            swal({
+                                title: "دسترسی غیر مجاز!",
+                                text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                type: "error",
+                                showCancelButton: false,
+                                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                confirmButtonText: 'باشه ببخشید!',
+                                closeOnConfirm: true
+                            }
+                            );
+                        }
+                    }
+            });
+            }
+        });
+    </script>
+}

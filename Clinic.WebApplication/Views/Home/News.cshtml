@@ -155,9 +155,9 @@
                         <br />
                         <label>برچسب ها</label>
                         <div class="keywords border-radius">
-                            @foreach (var item in Model.NewsTags)
+                            @foreach (var item in Model.Tags.Split(','))
                             {
-                                <a asp-controller="Home" asp-action="NewsArchive" asp-route-searchString="@item.Tag.TagValue"> @item.Tag.TagValue </a>
+                                <a asp-controller="Home" asp-action="NewsArchive" asp-route-searchString="@item"> @item </a>
                             }
                         </div>
                         <hr />

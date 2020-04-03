@@ -87,7 +87,7 @@ namespace Clinic.Services.InitService
                 await _db.WeekDays.AddAsync(thursday);
                 await _db.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 //TODO: log
                 return false;

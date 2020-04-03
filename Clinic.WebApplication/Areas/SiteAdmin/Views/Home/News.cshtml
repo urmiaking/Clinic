@@ -1,4 +1,4 @@
-﻿@model PaginatedList<NewsTag>
+﻿@model PaginatedList<News>
 
 @{
     ViewBag.Title = "اخبار";
@@ -58,185 +58,136 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            @foreach (var item in Model)
+            @if (!Model.Any())
             {
-                var modalId = "edit-modal" + item.News.Id;
-                var dataTarget = "#" + modalId;
-                var deleteBtnId = "danger-alert" + i;
-                i++;
-
-                <div id=@modalId.ToString() class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-                    <div class="modal-dialog">
-                        @using (Html.BeginForm("EditNews", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
-                        {
-                            @Html.AntiForgeryToken()
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                    <h4 class="modal-title">ویرایش خبر</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="newsTitle" class="control-label">عنوان خبر</label>
-                                                <input type="text" class="form-control" id="newsTitle" name="newsTitle" placeholder="عنوان خبر" value="@item.News.Title">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="newsShortDesc" class="control-label">خلاصه خبر</label>
-                                                <input type="text" class="form-control" id="newsShortDesc" required="" name="newsShortDesc" placeholder="توضیح مختصر خبر" value="@item.News.ShortDescription">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group no-margin">
-                                                <label for="newsDesc" class="control-label">شرح خبر</label>
-                                                <textarea class="form-control" id="newsDesc" name="newsDesc" placeholder="مشروح اخبار را در اینجا بنویسید" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px;">@item.News.Description</textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="form-group">
-                                                <label for="image" class="control-label">عکس خبر</label>
-                                                <input type="file" class="dropify" id="image" name="newsImage" data-default-file="../../Administrators/assets/images/news/@item.News.ImageName" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            @{
-
-                                                var tagList = "";
-                                                foreach (var tag in Model)
-                                                {
-                                                    tagList += tag.Tag.TagValue + ",";
-                                                }
-
-                                                <div class="task-tags m-t-20">
-                                                    <h5 class="font-600">برچسب ها</h5>
-                                                    <input type="text" value="@tagList" name="tagList" data-role="tagsinput" />
-                                                </div>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="modal-footer">
-                                    <input type="hidden" name="id" value="@item.News.Id" />
-                                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
-                                    <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
-                                </div>
-                            </div>
-                        }
-
-                    </div>
+                <div class="text-center" style="margin-top: 200px;">
+                    هیچ خبری موجود نیست
                 </div>
-                <div class="bg-picture card-box" id="@i">
+            }
+            else
+            {
+                foreach (var item in Model)
+                {
+                    var deleteBtnId = "danger-alert" + i;
+                    i++;
 
-                    <div class="dropdown pull-right">
-                        <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
-                            <i class="zmdi zmdi-more-vert"></i>
-                        </a>
-                        <ul class="dropdown-menu" role="menu">
-                            <li>
-                                <a href="#" data-toggle="modal" data-target=@dataTarget.ToString()>
-                                    ویرایش
-                                </a>
-                            </li>
-                            <li>
-                                <a id="@deleteBtnId">
-                                    حذف
-                                </a>
-                            </li>
-                        </ul>
+                    <div class="bg-picture card-box" id="@i">
 
-                        <script>
-                                        $('#@deleteBtnId').click(function () {
-                                            swal({
-                                                    title: "مطمئنی ؟؟",
-                                                    text: "",
-                                                    type: "error",
-                                                    showCancelButton: true,
-                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
-                                                    confirmButtonText: 'بله!',
-                                                    closeOnConfirm: false
-                                                },
-                                                function(isConfirm) {
-                                                    if (isConfirm) {
-                                                        $.ajax({
-                                                            url: "/SiteAdmin/Home/DeleteNews/",
-                                                            type: "POST",
-                                                            data: {
-                                                                id : @item.News.Id
-                                                            },
-                                                            dataType: "html",
-                                                            success: function() {
-                                                                swal("انجام شد!",
-                                                                    "خبر مورد نظر با موفقت حذف شد!",
-                                                                    "success");
-                                                                $("#@i").hide("slow", function() {
-                                                                    $("#@i").remove();
-                                                                });
-                                                            }
-                                                        });
+                        <div class="dropdown pull-right">
+                            <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+                                <i class="zmdi zmdi-more-vert"></i>
+                            </a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li>
+                                    <a asp-action="EditNews" asp-route-id="@item.Id">
+                                        ویرایش
+                                    </a>
+                                </li>
+                                <li>
+                                    <a id="@deleteBtnId">
+                                        حذف
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <script>
+                                $('#@deleteBtnId').click(function() {
+                                    swal({
+                                            title: "مطمئنی ؟؟",
+                                            text: "",
+                                            type: "error",
+                                            showCancelButton: true,
+                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                            confirmButtonText: 'بله!',
+                                            closeOnConfirm: false
+                                        },
+                                        function(isConfirm) {
+                                            if (isConfirm) {
+                                                $.ajax({
+                                                    url: "/SiteAdmin/Home/DeleteNews/",
+                                                    type: "POST",
+                                                    data: {
+                                                        id: @item.Id
+                                                    },
+                                                    dataType: "html",
+                                                    success: function() {
+                                                        swal("انجام شد!",
+                                                            "خبر مورد نظر با موفقت حذف شد!",
+                                                            "success");
+                                                        $("#@i").hide("slow",
+                                                            function() {
+                                                                $("#@i").remove();
+                                                            });
+                                                    },
+                                                    statusCode: {
+                                                        404: function () {
+                                                            swal({
+                                                                    title: "دسترسی غیر مجاز!",
+                                                                    text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                    type: "error",
+                                                                    showCancelButton: false,
+                                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                    confirmButtonText: 'باشه ببخشید!',
+                                                                    closeOnConfirm: true
+                                                                }
+                                                            );
+                                                        },
+                                                        402: function () {
+                                                            swal({
+                                                                    title: "خطا!",
+                                                                    text: "عکس خبر پاک نشد!",
+                                                                    type: "error",
+                                                                    showCancelButton: false,
+                                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                    confirmButtonText: 'باشه!',
+                                                                    closeOnConfirm: true
+                                                                }
+                                                            );
+                                                        }
                                                     }
                                                 });
+                                            }
                                         });
-                        </script>
-
-                    </div>
-                    @{
-
-                    }
-                    <div class="profile-info-name">
-                        <h4 class="header-title m-t-0 m-b-30">@item.News.ReleaseDate.ToHijriFarsi()</h4>
+                                });
+                            </script>
+                        </div>
 
                         <div class="profile-info-name">
-                            <img src="/Administrators/assets/images/news/@item.News.ImageName"
-                                 class="img-thumbnail" alt="profile-image">
+                            <h4 class="header-title m-t-0 m-b-30">@item.ReleaseDate.ToHijriFarsi()</h4>
 
-                            <div class="profile-info-detail">
-                                <h3 class="m-t-0 m-b-0">@item.News.Title</h3>
-                                <p class="text-muted m-b-20"><i>نویسنده : @item.News.SiteAdmin.FullName</i></p>
-                                <p>@item.News.ShortDescription</p>
+                            <div class="profile-info-name">
+                                <img src="/Administrators/assets/images/news/@item.ImageName"
+                                     class="img-thumbnail" alt="profile-image">
+
+                                <div class="profile-info-detail">
+                                    <h3 class="m-t-0 m-b-0">@item.Title</h3>
+                                    <p class="text-muted m-b-20"><i>نویسنده : مدیر سایت</i></p>
+                                    <p>@item.ShortDescription</p>
 
 
-                                <div class="keywords">
-                                    @foreach (var tag in Model)
-                                    {
-                                        <a href="/SiteAdmin/Home/Search?q=@tag.Tag.TagValue"> @tag.Tag.TagValue </a>
-                                    }
+                                    <div class="keywords">
+                                        @foreach (var tag in item.Tags.Split(','))
+                                        {
+                                            <a asp-action="News" asp-route-searchString="@tag"> @tag </a>
+                                        }
+                                    </div>
+
                                 </div>
-
+                                <div class="clearfix"></div>
                             </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <br />
-                        <div class="row">
-                            @using (Html.BeginForm("NewsDetails", "Home", FormMethod.Get))
-                            {
-                                <input type="hidden" name="id" value="@item.News.Id" />
-                                <button type="submit" class="pull-right btn btn-success waves-effect waves-light">
-                                    ادامه مطلب
-                                </button>
-                            }
+                            <br />
+                            <div class="row">
+                                <a asp-action="NewsDetails" asp-route-id="@item.Id"
+                                   class="pull-right btn btn-success btn-rounded waves-effect waves-light">ادامه مطلب</a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-            @{
+                }
+
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
                 var nextDisabled = !Model.HasNextPage ? "disabled" : "";
-            }
-            @if (Model.Any())
-            {
+
+
                 <div class="text-center">
                     <a asp-action="News"
                        asp-route-page="@(Model.PageIndex - 1)"
@@ -251,13 +202,11 @@
                         بعدی
                     </a>
                 </div>
+
             }
 
         </div>
-
     </div>
-    <!-- End content-page -->
-
 </div>
 
 @section Scripts

@@ -7,6 +7,6 @@ namespace Clinic.Models.DomainClasses.Users
 {
     public class SiteAdmin : User
     {
-        public ICollection<News> News { get; set; }
+
     }
 }

@@ -1,4 +1,5 @@
-﻿@model PaginatedList<News>
+﻿@using Clinic.Utilities.Convertors
+@model PaginatedList<News>
 
 @{
     ViewBag.Title = "آرشیو اخبار";
@@ -97,7 +98,7 @@
                 {
                     <div class="col-sm-4">
                         <div class="single-blog">
-                            <div class="post-date">@item.ReleaseDate</div>
+                            <div class="post-date">@item.ReleaseDate.ToHijriFarsi()</div>
                             <div class="blog-photo">
                                 <img src="/Administrators/assets/images/news/@item.ImageName" alt="">
                             </div>
@@ -111,7 +112,7 @@
                                     <div class="sm-title">@item.ShortDescription</div>
                                 </div>
                                 <div class="blog-read-more-icon">
-                                    <a href="/Home/NewsList/@item.Id"><i class="flaticon-right-arrow"></i></a>
+                                    <a asp-action="News" asp-route-id="@item.Id"><i class="flaticon-right-arrow"></i></a>
                                 </div>
                             </div>
                         </div>
