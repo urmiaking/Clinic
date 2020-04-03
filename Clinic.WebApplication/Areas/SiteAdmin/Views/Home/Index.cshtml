@@ -1,15 +1,117 @@
-﻿
+﻿@model List<News>
 @{
-    Layout = null;
+    ViewBag.Title = "صفحه اصلی";
 }
 
-<!DOCTYPE html>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    @if (ViewBag.NewsCount == 0)
+                    {
+                        <h3>0</h3>
+                    }
+                    else
+                    {
+                        <h3>@ViewBag.NewsCount</h3>
+                    }
+                    <p>تعداد کل اخبار</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-newspaper-o"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    @if (ViewBag.CountAll == 0)
+                    {
+                        <h3>0</h3>
+                    }
+                    else
+                    {
+                        <h3>@ViewBag.CountAll</h3>
+                    }
+                    <p>تعداد کل بازدید ها</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    @if (ViewBag.CountThisMonth == 0)
+                    {
+                        <h3>0</h3>
+                    }
+                    else
+                    {
+                        <h3>@ViewBag.CountThisMonth</h3>
+                    }
+                    <p>تعداد بازدید های این ماه</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+    <div class="row text-center" style="margin: 10px 20px;">
+        <div col-md-12>
+            <a asp-action="AddNews" style="margin-bottom: 10px;" class="btn btn-block btn-primary btn-rounded waves-effect waves-light">
+                <i class="fa fa-pencil m-l-5"></i>
+                <span style="margin-right: 5px;">خبر جدیدی بنویسید</span>
+            </a>
+        </div>
+    </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var news in Model)
+            {
+                <div class="bg-picture card-box">
+                    <div class="profile-info-name">
+                        <h4 class="header-title m-t-0 m-b-30">@news.ReleaseDate.ToHijriFarsi()</h4>
+
+                        <div class="profile-info-name">
+                            <img src="/Administrators/assets/images/news/@news.ImageName"
+                                 class="img-thumbnail" alt="profile-image">
+                            <div class="profile-info-detail">
+                                <h3 class="m-t-0 m-b-0">@news.Title</h3>
+                                <p class="text-muted m-b-20"><i>نویسنده : @news.SiteAdmin.FullName</i></p>
+                                <p>@news.ShortDescription</p>
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            <a asp-action="NewsDetails" asp-route-id="@news.Id" 
+                               class="pull-right btn btn-success btn-rounded waves-effect waves-light">ادامه مطلب</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
+    @{
+        if (Model.Count == 6)
+        {
+            <div class="text-center" style="margin-bottom: 20px">
+                <a asp-action="News" class="btn btn-primary btn-rounded w-md waves-effect waves-light m-b-5">نمایش اخبار بیشتر</a>
+            </div>
+        }
+    }
+</div>
+

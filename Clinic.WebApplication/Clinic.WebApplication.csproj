@@ -8,9 +8,9 @@
     <Folder Include="Areas\Doctor\Views\Shared\" />
     <Folder Include="Areas\Patient\Views\Shared\" />
     <Folder Include="Areas\Pharmacy\Views\Shared\" />
-    <Folder Include="Areas\SiteAdmin\Views\Shared\" />
     <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\" />
+    <Folder Include="wwwroot\Administrators\assets\images\news\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,93 @@
+﻿@model NewsImageTagsViewModel
+
+@{
+    ViewBag.Title = "اضافه کردن خبر جدید";
+}
+
+@section head{
+    <!-- form Uploads -->
+    <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">افزودن خبر</h4>
+                <form asp-action="AddNews" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="News.Title" class="control-label"></label>
+                                <input asp-for="News.Title" class="form-control" placeholder="عنوان خبر">
+                                <span asp-validation-for="News.Title" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="News.ShortDescription" class="control-label"></label>
+                                <input asp-for="News.ShortDescription" class="form-control" placeholder="شرح مختصر خبر">
+                                <span asp-validation-for="News.ShortDescription" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group no-margin">
+                                <label asp-for="News.Description" class="control-label"></label>
+                                <textarea asp-for="News.Description" class="form-control" rows="15" placeholder="مشروح اخبار را در اینجا بنویسید"
+                                          style="overflow: hidden; word-wrap: break-word; resize: horizontal;"></textarea>
+                                <span asp-validation-for="News.Description" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="News.ImageName" class="control-label"></label>
+                                <input asp-for="File" class="dropify" data-height="300" required="" accept="image/x-png,image/gif,image/jpeg" />
+                                <span asp-validation-for="File" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label asp-for="Tags" class="control-label"></label><br />
+                                <input asp-for="Tags" value="" data-role="tagsinput" /><br />
+                                <span asp-validation-for="Tags" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr />
+                    <button type="button" class="btn btn-default waves-effect">بازگشت</button>
+                    <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <!-- file uploads js -->
+    <script src="/Administrators/assets/plugins/fileuploads/js/dropify.min.js"></script>
+    <script type="text/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'عکس را به اینجا بکشید یا کلیک کنید',
+                'replace': 'برای جایگزینی عکس را به اینجا بکشید یا کلیک کنید',
+                'remove': 'پاک کردن',
+                'error': 'با پوزش فراوان، خطایی رخ داده'
+            },
+            error: {
+                'fileSize': 'حجم عکس بیشتر از حد مجاز است (1M).'
+            }
+        });
+    </script>
+}

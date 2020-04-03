@@ -80,13 +80,13 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
                 else
                 {
                     TempData["Error"] = "حجم عکس بارگذاری شده برای پروفایل پزشک بیشتر از 500 کیلوبایت می باشد";
-                    return RedirectToAction("Index");
+                    return RedirectToAction("DoctorsList");
                 }
             }
             else
             {
                 TempData["Error"] = "لطفا عکس پزشک را آپلود کنید";
-                return RedirectToAction("Index");
+                return RedirectToAction("DoctorsList");
             }
 
             await _db.Doctors.AddAsync(doctorViewModel.Doctor);

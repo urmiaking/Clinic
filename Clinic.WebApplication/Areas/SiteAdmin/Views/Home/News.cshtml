@@ -1,0 +1,280 @@
+﻿@model PaginatedList<NewsTag>
+
+@{
+    ViewBag.Title = "اخبار";
+    int i = 0;
+}
+
+
+@section Head{
+    <script src="/Administrators/assets/js/jquery.min.js"></script>
+    <!-- form Uploads -->
+    <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+    <!-- Sweet Alert css -->
+    <link href="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+    <script src="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.min.js"></script>
+
+    <style>
+        .keywords {
+            margin-top: 20px;
+            padding: 10px
+        }
+
+            .keywords a {
+                padding: 2px 5px;
+                background-color: #f2f2f2;
+                line-height: 18px;
+                font-size: 14px;
+                color: #767676;
+                margin: 3px;
+                border-radius: 3px;
+                -moz-border-radius: 3px;
+                -webkit-border-radius: 3px;
+            }
+
+                .keywords a:hover {
+                    background-color: #dfdfdf
+                }
+
+        .border-radius {
+            border-radius: 4px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+        }
+    </style>
+}
+
+@section Search {
+    <li class="hidden-xs">
+        <form role="search" class="app-search" method="get">
+            <input type="text" placeholder="جستجوی خبر..." class="form-control" name="searchString" value="@ViewBag.CurrentFilter">
+            <button type="submit" style="background-color: Transparent; background-repeat: no-repeat; border: none; cursor: pointer; overflow: hidden; outline: none;">
+                <i class="fa fa-search"></i>
+            </button>
+        </form>
+    </li>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            @foreach (var item in Model)
+            {
+                var modalId = "edit-modal" + item.News.Id;
+                var dataTarget = "#" + modalId;
+                var deleteBtnId = "danger-alert" + i;
+                i++;
+
+                <div id=@modalId.ToString() class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog">
+                        @using (Html.BeginForm("EditNews", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title">ویرایش خبر</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="newsTitle" class="control-label">عنوان خبر</label>
+                                                <input type="text" class="form-control" id="newsTitle" name="newsTitle" placeholder="عنوان خبر" value="@item.News.Title">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="newsShortDesc" class="control-label">خلاصه خبر</label>
+                                                <input type="text" class="form-control" id="newsShortDesc" required="" name="newsShortDesc" placeholder="توضیح مختصر خبر" value="@item.News.ShortDescription">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group no-margin">
+                                                <label for="newsDesc" class="control-label">شرح خبر</label>
+                                                <textarea class="form-control" id="newsDesc" name="newsDesc" placeholder="مشروح اخبار را در اینجا بنویسید" style="overflow: hidden; word-wrap: break-word; resize: horizontal; height: 104px;">@item.News.Description</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="image" class="control-label">عکس خبر</label>
+                                                <input type="file" class="dropify" id="image" name="newsImage" data-default-file="../../Administrators/assets/images/news/@item.News.ImageName" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @{
+
+                                                var tagList = "";
+                                                foreach (var tag in Model)
+                                                {
+                                                    tagList += tag.Tag.TagValue + ",";
+                                                }
+
+                                                <div class="task-tags m-t-20">
+                                                    <h5 class="font-600">برچسب ها</h5>
+                                                    <input type="text" value="@tagList" name="tagList" data-role="tagsinput" />
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <input type="hidden" name="id" value="@item.News.Id" />
+                                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                                    <button type="submit" class="btn btn-info waves-effect waves-light">ذخیره</button>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+                <div class="bg-picture card-box" id="@i">
+
+                    <div class="dropdown pull-right">
+                        <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
+                            <i class="zmdi zmdi-more-vert"></i>
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="#" data-toggle="modal" data-target=@dataTarget.ToString()>
+                                    ویرایش
+                                </a>
+                            </li>
+                            <li>
+                                <a id="@deleteBtnId">
+                                    حذف
+                                </a>
+                            </li>
+                        </ul>
+
+                        <script>
+                                        $('#@deleteBtnId').click(function () {
+                                            swal({
+                                                    title: "مطمئنی ؟؟",
+                                                    text: "",
+                                                    type: "error",
+                                                    showCancelButton: true,
+                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                    confirmButtonText: 'بله!',
+                                                    closeOnConfirm: false
+                                                },
+                                                function(isConfirm) {
+                                                    if (isConfirm) {
+                                                        $.ajax({
+                                                            url: "/SiteAdmin/Home/DeleteNews/",
+                                                            type: "POST",
+                                                            data: {
+                                                                id : @item.News.Id
+                                                            },
+                                                            dataType: "html",
+                                                            success: function() {
+                                                                swal("انجام شد!",
+                                                                    "خبر مورد نظر با موفقت حذف شد!",
+                                                                    "success");
+                                                                $("#@i").hide("slow", function() {
+                                                                    $("#@i").remove();
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                        });
+                        </script>
+
+                    </div>
+                    @{
+
+                    }
+                    <div class="profile-info-name">
+                        <h4 class="header-title m-t-0 m-b-30">@item.News.ReleaseDate.ToHijriFarsi()</h4>
+
+                        <div class="profile-info-name">
+                            <img src="/Administrators/assets/images/news/@item.News.ImageName"
+                                 class="img-thumbnail" alt="profile-image">
+
+                            <div class="profile-info-detail">
+                                <h3 class="m-t-0 m-b-0">@item.News.Title</h3>
+                                <p class="text-muted m-b-20"><i>نویسنده : @item.News.SiteAdmin.FullName</i></p>
+                                <p>@item.News.ShortDescription</p>
+
+
+                                <div class="keywords">
+                                    @foreach (var tag in Model)
+                                    {
+                                        <a href="/SiteAdmin/Home/Search?q=@tag.Tag.TagValue"> @tag.Tag.TagValue </a>
+                                    }
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        </div>
+                        <br />
+                        <div class="row">
+                            @using (Html.BeginForm("NewsDetails", "Home", FormMethod.Get))
+                            {
+                                <input type="hidden" name="id" value="@item.News.Id" />
+                                <button type="submit" class="pull-right btn btn-success waves-effect waves-light">
+                                    ادامه مطلب
+                                </button>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            }
+            @if (Model.Any())
+            {
+                <div class="text-center">
+                    <a asp-action="News"
+                       asp-route-page="@(Model.PageIndex - 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @prevDisabled">
+                        قبلی
+                    </a>
+                    <a asp-action="News"
+                       asp-route-page="@(Model.PageIndex + 1)"
+                       asp-route-currentFilter="@ViewBag.CurrentFilter"
+                       class="btn btn-default @nextDisabled">
+                        بعدی
+                    </a>
+                </div>
+            }
+
+        </div>
+
+    </div>
+    <!-- End content-page -->
+
+</div>
+
+@section Scripts
+{
+    <!-- file uploads js -->
+    <script src="/Administrators/assets/plugins/fileuploads/js/dropify.min.js"></script>
+    <script type="text/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'عکس را به اینجا بکشید یا کلیک کنید',
+                'replace': 'برای جایگزینی عکس را به اینجا بکشید یا کلیک کنید',
+                'remove': 'پاک کردن',
+                'error': 'با پوزش فراوان، خطایی رخ داده'
+            },
+            error: {
+                'fileSize': 'حجم عکس بیشتر از حد مجاز است (1M).'
+            }
+        });
+    </script>
+}
