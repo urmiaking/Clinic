@@ -220,7 +220,7 @@
                                     var dataTarget = "#" + modalId;
                                     <div id=@modalId class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                         <div class="modal-dialog">
-                                            <form asp-action="PrescriptionOnlineCheck" method="post">
+                                            <form asp-action="PrescriptionCheck" method="post">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -337,7 +337,7 @@
                             {
                                 <tr>
                                     <th>@drug.Name</th>
-                                    <td>@drug.Category</td>
+                                    <td>@drug.DrugCategory.Name</td>
                                     <td>@drug.Count بسته</td>
                                     <td>
                                         @drug.Cost تومان

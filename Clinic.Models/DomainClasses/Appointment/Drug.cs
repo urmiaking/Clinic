@@ -12,9 +12,6 @@ namespace Clinic.Models.DomainClasses.Appointment
         [Display(Name = "نام دارو")]
         public string Name { get; set; }
 
-        [Display(Name = "دسته بندی")]
-        public string Category { get; set; }
-
         [Display(Name = "توضیحات")]
         public string Instruction { get; set; }
 
@@ -27,7 +24,9 @@ namespace Clinic.Models.DomainClasses.Appointment
         [Display(Name = "وضعیت موجودی")]
         public bool Status { get; set; }
 
-        public Pharmacy Pharmacy { get; set; }
+        [Display(Name = "دسته بندی")]
+        public DrugCategory DrugCategory { get; set; }
+
         public ICollection<PrescriptionDrug> PrescriptionDrugs { get; set; }
     }
 }

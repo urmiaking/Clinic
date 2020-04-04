@@ -4,14 +4,16 @@ using Clinic.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Clinic.DataContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200404010343_RemoveDrugPharmacyRelation")]
+    partial class RemoveDrugPharmacyRelation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,13 +28,13 @@ namespace Clinic.DataContext.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Cost")
                         .HasColumnType("int");
 
                     b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DrugCategoryId")
                         .HasColumnType("int");
 
                     b.Property<string>("Instruction")
@@ -47,24 +49,7 @@ namespace Clinic.DataContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DrugCategoryId");
-
                     b.ToTable("Drugs");
-                });
-
-            modelBuilder.Entity("Clinic.Models.DomainClasses.Appointment.DrugCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DrugCategories");
                 });
 
             modelBuilder.Entity("Clinic.Models.DomainClasses.Appointment.InsuranceProvider", b =>
@@ -604,13 +589,6 @@ namespace Clinic.DataContext.Migrations
                             Password = "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918",
                             Username = "admin"
                         });
-                });
-
-            modelBuilder.Entity("Clinic.Models.DomainClasses.Appointment.Drug", b =>
-                {
-                    b.HasOne("Clinic.Models.DomainClasses.Appointment.DrugCategory", "DrugCategory")
-                        .WithMany("Drugs")
-                        .HasForeignKey("DrugCategoryId");
                 });
 
             modelBuilder.Entity("Clinic.Models.DomainClasses.Appointment.Prescription", b =>

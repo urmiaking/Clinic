@@ -1,11 +1,11 @@
-﻿@model IEnumerable<InsuranceProvider>
+﻿@model IEnumerable<DrugCategory>
 
 @{
-    ViewBag.Title = "شرکت های بیمه تحت پوشش کلینیک";
+    ViewBag.Title = "مدیریت دسته های داروها";
     int i = 0;
 }
 
-@section Links{
+@section Head{
     <script src="/Administrators/assets/js/jquery.min.js"></script>
 
     <!-- Sweet Alert css -->
@@ -14,30 +14,23 @@
 }
 
 <div class="container">
-    <div id="add-insurance-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div id="add-drug-ategory-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form method="post" asp-action="AddInsurance">
+                <form method="post" asp-action="AddDrugCategory">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                        <h4 class="modal-title">اضافه کردن شرکت بیمه تحت پوشش کلینیک</h4>
+                        <h4 class="modal-title">اضافه کردن دسته بندی برای داروها</h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="insuranceName" class="control-label">نام</label>
-                                    <input type="text" class="form-control" id="insuranceName" required="" name="insuranceName" placeholder="نام شرکت بیمه">
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="discount" class="control-label">درصد تخفیف</label>
-                                    <input type="tel" class="form-control" id="discount" name="discount" required="" placeholder="10">
+                                    <label for="categoryName" class="control-label">نام دسته</label>
+                                    <input type="text" class="form-control" id="categoryName" required="" name="categoryName" placeholder="نام دسته">
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
@@ -49,24 +42,20 @@
         </div>
     </div><!-- /.modal -->
     <div class="text-center">
-        <button class="btn btn-rounded btn-info btn-block" data-toggle="modal" data-target="#add-insurance-modal"><i class="fa fa-pencil">&nbsp;</i> اضافه کردن بیمه </button>
+        <button class="btn btn-rounded btn-info btn-block" data-toggle="modal" data-target="#add-drug-ategory-modal"><i class="fa fa-pencil">&nbsp;</i> اضافه کردن دسته جدید </button>
         <br />
     </div>
-
     <div class="row">
         <div class="col-md-12">
             <div class="card-box">
-                <h4 class="header-title m-t-0 m-b-30">لیست بیمه ها</h4>
+                <h4 class="header-title m-t-0 m-b-30">لیست دسته بندی دارو ها</h4>
                 @if (Model.Any())
                 {
                     <table class="table table table-hover m-0">
                         <thead>
                             <tr>
                                 <th>
-                                    @Html.DisplayNameFor(model => model.InsuranceName)
-                                </th>
-                                <th>
-                                    @Html.DisplayNameFor(model => model.Discount)
+                                    @Html.DisplayNameFor(model => model.Name)
                                 </th>
                                 <th>عملیات</th>
                             </tr>
@@ -80,11 +69,9 @@
                                 var editModalId = "edit-modal-" + i;
                                 <tr id="row-@i">
                                     <td>
-                                        @Html.DisplayFor(modelItem => item.InsuranceName)
+                                        @Html.DisplayFor(modelItem => item.Name)
                                     </td>
-                                    <td>
-                                        @Html.DisplayFor(modelItem => item.Discount) درصد
-                                    </td>
+                                    
                                     <td>
                                         <a id="@editButtonId" class="btn btn-sm btn-success" data-toggle="modal" data-target="#@editModalId">ویرایش</a> |
 
@@ -104,7 +91,7 @@
                                             function(isConfirm) {
                                                 if (isConfirm) {
                                                     $.ajax({
-                                                        url: "/ClinicManager/Home/DeleteInsuranceProvider/",
+                                                        url: "/Pharmacy/Home/DeleteDrugCategory/",
                                                         type: "POST",
                                                         data: {
                                                             id: @item.Id
@@ -112,7 +99,7 @@
                                                         dataType: "html",
                                                         success: function() {
                                                             swal("انجام شد!",
-                                                                "بیمه مورد نظر با موفقت حذف شد!",
+                                                                "دسته مورد نظر با موفقت حذف شد!",
                                                                 "success");
                                                             $("#row-@i").hide("slow",
                                                                 function() {
@@ -131,6 +118,18 @@
                                                                         closeOnConfirm: true
                                                                     }
                                                                 );
+                                                            },
+                                                            403: function () {
+                                                                swal({
+                                                                    title: "خطا!",
+                                                                    text: "این دسته شامل داروهایی می باشد که در نسخه بیماران این کلینیک موجود است!",
+                                                                    type: "error",
+                                                                    showCancelButton: false,
+                                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                    confirmButtonText: 'باشه!',
+                                                                    closeOnConfirm: true
+                                                                }
+                                                                );
                                                             }
                                                         }
                                                     });
@@ -141,24 +140,18 @@
                                     <div id="@editModalId" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                         <div class="modal-dialog">
                                             <div class="modal-content">
-                                                <form method="post" asp-action="EditInsurance">
+                                                <form method="post" asp-action="EditDrugCategory">
                                                     <input type="hidden" value="@item.Id" name="id" />
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                                                        <h4 class="modal-title">ویرایش شرکت بیمه تحت پوشش کلینیک</h4>
+                                                        <h4 class="modal-title">ویرایش دسته بندی</h4>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="row">
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label for="insuranceName" class="control-label">نام</label>
-                                                                    <input type="text" class="form-control" id="insuranceName" value="@item.InsuranceName" required="" name="insuranceName" placeholder="نام شرکت بیمه">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-md-6">
-                                                                <div class="form-group">
-                                                                    <label for="discount" class="control-label">درصد تخفیف</label>
-                                                                    <input type="tel" class="form-control" id="discount" name="discount" value="@item.Discount" required="" placeholder="10">
+                                                                    <label for="categoryNameEdit" class="control-label">نام دسته</label>
+                                                                    <input type="text" class="form-control" id="categoryNameEdit" value="@item.Name" required="" name="categoryName" placeholder="نام دسته">
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -181,7 +174,7 @@
                 else
                 {
                     <div class="text-center">
-                        هیچ بیمه ای وجود ندارد
+                        هیچ دسته ای وجود ندارد
                     </div>
                 }
 
@@ -189,5 +182,3 @@
         </div>
     </div>
 </div>
-
-

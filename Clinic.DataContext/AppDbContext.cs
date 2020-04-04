@@ -34,7 +34,7 @@ namespace Clinic.DataContext
         public virtual DbSet<Reply> Replies { get; set; }
 
         public virtual DbSet<ManagerMessage> ManagerMessages { get; set; }
-
+        public virtual DbSet<DrugCategory> DrugCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

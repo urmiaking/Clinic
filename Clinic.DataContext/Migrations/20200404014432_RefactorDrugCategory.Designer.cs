@@ -4,14 +4,16 @@ using Clinic.DataContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Clinic.DataContext.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20200404014432_RefactorDrugCategory")]
+    partial class RefactorDrugCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,7 +66,7 @@ namespace Clinic.DataContext.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DrugCategories");
+                    b.ToTable("DrugCategory");
                 });
 
             modelBuilder.Entity("Clinic.Models.DomainClasses.Appointment.InsuranceProvider", b =>

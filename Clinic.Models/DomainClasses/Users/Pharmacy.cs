@@ -7,6 +7,6 @@ namespace Clinic.Models.DomainClasses.Users
 {
     public class Pharmacy : User
     {
-        public ICollection<Drug> Drugs { get; set; }
+
     }
 }

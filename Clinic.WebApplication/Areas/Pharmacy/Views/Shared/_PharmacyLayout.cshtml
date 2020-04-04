@@ -19,6 +19,7 @@
     <link href="/Administrators/assets/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
     <!-- Custom box css -->
     <link href="/Administrators/assets/plugins/custombox/dist/custombox.min.css" rel="stylesheet">
+    @RenderSection("Head", false)
     <!-- App CSS -->
     <link href="/Administrators/assets/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/core.css" rel="stylesheet" type="text/css" />
@@ -28,7 +29,7 @@
     <link href="/Administrators/assets/css/menu.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/responsive.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/AdminLTE.css" rel="stylesheet" type="text/css" />
-    @RenderSection("Head", false)
+
     <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -118,7 +119,9 @@
                         <li>
                             <a asp-action="ManageDrugs" class="waves-effect"><i class="fa fa-heartbeat"></i> <span> مدیریت داروها </span> </a>
                         </li>
-
+                        <li>
+                            <a asp-action="ManageDrugsCategory" class="waves-effect"><i class="fa fa-list"></i> <span> دسته بندی داروها </span> </a>
+                        </li>
                         <li>
                             <a asp-area="" asp-controller="Home" asp-action="Index" class="waves-effect"><i class="fa fa-home"></i> <span> بازگشت به صفحه اصلی </span> </a>
                         </li>
@@ -144,7 +147,10 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            var drugs = await DbContext.Drugs.Where(a => a.Category.Equals("نامشخص")).ToListAsync();
+                            var drugs = await DbContext.Drugs
+                                .Include(a => a.DrugCategory)
+                                .Where(a => a.DrugCategory.Name.Equals("نامشخص"))
+                                .ToListAsync();
 
                             var onlinePrescriptions = await DbContext.Prescriptions
                                 .Include(a => a.Visit)
@@ -214,6 +220,9 @@
     <!-- App js -->
     <script src="/Administrators/assets/js/jquery.core.js"></script>
     <script src="/Administrators/assets/js/jquery.app.js"></script>
+    <!-- Validation -->
+    <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <!-- Toaster js -->
     <script src="/Administrators/assets/plugins/toastr/toastr.min.js"></script>
     @RenderSection("Scripts", false)
