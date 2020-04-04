@@ -1,5 +1,4 @@
-﻿@using Microsoft.EntityFrameworkCore
-@inject AppDbContext Context
+﻿@inject AppDbContext DbContext
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -93,7 +92,7 @@
                 <div class="user-box">
                     <div class="user-img">
                         @{
-                            var doctor = await Context.Doctors
+                            var doctor = await DbContext.Doctors
                                 .FirstOrDefaultAsync(a => a.Username
                                     .Equals(User.Identity.Name));
                         }

@@ -91,7 +91,7 @@ namespace Clinic.WebApplication.Controllers
                     case Pharmacy _:
                         return RedirectToAction("Index", "Home", new { area = "Pharmacy" });
                     case Doctor _:
-                        return RedirectToAction("Index", "Home", new { area = "Pharmacy" });
+                        return RedirectToAction("Index", "Home", new { area = "Doctor" });
                 }
             }
 
