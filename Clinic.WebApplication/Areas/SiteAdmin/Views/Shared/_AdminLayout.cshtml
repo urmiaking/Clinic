@@ -1,4 +1,4 @@
-﻿@inject AppDbContext Context
+﻿@inject AppDbContext DbContext
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -148,7 +148,7 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            var messages = await Context.ManagerMessages.ToListAsync();
+                            var messages = await DbContext.ManagerMessages.ToListAsync();
 
                             if (messages.Count > 0)
                             {

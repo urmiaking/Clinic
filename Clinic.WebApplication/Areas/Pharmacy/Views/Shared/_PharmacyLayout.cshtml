@@ -1,12 +1,13 @@
-﻿@inject AppDbContext DbContext
+﻿
+@inject AppDbContext DbContext
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="پنل مدیریتی مدیر کلینیک فوق تخصصی بهار">
-    <meta name="author" content="Masoud Khodadadi">
+    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+    <meta name="author" content="Coderthemes">
 
     <!-- App Favicon -->
     <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
@@ -14,11 +15,10 @@
     <link rel="stylesheet" href="/Administrators/assets/css/ionicons.min.css">
     <!-- App title -->
     <title>@ViewBag.Title</title>
+    <!-- Notification css (Toaster) -->
+    <link href="/Administrators/assets/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
     <!-- Custom box css -->
     <link href="/Administrators/assets/plugins/custombox/dist/custombox.min.css" rel="stylesheet">
-    <!-- Notification css (Toastr) -->
-    <link href="/Administrators/assets/plugins/toastr/toastr.min.css" rel="stylesheet" type="text/css" />
-
     <!-- App CSS -->
     <link href="/Administrators/assets/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/core.css" rel="stylesheet" type="text/css" />
@@ -28,39 +28,25 @@
     <link href="/Administrators/assets/css/menu.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/responsive.css" rel="stylesheet" type="text/css" />
     <link href="/Administrators/assets/css/AdminLTE.css" rel="stylesheet" type="text/css" />
-    <script src="/Administrators/assets/js/jquery.min.js"></script>
-
+    @RenderSection("Head", false)
     <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 
     <script src="/Administrators/assets/js/modernizr.min.js"></script>
-    <style>
-        .checked {
-            color: orange;
-        }
-    </style>
-    @RenderSection("Links", false)
 </head>
+
 <body class="fixed-left">
     <div id="wrapper">
-
-        <!-- Top Bar Start -->
         <div class="topbar">
-
-            <!-- LOGO -->
             <div class="topbar-left">
                 <a asp-action="Index" class="logo"><span>کلینیک <span>بهار</span></span><i class="zmdi zmdi-layers"></i></a>
             </div>
-
-            <!-- Button mobile view to collapse sidebar menu -->
             <div class="navbar navbar-default" role="navigation">
                 <div class="container">
-
-                    <!-- Page title -->
                     <ul class="nav navbar-nav navbar-left">
                         <li>
                             <button class="button-menu-mobile open-left">
@@ -71,11 +57,8 @@
                             <h4 class="page-title">@ViewBag.Title</h4>
                         </li>
                     </ul>
-
-                    <!-- Right(Notification and Search box -->
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                            <!-- Notification -->
                             <div class="notification-box">
                                 <ul class="list-inline m-b-0">
                                     <li>
@@ -89,26 +72,20 @@
                                     </li>
                                 </ul>
                             </div>
-                            <!-- End Notification bar -->
                         </li>
-                        @RenderSection("Search", false)
                     </ul>
-
-                </div><!-- end container -->
-            </div><!-- end navbar -->
+                </div>
+            </div>
         </div>
-        <!-- Top Bar End -->
-        <!-- ========== Left Sidebar Start ========== -->
+
         <div class="left side-menu">
             <div class="sidebar-inner slimscrollleft">
-
-                <!-- User -->
                 <div class="user-box">
                     <div class="user-img">
-                        <img src="/Administrators/assets/images/users/manager.jpg" alt="user-img" title="مدیر کلینیک" class="img-circle img-thumbnail img-responsive">
+                        <img src="/Administrators/assets/images/users/pharmacy.png" alt="user-img" title="مسئول داروخانه" class="img-circle img-thumbnail img-responsive">
                         <div class="user-status online"><i class="zmdi zmdi-dot-circle"></i></div>
                     </div>
-                    <h5><a href="#">مدیر کلینیک</a> </h5>
+                    <h5><a href="#">مسئول داروخانه</a> </h5>
                     <ul class="list-inline">
                         <li>
                             <a asp-action="EditProfile">
@@ -123,8 +100,7 @@
                         </li>
                     </ul>
                 </div>
-                <!-- End User -->
-                <!--- Side menu -->
+
                 <div id="sidebar-menu">
                     <ul>
                         <li class="text-muted menu-title">دسته بندی ها</li>
@@ -133,15 +109,14 @@
                             <a asp-action="Index" class="waves-effect"><i class="zmdi zmdi-view-dashboard"></i> <span> داشبورد </span> </a>
                         </li>
                         <li>
-                            <a asp-action="DoctorsList" class="waves-effect"><i class="fa fa-user-md"></i> <span> لیست پزشکان </span> </a>
+                            <a asp-action="PrescriptionList" class="waves-effect"><i class="ti-pencil-alt"></i> <span> لیست نسخه ها </span> </a>
                         </li>
 
                         <li>
-                            <a asp-action="Complains" class="waves-effect"><i class="fa fa-edit"></i> <span> رسیدگی به شکایات </span> </a>
+                            <a asp-action="PrescriptionOnlineList" class="waves-effect"><i class="fa fa-cart-plus"></i> <span> لیست نسخه های پستی </span> </a>
                         </li>
-
                         <li>
-                            <a asp-action="InsuranceProviders" class="waves-effect"><i class="fa fa-shield"></i> <span> بیمه های تحت پوشش </span> </a>
+                            <a asp-action="ManageDrugs" class="waves-effect"><i class="fa fa-heartbeat"></i> <span> مدیریت داروها </span> </a>
                         </li>
 
                         <li>
@@ -150,31 +125,17 @@
                     </ul>
                     <div class="clearfix"></div>
                 </div>
-                <!-- Sidebar -->
                 <div class="clearfix"></div>
-
             </div>
-
         </div>
-        <!-- Left Sidebar End -->
-        <!-- ============================================================== -->
-        <!-- Start right Content here -->
-        <!-- ============================================================== -->
+
         <div class="content-page">
-            <!-- Start content -->
             <div class="content">
                 @RenderBody()
-
                 <footer class="footer">
                     Developed By Masoud Khodadadi
                 </footer>
-
             </div>
-            <!-- End content-page -->
-            <!-- ============================================================== -->
-            <!-- End Right content here -->
-            <!-- ============================================================== -->
-            <!-- Right Sidebar -->
             <div class="side-bar right-bar">
                 <a href="javascript:void(0);" class="right-bar-toggle">
                     <i class="zmdi zmdi-close-circle-o"></i>
@@ -183,21 +144,40 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            List<Report> reports = await DbContext.Reports.Where(a => a.Status.Equals("در انتظار بررسی")).ToListAsync();
+                            var drugs = await DbContext.Drugs.Where(a => a.Category.Equals("نامشخص")).ToListAsync();
 
-                            if (reports.Count > 0)
+                            var onlinePrescriptions = await DbContext.Prescriptions
+                                .Include(a => a.Visit)
+                                .Where(a => a.PaymentMethod.Equals("غیر نقدی") && a.Status.Equals("ارسال نشده")).ToListAsync();
+
+                            if (drugs.Count > 0 || onlinePrescriptions.Count > 0)
                             {
-                                foreach (var report in reports)
+                                foreach (var drug in drugs)
                                 {
                                     <li class="list-group-item">
-                                        <a asp-action="CheckComplain" asp-route-id="@report.Id" class="user-list-item">
+                                        <a asp-action="ManageDrugs" class="user-list-item">
                                             <div class="icon bg-pink">
-                                                <i class="zmdi zmdi-flag"></i>
+                                                <i class="fa fa-question-circle"></i>
                                             </div>
                                             <div class="user-desc">
-                                                <span class="name">گزارش جدید</span>
-                                                <span class="desc">@report.Title</span>
-                                                <span class="time">@report.ComplainDate.ElapsedTimeNotification()</span>
+                                                <span class="name">داروی ناشناس</span>
+                                                <span class="desc">@drug.Name</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+
+                                foreach (var prescription in onlinePrescriptions)
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-action="PrescriptionOnlineList" class="user-list-item">
+                                            <div class="icon bg-pink">
+                                                <i class="zmdi zmdi-email"></i>
+                                            </div>
+                                            <div class="user-desc">
+                                                <span class="name">نسخه جدید</span>
+                                                <span class="desc">@prescription.PaymentMethod (@prescription.Status)</span>
+                                                <span class="time">@prescription.Visit.Reservation.ReserveDate.ElapsedTimeNotification()</span>
                                             </div>
                                         </a>
                                     </li>
@@ -218,7 +198,6 @@
     <script>
         var resizefunc = [];
     </script>
-
     <!-- jQuery  -->
     <script src="/Administrators/assets/js/jquery.min.js"></script>
     <script src="/Administrators/assets/js/bootstrap-rtl.min.js"></script>
@@ -235,60 +214,57 @@
     <!-- App js -->
     <script src="/Administrators/assets/js/jquery.core.js"></script>
     <script src="/Administrators/assets/js/jquery.app.js"></script>
-
-    <!-- Validation -->
-    <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
-    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <!-- Toaster js -->
     <script src="/Administrators/assets/plugins/toastr/toastr.min.js"></script>
-
-    <script>
-    $(function() {
-        if ("@TempData["Error"]" != "")
-        {
-            toastr["error"]("@TempData["Error"]", "خطا");
-
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-bottom-left",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "500",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            }
-        }
-        if ("@TempData["Success"]" != "") {
-            toastr["success"]("@TempData["Success"]", "موفق");
-
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "500",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            }
-        }
-    });
-    </script>
     @RenderSection("Scripts", false)
+    <script>
+            $(function() {
+                if ("@TempData["Error"]" != "")
+                {
+                    toastr["error"]("@TempData["Error"]", "خطا");
+
+                    toastr.options = {
+                        "closeButton": false,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": false,
+                        "positionClass": "toast-bottom-left",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "500",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    }
+                }
+                if ("@TempData["Success"]" != "")
+                {
+                    toastr["success"]("@TempData["Success"]", "موفق")
+
+                    toastr.options = {
+                        "closeButton": false,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": false,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "500",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    }
+                }
+
+            });
+    </script>
 </body>
 </html>
