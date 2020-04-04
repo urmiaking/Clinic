@@ -1,0 +1,80 @@
+﻿@model Visit
+@{
+    ViewBag.Title = "جزئیات ویزیت بیمار " + Model.Reservation.Patient.FullName;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">جزئیات ویزیت بیمار @Model.Reservation.Patient.FullName</h4>
+
+                <div class="form-group">
+                    <label asp-for="CauseOfPatientReferral"></label>
+                    <input type="text" name="patientReferral" value="@Model.CauseOfPatientReferral" 
+                           class="form-control" id="patientReferral" readonly="" placeholder="دلیل مراجعه بیمار">
+                </div>
+                <div class="form-group">
+                    <label asp-for="DoctorAssessment"></label>
+                    <input type="text" name="docAssessment" value="@Model.DoctorAssessment" 
+                           class="form-control" id="docAssessment" readonly="" placeholder="تشخیص پزشک">
+                </div>
+                <div class="form-group">
+                    <label asp-for="DoctorNote"></label>
+                    <input type="text" name="docNote" value="@Model.DoctorNote" 
+                           class="form-control" id="docNote" readonly="" placeholder="در صورت نیاز یادداشتی برای ویزیت بنویسید">
+                </div>
+
+                <hr />
+                <h4 class="header-title m-t-0 m-b-30">داروهای تجویز شده</h4>
+
+                @if (Model.Prescription != null)
+                {
+                    foreach (var drug in Model.Prescription.PrescriptionDrugs)
+                    {
+                        <div class="row text-center">
+                            <div class="col-sm-8">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <label for="drugName" class="control-label">نام دارو</label>
+                                        </div>
+                                        <div class="col-sm-5">
+                                            <input type="text" readonly="" 
+                                                   class="form-control" id="drugName" value="@drug.Drug.Name">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            <label for="drugCount" class="control-label">تعداد</label>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <input type="text" readonly=""
+                                                   class="form-control" id="drugCount" value="@drug.Count">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center">
+                        شما دارویی برای @Model.Reservation.Patient.FullName تجویز نکرده اید!
+                    </div>
+                }
+
+                <br />
+                <div class="text-center">
+                    <a asp-action="VisitedPatient" asp-route-patientId="@Model.Reservation.PatientId"
+                       asp-route-docId="@Model.Reservation.DoctorId" class="btn btn-info">بازگشت</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

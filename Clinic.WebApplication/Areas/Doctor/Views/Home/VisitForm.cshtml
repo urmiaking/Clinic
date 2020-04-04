@@ -1,0 +1,98 @@
+﻿@model Reservation
+@inject AppDbContext DbContext
+@{
+    ViewBag.Title = "نوشتن ویزیت برای " + Model.Patient.FullName;
+
+    List<SelectListItem> insuranceList = new List<SelectListItem>();
+    foreach (var insurance in await DbContext.InsuranceProviders.ToListAsync())
+    {
+        insuranceList.Add(new SelectListItem { Text = insurance.InsuranceName, Value = insurance.InsuranceName });
+    }
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <form asp-action="AddVisit" method="post">
+                    <input name="patientId" value="@Model.PatientId" type="hidden" />
+                    <input name="docId" value="@Model.DoctorId" type="hidden" />
+                    <input name="reserveDate" value="@Model.ReserveDate" type="hidden" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="header-title m-t-0 m-b-30">مشخصات ویزیت</h4>
+                            <hr />
+                            <div class="form-group">
+                                <label for="patientReferral">دلیل مراجعه بیمار</label>
+                                <input type="text" name="patientReferral" class="form-control" id="patientReferral" required="" placeholder="دلیل مراجعه بیمار">
+                            </div>
+                            <div class="form-group">
+                                <label for="docAssessment">تشخیص پزشک</label>
+                                <input type="text" name="docAssessment" class="form-control" id="docAssessment" required="" placeholder="تشخیص پزشک">
+                            </div>
+                            <div class="form-group">
+                                <label for="docNote">یادداشت</label>
+                                <input type="text" name="docNote" class="form-control" id="docNote" required="" placeholder="در صورت نیاز یادداشتی برای ویزیت بنویسید">
+                            </div>
+                            <br />
+                        </div>
+                        <div class="col-md-6">
+                            <h4 class="header-title m-t-0 m-b-30">نسخه</h4>
+                            <hr />
+                            <div class="form-group">
+                                <label>داروها</label>
+                                <input type="text" name="drugList" class="form-control" />
+                                <span class="help-block"><small>مثال: آستامینافن،1،سرماخوردگی،2</small></span>
+                            </div>
+                            <div class="form-group">
+                                <label>بیمه</label>
+                                <select class="form-control" name="insuranceName" asp-items="insuranceList">
+                                    <option value="">انتخاب کنید</option>
+                                </select>
+                                <span class="help-block"><small>در صورت عدم ارائه بیمه توسط بیمار، این فیلد را خالی بگذارید</small></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4 class="header-title m-t-0 m-b-30">ویزیت دوباره</h4>
+                            <div class="form-group">
+                                <label for="pcal1">تاریخ ملاقات </label>
+                                <input type="text" id="pcal1" class="form-control pdate" value="" name="reserveDateAgain">
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <label for="hourList"> ساعت </label>
+                                <select class="form-control" name="reserveTimeAgain" id="hourList">
+                                    <option selected="">ساعت مورد نظر را انتخاب کنید</option>
+                                    <option value="EightTen">8-10</option>
+                                    <option value="TenTwelve">10-12</option>
+                                    <option value="TwelveFourteen">12-14</option>
+                                    <option value="FourteenSixteen">14-16</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-success">ثبت ویزیت</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Head
+{
+    <link rel="stylesheet" href="/Administrators/assets/css/calendar/jspc-royal_blue.css">
+
+    <!-- scripts -->
+    <script type="text/javascript" src="/Administrators/assets/css/calendar/js-persian-cal.min.js"></script>
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var objCal1 = new AMIB.persianCalendar('pcal1');
+    </script>
+}

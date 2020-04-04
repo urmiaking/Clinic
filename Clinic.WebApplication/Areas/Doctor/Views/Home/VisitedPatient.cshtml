@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Visit>
+@{
+    ViewBag.Title = "ویزیت های بیمار " + Model.FirstOrDefault()?.Reservation.Patient.FullName;
+    int i = 1;
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box table-responsive">
+                <h4 class="header-title m-t-0 m-b-30">جدول ویزیت های بیمار @Model.FirstOrDefault()?.Reservation.Patient.FullName</h4>
+                <table id="datatable-responsive" class="text-center table table-striped table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                    <thead>
+                        <tr>
+                            <th>شماره ویزیت</th>
+                            <th>تاریخ ویزیت</th>
+                            <th>جزئیات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var visit in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @i
+                                </td>
+                                <td>
+                                    @visit.Reservation.ReserveDate.ToHijriFarsiWithHourAndMinute()
+                                </td>
+                                <td>
+                                    <form method="post" asp-action="VisitFormDetails">
+                                        <input type="hidden" name="patientId" value="@visit.Reservation.PatientId" />
+                                        <input type="hidden" name="docId" value="@visit.Reservation.DoctorId" />
+                                        <input type="hidden" name="reserveDate" value="@visit.Reservation.ReserveDate" />
+                                        <button type="submit" class="btn btn-primary">مشاهده</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Head
+{
+    <!-- DataTables -->
+    <link href="/Administrators/assets/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+}
+
+
+
+@section Scripts {
+    <!-- DataTables-->
+    <script src="/Administrators/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/jszip.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/pdfmake.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/vfs_fonts.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.print.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.fixedHeader.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.keyTable.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/responsive.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.scroller.min.js"></script>
+
+    <!-- DataTable init js -->
+    <script src="/Administrators/assets/pages/datatables.init.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+            $('#datatable-keytable').DataTable({ keys: true });
+            $('#datatable-responsive').DataTable();
+            $('#datatable-scroller').DataTable({
+                ajax: "assets/plugins/datatables/json/scroller-demo.json",
+                deferRender: true,
+                scrollY: 380,
+                scrollCollapse: true,
+                scroller: true
+            });
+            var table = $('#datatable-fixed-header').DataTable({ fixedHeader: true });
+        });
+        TableManageButtons.init();
+    </script>
+}

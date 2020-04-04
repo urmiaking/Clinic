@@ -1,0 +1,130 @@
+﻿@model List<IGrouping<Patient, Reservation>>
+@{
+    ViewBag.Title = "بیماران ویزیت شده";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box table-responsive">
+                <div class="card-body">
+                    <h4 class="header-title m-t-0 m-b-30">جدول ویزیت های شما</h4>
+                    
+                    @if (Model.Any())
+                    {
+                        <table id="datatable-responsive" class="text-center table table-bordered dt-responsive nowrap" cellspacing="0" width="100%">
+                            <thead>
+                                <tr class="text-dark">
+                                    <th>عکس بیمار</th>
+                                    <th>نام بیمار</th>
+                                    <th>کد ملی</th>
+                                    <th>شماره همراه</th>
+                                    <th>مشاهده ویزیت ها</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    foreach (var patient in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a href="" data-toggle="modal" data-target="#">
+                                                    <img class="thumb-md img-circle img-thumbnail img-responsive" src="/Administrators/assets/images/patients/@patient.Key.ProfilePic">
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <div class="margin-top-td">
+                                                    @patient.Key.FullName
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="margin-top-td">
+                                                    @patient.Key.NationalCode
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="margin-top-td">
+                                                    @patient.Key.PhoneNumber
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="margin-top-td">
+                                                    <a class="btn btn-info label label-success"
+                                                       asp-action="VisitedPatient"
+                                                       asp-route-patientId="@patient.Key.Id"
+                                                       asp-route-docId="@ViewBag.DocId">
+                                                        <i class="fa fa-edit"></i> مشاهده
+                                                    </a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            شما تاکنون بیماری را ویزیت نکرده اید!
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Head
+{
+    <!-- DataTables -->
+    <link href="/Administrators/assets/plugins/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/buttons.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/fixedHeader.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/responsive.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/Administrators/assets/plugins/datatables/scroller.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .margin-top-td {
+            margin-top: 10px;
+        }
+    </style>
+}
+
+@section Scripts {
+    <!-- DataTables-->
+    <script src="/Administrators/assets/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.buttons.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/jszip.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/pdfmake.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/vfs_fonts.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.html5.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/buttons.print.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.fixedHeader.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.keyTable.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.responsive.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/responsive.bootstrap.min.js"></script>
+    <script src="/Administrators/assets/plugins/datatables/dataTables.scroller.min.js"></script>
+
+    <!-- DataTable init js -->
+    <script src="/Administrators/assets/pages/datatables.init.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#datatable').DataTable();
+            $('#datatable-keytable').DataTable({ keys: true });
+            $('#datatable-responsive').DataTable();
+            $('#datatable-scroller').DataTable({
+                ajax: "assets/plugins/datatables/json/scroller-demo.json",
+                deferRender: true,
+                scrollY: 380,
+                scrollCollapse: true,
+                scroller: true
+            });
+            var table = $('#datatable-fixed-header').DataTable({ fixedHeader: true });
+        });
+        TableManageButtons.init();
+    </script>
+}

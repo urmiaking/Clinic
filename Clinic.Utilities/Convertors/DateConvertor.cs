@@ -22,7 +22,7 @@ namespace Clinic.Utilities.Convertors
             return pc.ToString("dddd d MMMM yyyy");
         }
         
-        public static string ToHijriHour(this DateTime value)
+        public static string ToHijriFarsiHourWithoutMinutes(this DateTime value)
         {
             var pc = new PersianDateTime(value);
             return pc.ToString("ساعت HH");
@@ -32,6 +32,18 @@ namespace Clinic.Utilities.Convertors
         {
             var pc = new PersianDateTime(value);
             return pc.ToString("dddd d MMMM yyyy ساعت HH");
+        }
+        
+        public static string ToHijriFarsiWithHourAndMinute(this DateTime value)
+        {
+            var pc = new PersianDateTime(value);
+            return pc.ToString("dddd d MMMM yyyy ساعت HH:mm");
+        }
+
+        public static string ToHijriJustHour(this DateTime value)
+        {
+            var pc = new PersianDateTime(value);
+            return pc.ToString("HH:mm");
         }
 
         public static string ElapsedTime(this DateTime value)
