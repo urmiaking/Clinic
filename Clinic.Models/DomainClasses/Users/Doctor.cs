@@ -36,6 +36,7 @@ namespace Clinic.Models.DomainClasses.Users
         [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
         [ValidateAge(ErrorMessage = "سن عددی بین ۱۸ تا ۱۵۰ می باشد")]
         [Range(1, 150, ErrorMessage = "لطفا عددی مجاز وارد کنید")]
+        [DataType(DataType.PhoneNumber)]
         public short Age { get; set; }
 
         [Display(Name = "امتیاز")]

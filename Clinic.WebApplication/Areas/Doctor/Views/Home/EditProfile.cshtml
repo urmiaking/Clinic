@@ -1,0 +1,252 @@
+﻿@model Doctor
+
+@{
+    ViewBag.Title = "ویرایش پروفایل";
+}
+
+
+@section Head {
+    <!-- form Uploads -->
+    <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        .checked {
+            color: orange;
+        }
+
+        .profile-background {
+            background-image: url("/Administrators/assets/images/big/12.jpg") !important;
+            background-repeat: no-repeat !important;
+            background-size: cover !important;
+        }
+    </style>
+}
+
+<div class="container">
+    <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+        <input asp-for="Id" type="hidden"/>
+        <input asp-for="UserType" type="hidden" />
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card-box profile-background">
+                    <div class="text-center">
+                        <br />
+                        <img src="@Url.Content("/Administrators/assets/images/doctors/" + Model.ProfilePic)" class="img-circle thumb-xl img-thumbnail m-b-10" alt="profile-image">
+                        <h4>@Model.FullName</h4>
+
+                        @if (Model.Score > 4)
+                        {
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                        }
+                        else if (Model.Score > 3 && Model.Score <= 4)
+                        {
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                        }
+                        else if (Model.Score > 2 && Model.Score <= 3)
+                        {
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                        }
+                        else if (Model.Score > 1 && Model.Score <= 2)
+                        {
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                        }
+                        else if (Model.Score > 0 && Model.Score <= 1)
+                        {
+                            <span class="fa fa-star checked"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                        }
+                        else if (Math.Abs(Model.Score) < 0.001)
+                        {
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                            <span class="fa fa-star"></span>
+                        }
+                        <br />
+                        <label>امتیاز کل: @Model.Score</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0 m-b-30">اطلاعات شخصی</h4>
+                    <div class="form-group">
+                        <label class="control-label" asp-for="FullName">* نام و نام خانوادگی</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input asp-for="FullName" class="form-control" placeholder="نام و نام خانوادگی">
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Username">* نام کاربری</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+                            <input asp-for="Username" class="form-control" placeholder="نام کاربری">
+                        </div>
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Email">* ایمیل</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                            <input asp-for="Email" class="form-control" placeholder="آدرس پست الکترونیکی">
+                        </div>
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Gender">* جنسیت</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-male"></i></span>
+                            <select class="form-control" asp-for="Gender"
+                                    asp-items="new SelectList(Enum.GetValues(typeof(GenderEnum)))"></select>
+                        </div>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Age">* سن</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                            <input asp-for="Age" type="tel" class="form-control" placeholder="سن">
+                        </div>
+                        <span asp-validation-for="Age" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="NationalCode">* کد ملی</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+                            <input asp-for="NationalCode" type="tel" class="form-control" placeholder="کد ملی" >
+                        </div>
+                        <span asp-validation-for="NationalCode" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="PhoneNumber">* شماره تلفن</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                            <input asp-for="PhoneNumber" type="tel" class="form-control" placeholder="شماره تلفن" value="@Model.PhoneNumber">
+                        </div>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                        <br />
+
+
+                        <label class="control-label" asp-for="Password">رمز عبور</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="رمز عبور جدید">
+
+                        </div><span class="font-13 text-muted">در صورت تغییر رمز عبور این فیلد پر شود</span>
+                        <div>
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <br />
+                        <br />
+
+                        <label class="control-label" asp-for="ProfilePic">عکس پروفایل</label>
+                        <input asp-for="ProfilePic" type="file" class="dropify" data-default-file="/../../Administrators/assets/images/doctors/@Model.ProfilePic" />
+                        <span asp-validation-for="ProfilePic" class="text-danger"></span>
+
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card-box">
+                    <h4 class="header-title m-t-0 m-b-30">اطلاعات پزشکی</h4>
+                    <div class="form-group">
+                        <label class="control-label" asp-for="MedicalNumber">* شماره نظام پزشکی</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+                            <input asp-for="MedicalNumber" type="tel" class="form-control" placeholder="شماره نظام پزشکی">
+                        </div>
+                        <span asp-validation-for="MedicalNumber" class="text-danger"></span>
+                        <br />
+                        <label class="control-label" asp-for="Specialty">* تخصص</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-male"></i></span>
+                            @Html.DropDownListFor(a => a.Specialty,
+                                new SelectList(new List<SelectListItem>
+                                {
+                                    new SelectListItem {Text = "متخصص زنان", Value = "متخصص زنان"},
+                                    new SelectListItem {Text = "پزشک عمومی", Value = "پزشک عمومی"},
+                                    new SelectListItem {Text = "چشم پزشک", Value = "چشم پزشک"},
+                                    new SelectListItem {Text = "دندان پزشک", Value = "دندان پزشک"},
+                                    new SelectListItem {Text = "متخصص اطفال", Value = "متخصص اطفال"}
+                                }, "Value", "Text", Model.Specialty),
+                                new { @class = "form-control", required = "" })
+                        </div>
+                        <br />
+
+                        <label class="control-label" asp-for="Biography">شرح حال</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                            <textarea asp-for="Biography" style="resize: none" class="form-control" rows="9" placeholder="شرح حال"></textarea>
+                        </div>
+                        <span asp-validation-for="Biography" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Articles">مقالات</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                            <textarea asp-for="Articles" style="resize: none" class="form-control" rows="9" placeholder="مقالات منتشر شده"></textarea>
+                        </div>
+                        <span asp-validation-for="Articles" class="text-danger"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Books">کتاب ها و افتخارات</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-info"></i></span>
+                            <textarea asp-for="Books" style="resize: none" class="form-control" rows="8" placeholder="کتاب ها و افتخارات"></textarea>
+                        </div>
+                        <span asp-validation-for="Books" class="text-danger"></span>
+
+                        <hr />
+                        <div class="text-center">
+                            <input type="submit" class="btn btn-primary" value="ذخیره تغییرات" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts
+{
+    <!-- file uploads js -->
+    <script src="/Administrators/assets/plugins/fileuploads/js/dropify.min.js"></script>
+    <script type="text/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'عکس را به اینجا بکشید یا کلیک کنید',
+                'replace': 'برای جایگزینی عکس را به اینجا بکشید یا کلیک کنید',
+                'remove': 'پاک کردن',
+                'error': 'با پوزش فراوان، خطایی رخ داده'
+            },
+            error: {
+                'fileSize': 'حجم عکس بیشتر از حد مجاز است (1M).'
+            }
+        });
+    </script>
+}

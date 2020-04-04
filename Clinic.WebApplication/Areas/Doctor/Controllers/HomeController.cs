@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.Appointment;
+using Clinic.Services.LoginService;
 using Clinic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +20,12 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ILoginService _loginService;
 
-        public HomeController(AppDbContext db)
+        public HomeController(AppDbContext db, ILoginService loginService)
         {
             _db = db;
+            _loginService = loginService;
         }
 
         public async Task<IActionResult> Index()
@@ -191,6 +196,8 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             return StatusCode(200);
         }
 
+        #region TimeTable
+
         public async Task<IActionResult> ViewTimeTable()
         {
             var doctor = await _db.Doctors
@@ -228,5 +235,106 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             TempData["Success"] = "برنامه روزانه ویرایش یافت";
             return RedirectToAction("ViewTimeTable");
         }
+
+        #endregion
+
+        #region EditProfile
+
+        public async Task<IActionResult> EditProfile()
+        { 
+            var doctor = await _db.Doctors.FirstOrDefaultAsync(a => a.Username.Equals(User.Identity.Name));
+            return View(doctor);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(Models.DomainClasses.Users.Doctor doctor, IFormFile profilePic)
+        {
+            var oldDoctor = await _db.Doctors.AsNoTracking().FirstOrDefaultAsync(a => a.Id.Equals(doctor.Id));
+
+            if (oldDoctor == null)
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(doctor.Password))
+            {
+                if (doctor.Password.Count() < 6)
+                {
+                    ModelState.AddModelError("Password", "کلمه عبور باید حداقل شامل ۶ کاراکتر باشد");
+                }
+                else
+                {
+                    doctor.Password = _loginService.GetHash(doctor.Password);
+                }
+            }
+            else
+            {
+                doctor.Password = oldDoctor.Password;
+            }
+
+            doctor.Score = oldDoctor.Score;
+
+            if (!ModelState.IsValid)
+            {
+                doctor.ProfilePic = oldDoctor.ProfilePic;
+                ViewBag.ProfilePic = doctor.ProfilePic;
+                return View(doctor);
+            }
+
+            if (!(profilePic == null || profilePic.Length == 0))
+            {
+                if (profilePic.Length > 0 && profilePic.Length < 500000)
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(oldDoctor.ProfilePic))
+                        {
+                            var oldImage = oldDoctor.ProfilePic;
+                            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(),
+                                "wwwroot/Administrators/assets/images/doctors/", oldImage);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                            else
+                            {
+                                TempData["Error"] = "خطا در حذف عکس";
+                                return RedirectToAction("EditProfile");
+                            }
+                        }
+
+                        doctor.ProfilePic = Guid.NewGuid() + Path.GetExtension(profilePic.FileName);
+                        string savePath = Path.Combine(
+                            Directory.GetCurrentDirectory(), "wwwroot/Administrators/assets/images/doctors",
+                            doctor.ProfilePic
+                        );
+                        await using var stream = new FileStream(savePath, FileMode.Create);
+                        await profilePic.CopyToAsync(stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO: log error
+                        Console.WriteLine(ex.Message);
+                    }
+                else
+                {
+                    TempData["Error"] = "حجم عکس بارگذاری شده برای پروفایل پزشک بیشتر از 500 کیلوبایت می باشد";
+                    return RedirectToAction("EditProfile");
+                }
+            }
+
+            else
+            {
+                doctor.ProfilePic = oldDoctor.ProfilePic;
+            }
+
+            _db.Doctors.Update(doctor);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "پروفایل با موفقیت ذخیره شد";
+            return View(doctor);
+        }
+
+        #endregion
     }
 }
