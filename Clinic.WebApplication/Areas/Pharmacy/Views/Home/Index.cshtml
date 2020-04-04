@@ -1,15 +1,357 @@
-﻿
+﻿@model PharmacyDrugPrescriptionViewModel
 @{
-    Layout = null;
+    ViewBag.Title = "صفحه اصلی";
 }
 
-<!DOCTYPE html>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="small-box bg-blue">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.AllPrescriptions
+                    </h3>
+                    <p>تعداد کل نسخه های داروخانه</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-sticky-note"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.AllDeliveredPrescriptions
+                    </h3>
+                    <p>تعداد کل نسخه های تحویل داده شده</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-check"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>
+                        @Model.Drugs.Count()
+                    </h3>
+                    <p>تعداد داروهای داروخانه</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-medkit"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-action="PrescriptionList" style="margin-bottom: 10px;"
+                   class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+                <h4 class="header-title m-t-0 m-b-30">نسخه های امروز</h4>
+                @if (Model.Prescriptions.Any(a => a.PaymentMethod.Equals("نقدی")))
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>شماره نسخه</th>
+                                <th>کد ملی</th>
+                                <th>نام و نام خانوادگی</th>
+                                <th>بررسی نسخه</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var prescription in Model.Prescriptions.Where(a => a.PaymentMethod.Equals("نقدی")))
+                                {
+                                    var modalId = "edit-modal" + prescription.Id;
+                                    var dataTarget = "#" + modalId;
+                                    <div id=@modalId class="modal fade in" tabindex="-1" role="dialog"
+                                         aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog">
+                                            <form asp-action="PrescriptionCheck" method="post">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title">مشاهده نسخه بیمار @prescription.Visit.Reservation.Patient.FullName</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userNationalCode" class="control-label">کد ملی</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userNationalCode" value="@prescription.Visit.Reservation.Patient.NationalCode">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userFullName" class="control-label">نام و نام خانوادگی بیمار</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userFullName" value="@prescription.Visit.Reservation.Patient.FullName">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @{
+                                                            var totalCost = 0;
+                                                            var discountCost = 0;
+                                                            if (prescription.Visit.InsuranceProvider != null)
+                                                            {
+                                                                foreach (var drug in prescription.PrescriptionDrugs)
+                                                                {
+                                                                    discountCost += drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100;
+                                                                }
+                                                            }
+                                                            foreach (var drug in prescription.PrescriptionDrugs)
+                                                            {
+                                                                <div class="row">
+                                                                    <div class="col-xs-10">
+                                                                        <div class="form-group">
+                                                                            <label for="drugName" class="control-label">نام دارو</label>
+                                                                            <input type="text" readonly="" class="form-control" id="drugName" value="@drug.Drug.Name">
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-xs-2">
+                                                                        <div class="form-group">
+                                                                            <label for="drugCount" class="control-label">تعداد</label>
+                                                                            <input type="text" readonly="" class="form-control" id="drugCount" value="@drug.Count">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                totalCost += drug.Drug.Cost * drug.Count;
+                                                            }
+                                                            var payCost = totalCost - discountCost;
+                                                        }
+                                                        @if (prescription.Visit.InsuranceProvider != null)
+                                                        {
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <label for="userTotalCost" class="control-label">مبلغ قابل پرداخت با احتساب بیمه</label>
+                                                                        <input type="text" readonly="" class="form-control" id="userTotalCost" value="@payCost تومان">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="row">
+                                                                <div class="col-md-12">
+                                                                    <div class="form-group">
+                                                                        <label for="userTotalCost" class="control-label">مبلغ قابل پرداخت</label>
+                                                                        <input type="text" readonly="" class="form-control" id="userTotalCost" value="@totalCost تومان">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="@prescription.Id" />
+                                                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                                                        <button type="submit" class="btn btn-success waves-effect waves-light">پرداخت شد</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <tr>
+                                        <th>@prescription.Id</th>
+                                        <td>@prescription.Visit.Reservation.Patient.NationalCode</td>
+                                        <td>@prescription.Visit.Reservation.Patient.FullName</td>
+                                        <td>
+                                            <a href="#" data-toggle="modal" data-target=@dataTarget class="btn btn-success label label-success">
+                                                <i class="fa fa-pencil">&nbsp;</i>
+                                                مشاهده
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">نسخه ای برای نمایش وجود ندارد</div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-action="PrescriptionOnlineList" style="margin-bottom: 10px;"
+                   class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+                <h4 class="header-title m-t-0 m-b-30">نسخه های پستی امروز</h4>
+                @if (Model.Prescriptions.Any(a => a.PaymentMethod.Equals("غیر نقدی") &&
+                                              a.Status.Equals("ارسال نشده")))
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>شماره نسخه</th>
+                                <th>کد ملی</th>
+                                <th>نام و نام خانوادگی</th>
+                                <th>بررسی نسخه</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                foreach (var prescription in Model.Prescriptions.
+                                    Where(a => a.PaymentMethod.Equals("غیر نقدی") &&
+                                                          a.Status.Equals("ارسال نشده")))
+                                {
+                                    var modalId = "edit-modal" + prescription.Id;
+                                    var dataTarget = "#" + modalId;
+                                    <div id=@modalId class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+                                        <div class="modal-dialog">
+                                            <form asp-action="PrescriptionOnlineCheck" method="post">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                                        <h4 class="modal-title">مشاهده نسخه بیمار @prescription.Visit.Reservation.Patient.FullName</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userNationalCode" class="control-label">کد ملی</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userNationalCode" value="@prescription.Visit.Reservation.Patient.NationalCode">
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userFullName" class="control-label">نام و نام خانوادگی بیمار</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userFullName" value="@prescription.Visit.Reservation.Patient.FullName">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        @foreach (var drug in prescription.PrescriptionDrugs.Where(a => a.IsBought.Equals(true)))
+                                                        {
+                                                            <div class="row">
+                                                                <div class="col-xs-10">
+                                                                    <div class="form-group">
+                                                                        <label for="drugName" class="control-label">نام دارو</label>
+                                                                        <input type="text" readonly="" class="form-control" id="drugName" value="@drug.Drug.Name">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-xs-2">
+                                                                    <div class="form-group">
+                                                                        <label for="drugCount" class="control-label">تعداد</label>
+                                                                        <input type="text" readonly="" class="form-control" id="drugCount" value="@drug.Count">
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userAddress" class="control-label">آدرس پستی بیمار</label>
+                                                                    <textarea readonly="" class="form-control" id="userAddress">@prescription.Visit.Reservation.Patient.Address</textarea>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userZipCode" class="control-label">کد پستی بیمار</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userZipCode" value="@prescription.Visit.Reservation.Patient.ZipCode">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <input type="hidden" name="id" value="@prescription.Id" />
+                                                        <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
+                                                        <button type="submit" class="btn btn-success waves-effect waves-light">تحویل داده شد</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    <tr>
+                                        <th>@prescription.Id</th>
+                                        <td>@prescription.Visit.Reservation.Patient.NationalCode</td>
+                                        <td>@prescription.Visit.Reservation.Patient.FullName</td>
+                                        <td>
+                                            <a href="#" data-toggle="modal" data-target=@dataTarget class="btn btn-success label label-success">
+                                                <i class="fa fa-pencil">&nbsp;</i>
+                                                مشاهده
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">نسخه ای برای نمایش وجود ندارد</div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-action="ManageDrugs" style="margin-bottom: 10px;" 
+                   class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+                <h4 class="header-title m-t-0 m-b-30">داروهای اخیرا به ثبت رسیده</h4>
+                @if (Model.Drugs.Any())
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>نام دارو</th>
+                                <th>دسته بندی</th>
+                                <th>موجودی</th>
+                                <th>قیمت واحد</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var drug in Model.Drugs.OrderByDescending(a => a.Id).Take(10))
+                            {
+                                <tr>
+                                    <th>@drug.Name</th>
+                                    <td>@drug.Category</td>
+                                    <td>@drug.Count بسته</td>
+                                    <td>
+                                        @drug.Cost تومان
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">دارویی برای نمایش وجود ندارد</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
