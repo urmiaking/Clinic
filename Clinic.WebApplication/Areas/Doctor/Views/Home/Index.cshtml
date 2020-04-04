@@ -78,7 +78,7 @@
             <div class="card-box">
                 @if (Model.Reserves.Any())
                 {
-                    <a asp-action="ReserveTable" style="margin-bottom: 10px;" 
+                    <a asp-action="ReserveTable" style="margin-bottom: 10px;"
                        class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
                         <span style="margin-right: 5px;">بیشتر</span>
                         <i class="fa fa-arrow-left m-l-5"></i>
@@ -99,16 +99,17 @@
                             {
                                 var profileModalId = "profile-modal-" + i;
                                 var patientPostponingModalId = "postpone-modal-" + i;
+                                var patientPostponingFormId = "postpone-form-" + i;
                                 var patientAbsenceSwalId = "absence-swal-" + i;
                                 var trId = "reserve-tr-" + i;
                                 i++;
                                 <tr id="@trId">
                                     <td>
                                         <a href="" data-toggle="modal" data-target="#@profileModalId">
-                                            <img class="thumb-md img-circle img-thumbnail img-responsive" 
+                                            <img class="thumb-md img-circle img-thumbnail img-responsive"
                                                  src="/Administrators/assets/images/patients/@reserve.Patient.ProfilePic">
                                         </a>
-                                        <div id="@profileModalId" class="modal fade" tabindex="-1" 
+                                        <div id="@profileModalId" class="modal fade" tabindex="-1"
                                              role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                             <div class="modal-dialog">
                                                 <div class="modal-content">
@@ -121,7 +122,7 @@
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
                                                                     <label for="field-3" class="control-label">نام و نام خانوادگی</label>
-                                                                    <input type="text" class="form-control" id="field-3" 
+                                                                    <input type="text" class="form-control" id="field-3"
                                                                            disabled="" value="@reserve.Patient.FullName">
                                                                 </div>
                                                             </div>
@@ -130,14 +131,14 @@
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label for="field-1" class="control-label">ایمیل</label>
-                                                                    <input type="email" class="form-control" id="field-1" 
+                                                                    <input type="email" class="form-control" id="field-1"
                                                                            disabled="" value="@reserve.Patient.Email">
                                                                 </div>
                                                             </div>
                                                             <div class="col-md-6">
                                                                 <div class="form-group">
                                                                     <label for="field-2" class="control-label">شماره تلفن</label>
-                                                                    <input type="tel" class="form-control" id="field-2" 
+                                                                    <input type="tel" class="form-control" id="field-2"
                                                                            disabled="" value="@reserve.Patient.PhoneNumber">
                                                                 </div>
                                                             </div>
@@ -160,7 +161,7 @@
                                                             <div class="col-md-4">
                                                                 <div class="form-group">
                                                                     <label for="field-6" class="control-label">جنسیت</label>
-                                                                    <input type="text" class="form-control" id="field-6" 
+                                                                    <input type="text" class="form-control" id="field-6"
                                                                            disabled="" value="@reserve.Patient.Gender">
                                                                 </div>
                                                             </div>
@@ -182,8 +183,8 @@
                                     </td>
                                     <td>
                                         <div class="margin-top-td">
-                                            <a asp-action="VisitForm" 
-                                               asp-route-patientId="@reserve.PatientId" 
+                                            <a asp-action="VisitForm"
+                                               asp-route-patientId="@reserve.PatientId"
                                                asp-route-docId="@reserve.DoctorId"
                                                asp-route-reserveDate="@reserve.ReserveDate" class="btn btn-success label label-success">
                                                 <i class="fa fa-edit"></i> ویزیت
@@ -198,7 +199,7 @@
                                             <div id="@patientPostponingModalId" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                                 <div class="modal-dialog">
                                                     <div class="modal-content">
-                                                        <form method="post" asp-action="PostponeReserve">
+                                                        <form id="@patientPostponingFormId" method="post" asp-action="PostponeReserve">
                                                             <input type="hidden" name="patientId" value="@reserve.PatientId" />
                                                             <input type="hidden" name="docId" value="@reserve.DoctorId" />
                                                             <input type="hidden" name="oldDate" value="@reserve.ReserveDate" />
@@ -237,58 +238,131 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <script>
+                                                $("#@patientPostponingFormId").submit(function(e) {
+                                                    e.preventDefault();
+
+                                                    var form = $(this);
+                                                    var url = form.attr('action');
+
+                                                    swal({
+                                                        title: "مطمئنی ؟؟",
+                                                        text: "",
+                                                        type: "error",
+                                                        showCancelButton: true,
+                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                        confirmButtonText: 'بله!',
+                                                        closeOnConfirm: false
+                                                    },
+                                                    function(isConfirm) {
+                                                        if (isConfirm) {
+                                                            $.ajax({
+                                                                type: "POST",
+                                                                url: url,
+                                                                data: form.serialize(),
+                                                                success: function() {
+                                                                    swal({
+                                                                        title: "وقت ملاقات تغییر یافت!",
+                                                                        text: "",
+                                                                        timer: 3000,
+                                                                        showConfirmButton: false
+                                                                    });
+                                                                    window.location.href =
+                                                                        '@Url.Action("Index", "Home")';
+                                                                },
+                                                                statusCode: {
+                                                                    404: function() {
+                                                                        swal({
+                                                                                title: "دسترسی غیر مجاز!",
+                                                                                text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                                type: "error",
+                                                                                showCancelButton: false,
+                                                                                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                                confirmButtonText: 'باشه ببخشید!',
+                                                                                closeOnConfirm: true
+                                                                            }
+                                                                        );
+                                                                    },
+                                                                    401: function() {
+                                                                        swal({
+                                                                            title: "لطفا تاریخ را وارد کنید!",
+                                                                            text: "!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه!',
+                                                                            closeOnConfirm: true
+                                                                        });
+                                                                    },
+                                                                    403: function () {
+                                                                        swal({
+                                                                            title: "ناموفق!",
+                                                                            text: "متاسفانه این تاریخ پر می باشد. لطفا وقت دیگری را انتخاب کنید!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه!',
+                                                                            closeOnConfirm: true
+                                                                        });
+                                                                    }
+                                                                }
+                                                            });
+                                                        }
+                                                    });
+                                                });
+                                            </script>
                                             <span>
                                                 &nbsp;
                                                 <a id="@patientAbsenceSwalId" class="btn btn-danger label label-danger">
                                                     <i class="fa fa-remove"></i> عدم حضور بیمار
                                                 </a>
                                                 <script>
-                                                $('#@patientAbsenceSwalId').click(function() {
-                                                    swal({
-                                                            title: "مطمئنی ؟؟",
-                                                            text:
-                                                                "تنها در صورت عدم حضور بیمار در ساعت مقرر، آن را لغو کنید",
-                                                            type: "error",
-                                                            showCancelButton: true,
-                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
-                                                            confirmButtonText: 'بله!',
-                                                            closeOnConfirm: false
-                                                        },
-                                                        function(isConfirm) {
-                                                            if (isConfirm) {
-                                                                $.ajax({
-                                                                    url: "/Doctor/Home/AbsencePatient/",
-                                                                    type: "POST",
-                                                                    data: {
-                                                                        reserveDate: "@reserve.ReserveDate",
-                                                                        docId: @reserve.DoctorId,
-                                                                        patientId: @reserve.PatientId
-                                                                    },
-                                                                    dataType: "html",
-                                                                    success: function() {
-                                                                        swal("انجام شد!",
-                                                                            "وقت ملاقات بیمار مورد نظر با موفقیت لغو شد!",
-                                                                            "success");
-                                                                        $("#@trId").remove();
-                                                                    },
-                                                                    statusCode: {
-                                                                        403: function() {
-                                                                            swal({
-                                                                                 title: "دسترسی غیر مجاز!",
-                                                                                 text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
-                                                                                 type: "error",
-                                                                                 showCancelButton: false,
-                                                                                 confirmButtonClass: 'btn-danger waves-effect waves-light',
-                                                                                 confirmButtonText: 'باشه ببخشید!',
-                                                                                 closeOnConfirm: true
-                                                                                }
-                                                                            );
+                                                    $('#@patientAbsenceSwalId').click(function() {
+                                                        swal({
+                                                                title: "مطمئنی ؟؟",
+                                                                text:
+                                                                    "تنها در صورت عدم حضور بیمار در ساعت مقرر، آن را لغو کنید",
+                                                                type: "error",
+                                                                showCancelButton: true,
+                                                                confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                confirmButtonText: 'بله!',
+                                                                closeOnConfirm: false
+                                                            },
+                                                            function(isConfirm) {
+                                                                if (isConfirm) {
+                                                                    $.ajax({
+                                                                        url: "/Doctor/Home/AbsencePatient/",
+                                                                        type: "POST",
+                                                                        data: {
+                                                                            reserveDate: "@reserve.ReserveDate",
+                                                                            docId: @reserve.DoctorId,
+                                                                            patientId: @reserve.PatientId
+                                                                        },
+                                                                        dataType: "html",
+                                                                        success: function() {
+                                                                            swal("انجام شد!",
+                                                                                "وقت ملاقات بیمار مورد نظر با موفقیت لغو شد!",
+                                                                                "success");
+                                                                            $("#@trId").remove();
+                                                                        },
+                                                                        statusCode: {
+                                                                            404: function() {
+                                                                                swal({
+                                                                                        title: "دسترسی غیر مجاز!",
+                                                                                        text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                                        type: "error",
+                                                                                        showCancelButton: false,
+                                                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                                        confirmButtonText: 'باشه ببخشید!',
+                                                                                        closeOnConfirm: true
+                                                                                    }
+                                                                                );
+                                                                            }
                                                                         }
-                                                                    }
-                                                                });
-                                                            }
-                                                        });
-                                                });
+                                                                    });
+                                                                }
+                                                            });
+                                                    });
                                                 </script>
                                             </span>
                                         </div>
@@ -307,12 +381,12 @@
             </div>
         </div>
     </div>
-<div class="row">
+    <div class="row">
         <div class="col-md-12">
             <div class="card-box">
                 @if (Model.Visits.Any())
                 {
-                    <a asp-action="VisitedPatients" style="margin-bottom: 10px;" 
+                    <a asp-action="VisitedPatients" style="margin-bottom: 10px;"
                        class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
                         <span style="margin-right: 5px;">بیشتر</span>
                         <i class="fa fa-arrow-left m-l-5"></i>

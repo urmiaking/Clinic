@@ -1,0 +1,100 @@
+﻿@model DoctorWeekDaysViewModel
+@{
+    ViewBag.Title = "ویرایش برنامه روزانه";
+}
+
+@section Head
+{
+    <style>
+        .input-weekday {
+            border: none;
+            max-width: 50px;
+        }
+    </style>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <h4 class="header-title m-t-0 m-b-30">ویرایش برنامه روزانه</h4>
+               <form method="post">
+                    <table class="table table-responsive">
+                        <thead>
+                            <tr>
+                                <th scope="col">روز / ساعت</th>
+                                <th scope="col">8 تا 10</th>
+                                <th scope="col">10 تا 12</th>
+                                <th scope="col">12 تا 14</th>
+                                <th scope="col">14 تا 16</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var i = 0;
+                            }
+
+                            @foreach (var weekday in Model.WeekDays)
+                            {
+                                <tr>
+                                    @Html.HiddenFor(model => model.WeekDays[i].Id)
+                                    @Html.HiddenFor(model => model.WeekDays[i].DayName)
+                                    @Html.HiddenFor(model => model.WeekDays[i].DoctorId)
+                                    <th scope="row">@weekday.DayName</th>
+                                    <td>
+                                        @Html.DropDownListFor(model => model.WeekDays[i].EightTen, new SelectList(
+                                            new List<SelectListItem>
+                                            {
+                                                new SelectListItem { Text = "استراحت", Value = "استراحت"},
+                                                new SelectListItem { Text = "صبحانه", Value = "صبحانه"},
+                                                new SelectListItem { Text = "نهار", Value = "نهار"},
+                                                new SelectListItem { Text = "خالی", Value = "خالی"},
+                                            }, "Value", "Text", Model.WeekDays[i].EightTen),
+                                            new { @class = "input-weekday" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(model => model.WeekDays[i].TenTwelve, new SelectList(
+                                            new List<SelectListItem>
+                                            {
+                                                new SelectListItem { Text = "استراحت", Value = "استراحت"},
+                                                new SelectListItem { Text = "صبحانه", Value = "صبحانه"},
+                                                new SelectListItem { Text = "نهار", Value = "نهار"},
+                                                new SelectListItem { Text = "خالی", Value = "خالی"},
+                                            }, "Value", "Text", Model.WeekDays[i].TenTwelve),
+                                            new { @class = "input-weekday" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(model => model.WeekDays[i].TwelveFourteen, new SelectList(
+                                            new List<SelectListItem>
+                                            {
+                                                new SelectListItem { Text = "استراحت", Value = "استراحت"},
+                                                new SelectListItem { Text = "صبحانه", Value = "صبحانه"},
+                                                new SelectListItem { Text = "نهار", Value = "نهار"},
+                                                new SelectListItem { Text = "خالی", Value = "خالی"},
+                                            }, "Value", "Text", Model.WeekDays[i].TwelveFourteen),
+                                            new { @class = "input-weekday" })
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(model => model.WeekDays[i].FourteenSixteen, new SelectList(
+                                            new List<SelectListItem>
+                                            {
+                                                new SelectListItem { Text = "استراحت", Value = "استراحت"},
+                                                new SelectListItem { Text = "صبحانه", Value = "صبحانه"},
+                                                new SelectListItem { Text = "نهار", Value = "نهار"},
+                                                new SelectListItem { Text = "خالی", Value = "خالی"},
+                                            }, "Value", "Text", Model.WeekDays[i].FourteenSixteen),
+                                            new { @class = "input-weekday" })
+                                    </td>
+                                </tr>
+                                i++;
+                            }
+                        </tbody>
+                    </table>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">ذخیره</button>
+                    </div>
+               </form>
+            </div>
+        </div>
+    </div>
+</div>
