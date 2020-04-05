@@ -262,6 +262,84 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             return StatusCode(200);
         }
 
+        public async Task<IActionResult> ReserveList()
+        {
+            var reserveList = await _db.Reservations
+                .Include(a => a.Doctor)
+                .Where(a =>
+                    a.Patient.Username.Equals(User.Identity.Name) &&
+                    a.ReserveStatus.Contains("در انتظار ویزیت"))
+                .ToListAsync();
+
+            return View(reserveList);
+        }
+
+        #endregion
+
+        #region Visit
+        public async Task<IActionResult> VisitList()
+        {
+            var visitList = await _db.Visits
+                .Include(a => a.Reservation)
+                .ThenInclude(a => a.Doctor)
+                .Where(a => a.Reservation.Patient.Username.Equals(User.Identity.Name))
+                .ToListAsync();
+
+            return View(visitList);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Rate(int rate = 0, int visitId = 0)
+        {
+            if (rate == 0)
+            {
+                return NotFound();
+            }
+
+            var visit = await _db.Visits
+                .Include(a => a.Reservation)
+                .ThenInclude(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.Id.Equals(visitId));
+
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            visit.GivenScore = rate;
+
+            _db.Visits.Update(visit); 
+            await _db.SaveChangesAsync();
+
+            var doctor = visit.Reservation.Doctor;
+
+            if (doctor == null)
+            {
+                return NotFound();
+            }
+
+            var scores = await _db.Visits
+                .Where(a => 
+                    a.GivenScore.HasValue && 
+                    a.Reservation.Doctor.Id.Equals(doctor.Id))
+                .Select(a => a.GivenScore)
+                .ToListAsync();
+
+            var average = scores.Average();
+
+            if (average != null)
+            {
+                doctor.Score = average.Value;
+                _db.Doctors.Update(doctor);
+                await _db.SaveChangesAsync();
+            }
+
+            TempData["Success"] = "امتیاز شما با موفقیت ثبت شد";
+            return RedirectToAction("VisitList", "Home");
+        }
+
+
         #endregion
     }
 }
