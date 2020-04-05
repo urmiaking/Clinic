@@ -27,7 +27,10 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var drugs = await _db.Drugs.Include(a => a.DrugCategory).OrderByDescending(a => a.Id).ToListAsync();
+            var drugs = await _db.Drugs
+                .Include(a => a.DrugCategory)
+                .OrderByDescending(a => a.Id)
+                .ToListAsync();
 
             var prescriptions = await _db.Prescriptions
                     .Include(a => a.PrescriptionDrugs)
