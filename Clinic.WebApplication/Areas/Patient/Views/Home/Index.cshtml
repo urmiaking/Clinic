@@ -1,5 +1,4 @@
-﻿@using Clinic.Utilities.Convertors
-@model ReserveVisitViewModel
+﻿@model ReserveVisitViewModel
 @{
     ViewBag.Title = "صفحه اصلی";
     int i = 0;
@@ -158,8 +157,21 @@
                                                                     "وقت ملاقات شما با موفقیت لغو شد!",
                                                                     "success");
                                                                 $("#@i").remove();
+                                                            },
+                                                            statusCode: {
+                                                                404: function () {
+                                                                    swal({
+                                                                        title: "دسترسی غیر مجاز!",
+                                                                        text: "لطفا از دستکاری داده های ارسالی اجتناب کنید!",
+                                                                        type: "error",
+                                                                        showCancelButton: false,
+                                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                        confirmButtonText: 'باشه ببخشید!',
+                                                                        closeOnConfirm: true
+                                                                    }
+                                                                    );
+                                                                }
                                                             }
-                                                            @*TODO:Status Code*@
                                                         });
                                                     }
                                                 });
