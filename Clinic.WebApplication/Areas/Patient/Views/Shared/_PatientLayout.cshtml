@@ -85,7 +85,7 @@
                 <div class="user-box">
                     <div class="user-img">
                         @{
-                            var patient = await DbContext.Patients
+                            var patient = await DbContext.Patients.AsNoTracking()
                                 .FirstOrDefaultAsync(a => a.Username
                                     .Equals(User.Identity.Name));
                         }

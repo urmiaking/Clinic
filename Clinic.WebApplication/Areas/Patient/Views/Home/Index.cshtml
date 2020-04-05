@@ -1,15 +1,236 @@
-﻿
+﻿@using Clinic.Utilities.Convertors
+@model ReserveVisitViewModel
 @{
-    Layout = null;
+    ViewBag.Title = "صفحه اصلی";
+    int i = 0;
 }
 
-<!DOCTYPE html>
+@section Head {
+    <!-- Sweet Alert css -->
+    <link href="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
+    <script src="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.min.js"></script>
+    <style>
+        .margin-top-td {
+            margin-top: 10px;
+        }
+    </style>
+}
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-</body>
-</html>
+<div class="container">
+    <div class="row">
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.TotalVisitsCount
+                    </h3>
+                    <p>تعداد کل ویزیت های انجام شده</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-md"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.TotalReservesCount
+                    </h3>
+                    <p>وقت های تعیین شده</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-stethoscope"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+        <!-- ./col -->
+        <div class="col-lg-4 col-md-4 col-sm-4">
+            <!-- small box -->
+            <div class="small-box bg-red">
+                <div class="inner">
+                    <h3>
+                        @ViewBag.MonthlyVisitsCount
+                    </h3>
+                    <p>تعداد ویزیت های این ماه</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-heartbeat"></i>
+                </div>
+                <br />
+            </div>
+        </div>
+    </div>
+    <div class="row" style="margin: 10px 20px;">
+        <div class="col-md-6">
+            <a asp-action="Reserve" style="margin-bottom: 10px;" 
+               class="btn btn-block btn-rounded btn-primary btn-md waves-effect waves-light m-b-30">
+                <i class="fa fa-hospital-o m-l-5"></i>
+                <span style="margin-right: 5px;">همین حالا رزرو کنید!</span>
+            </a>
+        </div>
+
+        <div class="col-md-6">
+            <a asp-area="" asp-controller="Home" asp-action="DoctorList" style="margin-bottom: 10px;" 
+               class="btn btn-block btn-rounded btn-primary btn-md waves-effect waves-light m-b-30">
+                <i class="fa fa-user-md m-l-5"></i>
+                <span style="margin-right: 5px;">مشاهده پروفایل پزشکان</span>
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-action="ReserveList" style="margin-bottom: 10px;" 
+                   class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+                <h4 class="header-title m-t-0 m-b-30">وقت های ملاقات امروز</h4>
+                @if (Model.Reserves.Any())
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>عکس پزشک</th>
+                                <th>نام پزشک</th>
+                                <th>تاریخ ملاقات</th>
+                                <th>وضعیت</th>
+                                <th>لغو</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var reserve in Model.Reserves)
+                            {
+                                var buttonId = "danger-alert" + i;
+                                i++;
+                                <tr id="@i">
+                                    <td>
+                                        <img class="thumb-md img-circle img-thumbnail img-responsive" 
+                                             src="/Administrators/assets/images/doctors/@reserve.Doctor.ProfilePic" />
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">@reserve.Doctor.FullName</div>
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">@reserve.ReserveDate.ToHijriFarsiWithHour()</div>
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">@reserve.ReserveStatus</div>
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">
+                                            <a id="@buttonId" class="btn btn-danger label label-danger">
+                                                <i class="fa fa-remove"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+
+                                    <script>
+                                        $('#@buttonId').click(function () {
+                                            swal({
+                                                    title: "مطمئنی ؟؟",
+                                                    text: "",
+                                                    type: "error",
+                                                    showCancelButton: true,
+                                                    confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                    confirmButtonText: 'بله!',
+                                                    closeOnConfirm: false
+                                                },
+                                                function(isConfirm) {
+                                                    if (isConfirm) {
+                                                        $.ajax({
+                                                            url: "/Patient/Home/DeleteReserve/",
+                                                            type: "POST",
+                                                            data: {
+                                                                reserveDate: "@reserve.ReserveDate",
+                                                                docId: @reserve.DoctorId,
+                                                                patientId: @reserve.PatientId
+                                                            },
+                                                            dataType: "html",
+                                                            success: function() {
+                                                                swal("انجام شد!",
+                                                                    "وقت ملاقات شما با موفقیت لغو شد!",
+                                                                    "success");
+                                                                $("#@i").remove();
+                                                            }
+                                                            @*TODO:Status Code*@
+                                                        });
+                                                    }
+                                                });
+                                        });
+                                    </script>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">شما وقتی برای امروز تنظیم نکرده اید!</div>
+                }
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <a asp-action="VisitList" style="margin-bottom: 10px;" 
+                   class="pull-right btn btn-primary btn-rounded waves-effect waves-light">
+                    <span style="margin-right: 5px;">بیشتر</span>
+                    <i class="fa fa-arrow-left m-l-5"></i>
+                </a>
+                <h4 class="header-title m-t-0 m-b-30">ویزیت های اخیر</h4>
+                @if (Model.Visits.Any())
+                {
+                    <table class="table table table-hover m-0">
+                        <thead>
+                            <tr>
+                                <th>عکس پزشک</th>
+                                <th>نام پزشک</th>
+                                <th>تاریخ ملاقات</th>
+                                <th>مشاهده نسخه</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var visit in Model.Visits.OrderByDescending(a => a.Reservation.ReserveDate).Take(2))
+                            {
+                                <tr>
+                                    <td>
+                                        <img class="thumb-md img-circle img-thumbnail img-responsive"
+                                             src="/Administrators/assets/images/doctors/@visit.Reservation.Doctor.ProfilePic" />
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">@visit.Reservation.Doctor.FullName</div>
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">@visit.Reservation.ReserveDate.ToHijriFarsiWithHour()</div>
+                                    </td>
+                                    <td>
+                                        <div class="margin-top-td">
+                                            <a asp-action="PrescriptionDetails" asp-route-id="@visit.Id" 
+                                               class="btn btn-info label label-info">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                }
+                else
+                {
+                    <div class="text-center">شما تا بحال توسط پزشکی ویزیت نشده اید‍!</div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
