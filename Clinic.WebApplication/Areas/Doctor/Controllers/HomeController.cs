@@ -377,6 +377,17 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                         a.DoctorId.Equals(visitViewModel.Reservation.DoctorId) &&
                         a.ReserveDate.Equals(reserveDateTimeAgain));
 
+                var isPatientBusy = await _db.Reservations
+                    .AnyAsync(a =>
+                        a.PatientId.Equals(reserve.PatientId) &&
+                        a.ReserveDate.Equals(reserveDateTimeAgain) &&
+                        a.ReserveStatus.Contains("در انتظار ویزیت"));
+
+                if (isPatientBusy)
+                {
+                    return StatusCode(409);
+                }
+
                 if (isAvailableReserve)
                 {
                     return StatusCode(405);
@@ -411,18 +422,18 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
 
             reserve.ReserveStatus = "ویزیت شده";
 
-            _db.Reservations.Update(reserve);
-            await _db.SaveChangesAsync();
-
             var newVisit = new Visit()
             {
                 CauseOfPatientReferral = visitViewModel.Visit.CauseOfPatientReferral,
                 DoctorAssessment = visitViewModel.Visit.DoctorAssessment,
                 DoctorNote = visitViewModel.Visit.DoctorNote,
-                Reservation = visitViewModel.Reservation,
+                Reservation = reserve,
                 InsuranceProvider = insurance
             };
             await _db.Visits.AddAsync(newVisit);
+            await _db.SaveChangesAsync();
+
+            _db.Reservations.Update(reserve);
             await _db.SaveChangesAsync();
 
             if (drugs != null)
@@ -539,7 +550,15 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                 return StatusCode(401);
             }
 
-            DateTime dt = Convert.ToDateTime(oldDate);
+            var doctor = await _db.Doctors.FindAsync(docId);
+            var patient = await _db.Patients.FindAsync(patientId);
+
+            if (doctor == null || patient == null)
+            {
+                return StatusCode(404);
+            }
+
+            var dt = Convert.ToDateTime(oldDate);
 
             var reserve = await _db.Reservations
                 .FirstOrDefaultAsync(a =>
@@ -565,8 +584,8 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             var isReservationTimeExist = await _db.Reservations.AsNoTracking()
                 .AnyAsync(a =>
                     a.DoctorId.Equals(docId) &&
-                    a.PatientId.Equals(patientId) &&
-                    a.ReserveDate.Equals(reserveDateTime));
+                    a.ReserveDate.Equals(reserveDateTime) &&
+                    a.ReserveStatus.Contains("در انتظار ویزیت"));
 
             if (isReservationTimeExist)
             {
@@ -610,12 +629,15 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                     return StatusCode(403);
             }
 
-            var doctor = await _db.Doctors.FindAsync(docId);
-            var patient = await _db.Patients.FindAsync(patientId);
+            var isPatientBusy = await _db.Reservations
+                .AnyAsync(a =>
+                    a.PatientId.Equals(patientId) &&
+                    a.ReserveDate.Equals(reserveDateTime) &&
+                    a.ReserveStatus.Contains("در انتظار ویزیت"));
 
-            if (doctor == null || patient == null)
+            if (isPatientBusy)
             {
-                return StatusCode(404);
+                return StatusCode(409);
             }
 
             _db.Reservations.Remove(reserve);
@@ -672,7 +694,8 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
 
             if (!visits.Any())
             {
-                return RedirectToAction("VisitedPatients");
+                TempData["Error"] = "بیمار مورد نظر سابقه ملاقات با شما را نداشته است";
+                return RedirectToAction("ReserveTable");
             }
             return View(visits);
         }

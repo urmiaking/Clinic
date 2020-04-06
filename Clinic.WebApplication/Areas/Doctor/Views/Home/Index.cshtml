@@ -102,6 +102,7 @@
                                 var patientPostponingFormId = "postpone-form-" + i;
                                 var patientAbsenceSwalId = "absence-swal-" + i;
                                 var trId = "reserve-tr-" + i;
+                                var calenderId = "calender-" + i;
                                 i++;
                                 <tr id="@trId">
                                     <td>
@@ -212,7 +213,10 @@
                                                                     <div class="col-md-6">
                                                                         <div class="form-group">
                                                                             <label class="control-label" for="pcal1">تاریخ ملاقات </label>
-                                                                            <input type="text" id="pcal1" class=" form-control pdate" value="" name="reserveDate" required="">
+                                                                            <input type="text" id="@calenderId" class=" form-control pdate" value="" name="reserveDate" required="">
+                                                                            <script type="text/javascript">
+                                                                                var objCal1 = new AMIB.persianCalendar('@calenderId');
+                                                                            </script>
                                                                         </div>
                                                                     </div>
                                                                     <div class="col-md-6">
@@ -331,6 +335,17 @@
                                                                         swal({
                                                                             title: "ناموفق!",
                                                                             text: "لطفا روز جمعه را برای رزرو انتخاب نکنید!",
+                                                                            type: "error",
+                                                                            showCancelButton: false,
+                                                                            confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                            confirmButtonText: 'باشه!',
+                                                                            closeOnConfirm: true
+                                                                        });
+                                                                    },
+                                                                    409: function () {
+                                                                        swal({
+                                                                            title: "ناموفق!",
+                                                                            text: "بیمار در این زمان با پزشک دیگری رزرو دارد!",
                                                                             type: "error",
                                                                             showCancelButton: false,
                                                                             confirmButtonClass: 'btn-danger waves-effect waves-light',
@@ -476,16 +491,15 @@
     </div>
 </div>
 @section Scripts {
-    <script type="text/javascript" src="/Administrators/assets/css/calendar/js-persian-cal.min.js"></script>
-    <script type="text/javascript">
-        var objCal1 = new AMIB.persianCalendar('pcal1');
-    </script>
+
+    
 }
 @section Head {
     <!-- Sweet Alert css -->
     <link href="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.css" rel="stylesheet" type="text/css" />
     <script src="/Administrators/assets/plugins/bootstrap-sweetalert/sweet-alert.min.js"></script>
     <link rel="stylesheet" href="/Administrators/assets/css/calendar/jspc-royal_blue.css">
+    <script type="text/javascript" src="/Administrators/assets/css/calendar/js-persian-cal.min.js"></script>
     <style>
         .margin-top-td {
             margin-top: 10px;
