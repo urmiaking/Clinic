@@ -174,6 +174,7 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
         {
             var prescriptions = await _db.Prescriptions
                 .Include(a => a.PrescriptionDrugs)
+                .ThenInclude(a => a.Drug)
                 .Include(a => a.Visit)
                     .ThenInclude(a => a.Reservation)
                         .ThenInclude(a => a.Patient)
@@ -332,9 +333,9 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
                 return StatusCode(404);
             }
 
-            var drugs = _db.Drugs.Where(a => a.DrugCategory.Id.Equals(category.Id));
+            var drugs = await _db.Drugs.Where(a => a.DrugCategory.Id.Equals(category.Id)).ToListAsync();
 
-            if (await _db.PrescriptionDrugs.AnyAsync(a=> a.DrugId.Equals(drugs.Select(a => a.Id))))
+            if ((await _db.PrescriptionDrugs.ToListAsync()).Any(prescriptionDrug => drugs.Any(drug => prescriptionDrug.DrugId.Equals(drug.Id))))
             {
                 return StatusCode(403);
             }

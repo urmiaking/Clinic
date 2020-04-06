@@ -10,9 +10,11 @@ namespace Clinic.Models.DomainClasses.Appointment
         public int Id { get; set; }
 
         [Display(Name = "دلیل مراجعه بیمار")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
         public string CauseOfPatientReferral { get; set; }
 
         [Display(Name = "تشخیص پزشک")]
+        [Required(ErrorMessage = "لطفا {0} را وارد کنید")]
         public string DoctorAssessment { get; set; }
 
         [Display(Name = "یادداشت پزشک")]

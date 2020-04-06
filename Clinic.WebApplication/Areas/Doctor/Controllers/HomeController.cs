@@ -85,7 +85,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             return View(reserveVisitVm);
         }
 
-        
+
 
         #region TimeTable
 
@@ -132,7 +132,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
         #region EditProfile
 
         public async Task<IActionResult> EditProfile()
-        { 
+        {
             var doctor = await _db.Doctors.FirstOrDefaultAsync(a => a.Username.Equals(User.Identity.Name));
             return View(doctor);
         }
@@ -255,187 +255,6 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             var reserve = await _db.Reservations
                 .Include(a => a.Patient)
                 .FirstOrDefaultAsync(a =>
-                    a.DoctorId.Equals(docId) && 
-                    a.PatientId.Equals(patientId) && 
-                    a.ReserveDate.Equals(dt));
-
-            if (reserve == null)
-            {
-                return NotFound();
-            }
-
-            return View(reserve);
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddVisit(string patientReferral, string docAssessment,
-            string docNote, string drugList, string reserveDate, string reserveDateAgain,
-            string reserveTimeAgain, string insuranceName, int patientId = 0, int docId = 0)
-        {
-            if (patientId == 0 || docId == 0)
-            {
-                return NotFound();
-            }
-
-            string[] drugs = null;
-            string[] number = null;
-            if (!string.IsNullOrEmpty(drugList))
-            {
-                string[] temp = null;
-                try
-                {
-                    temp = drugList.Split('،');
-                }
-                catch (Exception)
-                {
-                    TempData["Error"] = "فرمت نوشتن داروها صحیح نیست";
-                    return RedirectToAction("VisitForm", "Home", new { patientId, docId, reserveDate });
-                }
-
-                drugs = temp.Where((x, i) => i % 2 == 0).ToArray();
-                number = temp.Where((x, i) => i % 2 != 0).ToArray();
-
-                if (drugs.Any(a => a.Equals("")) || number.Any(a => a.Equals("")))
-                {
-                    TempData["Error"] = "فرمت نوشتن داروها صحیح نیست";
-                    return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                }
-
-                if (drugs.Length != number.Length)
-                {
-                    TempData["Error"] = "فرمت نوشتن داروها صحیح نیست";
-                    return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                }
-            }
-
-
-            TimeSpan ts = new TimeSpan();
-            DateTime reserveDateTimeAgain = DateTime.MinValue;
-
-            if (!(string.IsNullOrEmpty(reserveDateAgain) || string.IsNullOrEmpty(reserveTimeAgain)))
-            {
-                if (reserveTimeAgain.StartsWith("Eight"))
-                {
-                    ts = new TimeSpan(8, 00, 00);
-                }
-                if (reserveTimeAgain.StartsWith("Ten"))
-                {
-                    ts = new TimeSpan(10, 00, 00);
-                }
-                if (reserveTimeAgain.StartsWith("Twelve"))
-                {
-                    ts = new TimeSpan(12, 00, 00);
-                }
-                if (reserveTimeAgain.StartsWith("Fourteen"))
-                {
-                    ts = new TimeSpan(14, 00, 00);
-                }
-
-                string[] dates = reserveDateAgain.Split('/');
-                reserveDateTimeAgain = new DateTime(Int32.Parse(dates[0]), int.Parse(dates[1]), int.Parse(dates[2]), new PersianCalendar());
-                reserveDateTimeAgain = reserveDateTimeAgain.Date + ts;
-
-                string dayName = "";
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Sunday)
-                {
-                    dayName = "یکشنبه";
-                }
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Monday)
-                {
-                    dayName = "دوشنبه";
-                }
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Tuesday)
-                {
-                    dayName = "سه شنبه";
-                }
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Wednesday)
-                {
-                    dayName = "چهارشنبه";
-                }
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Thursday)
-                {
-                    dayName = "پنج شنبه";
-                }
-                if (reserveDateTimeAgain.DayOfWeek == DayOfWeek.Saturday)
-                {
-                    dayName = "شنبه";
-                }
-
-                if (string.IsNullOrEmpty(dayName))
-                {
-                    TempData["Error"] = "امکان رزرو دوباره در روز جمعه وجود ندارد";
-                    return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                }
-
-                var isThatTimeFull = false;
-                if (reserveTimeAgain.StartsWith("Eight"))
-                {
-                    isThatTimeFull = await _db.WeekDays
-                        .Where(a => a.DoctorId.Equals(docId) && a.DayName.Equals(dayName))
-                        .AnyAsync(a => !a.EightTen.Equals("خالی"));
-
-                    if (isThatTimeFull)
-                    {
-                        TempData["Error"] = "امکان رزرو دوباره در روز " + dayName + " ساعت ۸ تا ۱۰ وجود ندارد ";
-                        return RedirectToAction("VisitForm", "Home", new { patientId, docId, reserveDate });
-                    }
-                }
-                else if (reserveTimeAgain.StartsWith("Ten"))
-                {
-                    isThatTimeFull = await _db.WeekDays
-                        .Where(a => a.DoctorId.Equals(docId) && a.DayName.Equals(dayName))
-                        .AnyAsync(a => !a.TenTwelve.Equals("خالی"));
-
-                    if (isThatTimeFull)
-                    {
-                        TempData["Error"] = "امکان رزرو دوباره در روز " + dayName + " ساعت ۱۰ تا ۱۲ وجود ندارد ";
-                        return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                    }
-                }
-                else if (reserveTimeAgain.StartsWith("Twelve"))
-                {
-                    isThatTimeFull = await _db.WeekDays
-                        .Where(a => a.DoctorId.Equals(docId) && a.DayName.Equals(dayName))
-                        .AnyAsync(a => !a.TwelveFourteen.Equals("خالی"));
-
-                    if (isThatTimeFull)
-                    {
-                        TempData["Error"] = "امکان رزرو دوباره در روز " + dayName + " ساعت ۱۲ تا ۱۴ وجود ندارد ";
-                        return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                    }
-                }
-                else if (reserveTimeAgain.StartsWith("Fourteen"))
-                {
-                    isThatTimeFull = await _db.WeekDays
-                        .Where(a => a.DoctorId.Equals(docId) && a.DayName.Equals(dayName))
-                        .AnyAsync(a => !a.FourteenSixteen.Equals("خالی"));
-
-                    if (isThatTimeFull)
-                    {
-                        TempData["Error"] = "امکان رزرو دوباره در روز " + dayName + " ساعت ۱۴ تا ۱۶ وجود ندارد ";
-                        return RedirectToAction("VisitForm", "Home", new { patientId = patientId, docId = docId, reserveDate = reserveDate });
-                    }
-                }
-
-                var isAvailableReserve = await _db.Reservations
-                    .AnyAsync(a =>
-                        a.DoctorId.Equals(docId) &&
-                        a.PatientId.Equals(patientId) &&
-                        a.ReserveDate.Equals(reserveDateTimeAgain));
-
-                if (isAvailableReserve)
-                {
-                    TempData["Error"] = "این تاریخ از قبل رزرو شده است";
-                    return RedirectToAction("VisitForm", "Home",
-                        new { patientId, docId, reserveDate });
-                }
-            }
-
-            DateTime dt = Convert.ToDateTime(reserveDate);
-
-            var reserve = await _db.Reservations
-                .FirstOrDefaultAsync(a =>
                     a.DoctorId.Equals(docId) &&
                     a.PatientId.Equals(patientId) &&
                     a.ReserveDate.Equals(dt));
@@ -445,20 +264,143 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                 return NotFound();
             }
 
-            InsuranceProvider insurance = null;
-            if (!string.IsNullOrEmpty(insuranceName))
+            var addVisitViewModel = new AddVisitViewModel()
             {
+                Reservation = reserve
+            };
+
+            return View(addVisitViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddVisit(AddVisitViewModel visitViewModel)
+        {
+            if (visitViewModel.Reservation.DoctorId == 0 ||
+                visitViewModel.Reservation.PatientId == 0)
+            {
+                return StatusCode(404);
+            }
+
+            var reserve = await _db.Reservations
+                .FirstOrDefaultAsync(a =>
+                    a.DoctorId.Equals(visitViewModel.Reservation.DoctorId) &&
+                    a.PatientId.Equals(visitViewModel.Reservation.PatientId) &&
+                    a.ReserveDate.Equals(visitViewModel.Reservation.ReserveDate));
+
+            if (reserve == null)
+            {
+                return StatusCode(404);
+            }
+
+            string[] drugs = null;
+            string[] number = null;
+            if (!string.IsNullOrEmpty(visitViewModel.DrugList))
+            {
+                string[] temp = null;
+                try
+                {
+                    temp = visitViewModel.DrugList.Split('،');
+                }
+                catch (Exception)
+                {
+                    return StatusCode(403);
+                }
+
+                drugs = temp.Where((x, i) => i % 2 == 0).ToArray();
+                number = temp.Where((x, i) => i % 2 != 0).ToArray();
+
+                if (drugs.Any(a => a.Equals("")) || number.Any(a => a.Equals("")))
+                {
+                    return StatusCode(403);
+                }
+
+                if (drugs.Length != number.Length)
+                {
+                    return StatusCode(403);
+                }
+            }
+
+            DateTime reserveDateTimeAgain = DateTime.MinValue;
+
+            if (!(string.IsNullOrEmpty(visitViewModel.ReserveDateAgain) || string.IsNullOrEmpty(visitViewModel.ReserveTimeAgain)))
+            {
+                if (!TimeSpan.TryParse(visitViewModel.ReserveTimeAgain, out var time))
+                {
+                    return StatusCode(402);
+                }
+
+                var dates = visitViewModel.ReserveDateAgain.Split('/');
+                reserveDateTimeAgain = new DateTime(Int32.Parse(dates[0]), int.Parse(dates[1]), int.Parse(dates[2]), new PersianCalendar());
+                reserveDateTimeAgain = reserveDateTimeAgain.Date + time;
+
+                if (reserveDateTimeAgain.Date <= DateTime.Today.Date)
+                {
+                    return StatusCode(406);
+                }
+
+                var dayOfWeek = reserveDateTimeAgain.DayOfWeek switch
+                {
+                    DayOfWeek.Sunday => "یکشنبه",
+                    DayOfWeek.Monday => "دوشنبه",
+                    DayOfWeek.Tuesday => "سه شنبه",
+                    DayOfWeek.Wednesday => "چهارشنبه",
+                    DayOfWeek.Thursday => "پنج شنبه",
+                    DayOfWeek.Saturday => "شنبه",
+                    _ => null
+                };
+
+                if (string.IsNullOrEmpty(dayOfWeek))
+                {
+                    return StatusCode(401);
+                }
+
+                var day = await _db.WeekDays.FirstOrDefaultAsync(a =>
+                    a.DoctorId.Equals(visitViewModel.Reservation.DoctorId) &&
+                    a.DayName.Equals(dayOfWeek));
+
+                switch (time.Hours)
+                {
+                    case 8 when !day.EightTen.Equals("خالی"):
+                        return StatusCode(400);
+                    case 10 when !day.TenTwelve.Equals("خالی"):
+                        return StatusCode(400);
+                    case 12 when !day.TwelveFourteen.Equals("خالی"):
+                        return StatusCode(400);
+                    case 14 when !day.FourteenSixteen.Equals("خالی"):
+                        return StatusCode(400);
+                }
+
+
+                var isAvailableReserve = await _db.Reservations
+                    .AnyAsync(a =>
+                        a.DoctorId.Equals(visitViewModel.Reservation.DoctorId) &&
+                        a.ReserveDate.Equals(reserveDateTimeAgain));
+
+                if (isAvailableReserve)
+                {
+                    return StatusCode(405);
+                }
+            }
+
+            InsuranceProvider insurance = null;
+            if (!string.IsNullOrEmpty(visitViewModel.InsuranceProviderName))
+            {
+                if (drugs == null)
+                {
+                    return StatusCode(409);
+                }
                 insurance = await _db.InsuranceProviders
                     .FirstOrDefaultAsync(a =>
-                        a.InsuranceName.Equals(insuranceName));
+                        a.InsuranceName.Equals(visitViewModel.InsuranceProviderName));
             }
 
             if (!reserveDateTimeAgain.Equals(DateTime.MinValue))
             {
                 var reserveAgain = new Reservation()
                 {
-                    Doctor = await _db.Doctors.FindAsync(docId),
-                    Patient = await _db.Patients.FindAsync(patientId),
+                    Doctor = await _db.Doctors.FindAsync(visitViewModel.Reservation.DoctorId),
+                    Patient = await _db.Patients.FindAsync(visitViewModel.Reservation.PatientId),
                     ReserveDate = reserveDateTimeAgain,
                     ReserveStatus = "در انتظار ویزیت"
                 };
@@ -474,10 +416,10 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
 
             var newVisit = new Visit()
             {
-                CauseOfPatientReferral = patientReferral,
-                DoctorAssessment = docAssessment,
-                DoctorNote = docNote,
-                Reservation = reserve,
+                CauseOfPatientReferral = visitViewModel.Visit.CauseOfPatientReferral,
+                DoctorAssessment = visitViewModel.Visit.DoctorAssessment,
+                DoctorNote = visitViewModel.Visit.DoctorNote,
+                Reservation = visitViewModel.Reservation,
                 InsuranceProvider = insurance
             };
             await _db.Visits.AddAsync(newVisit);
@@ -515,7 +457,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                     else
                     {
                         var unknownCategory = await _db.DrugCategories
-                            .FirstOrDefaultAsync(a => 
+                            .FirstOrDefaultAsync(a =>
                                 a.Name.Equals("نامشخص"));
                         if (unknownCategory == null)
                         {
@@ -555,8 +497,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                 }
             }
 
-            TempData["Success"] = "ویزیت با موفقیت ثبت شد";
-            return RedirectToAction("ReserveTable");
+            return StatusCode(200);
         }
 
         [HttpPost]
@@ -611,29 +552,15 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                 return StatusCode(404);
             }
 
-            TimeSpan ts = new TimeSpan();
-
-            if (reserveTime.StartsWith("Eight"))
+            if (!TimeSpan.TryParse(reserveTime, out var time))
             {
-                ts = new TimeSpan(8, 00, 00);
-            }
-            else if (reserveTime.StartsWith("Ten"))
-            {
-                ts = new TimeSpan(10, 00, 00);
-            }
-            else if (reserveTime.StartsWith("Twelve"))
-            {
-                ts = new TimeSpan(12, 00, 00);
-            }
-            else if (reserveTime.StartsWith("Fourteen"))
-            {
-                ts = new TimeSpan(14, 00, 00);
+                return StatusCode(402);
             }
 
             string[] dates = reserveDate.Split('/');
             DateTime reserveDateTime = new DateTime(int.Parse(dates[0]), int.Parse(dates[1]), int.Parse(dates[2]), new PersianCalendar());
 
-            reserveDateTime = reserveDateTime.Date + ts;
+            reserveDateTime = reserveDateTime.Date + time;
 
             var isReservationTimeExist = await _db.Reservations.AsNoTracking()
                 .AnyAsync(a =>
@@ -644,6 +571,43 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
             if (isReservationTimeExist)
             {
                 return StatusCode(403);
+            }
+
+            if (reserveDateTime.Date <= DateTime.Today.Date)
+            {
+                return StatusCode(405);
+            }
+
+            var dayOfWeek = reserveDateTime.DayOfWeek switch
+            {
+                DayOfWeek.Sunday => "یکشنبه",
+                DayOfWeek.Monday => "دوشنبه",
+                DayOfWeek.Tuesday => "سه شنبه",
+                DayOfWeek.Wednesday => "چهارشنبه",
+                DayOfWeek.Thursday => "پنج شنبه",
+                DayOfWeek.Saturday => "شنبه",
+                _ => null
+            };
+
+            if (string.IsNullOrEmpty(dayOfWeek))
+            {
+                return StatusCode(406);
+            }
+
+            var day = await _db.WeekDays.FirstOrDefaultAsync(a =>
+                a.DoctorId.Equals(docId) &&
+                a.DayName.Equals(dayOfWeek));
+
+            switch (time.Hours)
+            {
+                case 8 when !day.EightTen.Equals("خالی"):
+                    return StatusCode(403);
+                case 10 when !day.TenTwelve.Equals("خالی"):
+                    return StatusCode(403);
+                case 12 when !day.TwelveFourteen.Equals("خالی"):
+                    return StatusCode(403);
+                case 14 when !day.FourteenSixteen.Equals("خالی"):
+                    return StatusCode(403);
             }
 
             var doctor = await _db.Doctors.FindAsync(docId);
@@ -674,7 +638,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
         public async Task<IActionResult> VisitedPatients()
         {
             var doctor = await _db.Doctors
-                .FirstOrDefaultAsync(a => 
+                .FirstOrDefaultAsync(a =>
                     a.Username.Equals(User.Identity.Name));
 
             var visitedPatients = _db.Reservations
@@ -682,8 +646,9 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                 .Include(a => a.Doctor)
                 .Include(a => a.Visit)
                 .Where(a =>
+                    a.Visit != null &&
                     a.ReserveStatus.Equals("ویزیت شده") &&
-                    a.DoctorId.Equals(doctor.Id)).GroupBy(a => a.Patient).ToList();
+                    a.DoctorId.Equals(doctor.Id)).ToList().GroupBy(a => a.Patient).ToList();
 
             ViewBag.DocId = doctor.Id;
 
