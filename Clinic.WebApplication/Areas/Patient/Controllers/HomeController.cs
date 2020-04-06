@@ -199,22 +199,33 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                 return StatusCode(404);
             }
 
-            var isCandidateReserveDateTimeBusy = await _db.Reservations
+            var isCandidateReserveDateTimeBusyDoctor = await _db.Reservations
                 .AnyAsync(a =>
                     a.ReserveDate.Equals(candidateReserveDateTime) &&
                     a.Doctor.Id.Equals(doctor.Id) &&
-                    a.ReserveStatus.Equals("در انتظار ویزیت"));
+                    a.ReserveStatus.Contains("در انتظار ویزیت"));
 
             var isDailyReserveLimitExceeded = await _db.Reservations
                 .AnyAsync(a =>
                     a.ReserveDate.Day.Equals(candidateReserveDateTime.Day) &&
                     a.Doctor.Id.Equals(doctor.Id) &&
                     a.Patient.Id.Equals(patient.Id) &&
-                    a.ReserveStatus.Equals("در انتظار ویزیت"));
+                    a.ReserveStatus.Contains("در انتظار ویزیت"));
 
-            if (isCandidateReserveDateTimeBusy)
+            var isCandidateReserveDateTimeBusyPatient = await _db.Reservations
+                .AnyAsync(a =>
+                    a.ReserveDate.Equals(candidateReserveDateTime) &&
+                    a.PatientId.Equals(patient.Id) &&
+                    a.ReserveStatus.Contains("در انتظار ویزیت"));
+
+            if (isCandidateReserveDateTimeBusyDoctor)
             {
                 return StatusCode(401);
+            }
+            
+            if (isCandidateReserveDateTimeBusyPatient)
+            {
+                return StatusCode(403);
             }
 
             if (isDailyReserveLimitExceeded)
@@ -292,11 +303,6 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Rate(int rate = 0, int visitId = 0)
         {
-            if (rate == 0)
-            {
-                return NotFound();
-            }
-
             var visit = await _db.Visits
                 .Include(a => a.Reservation)
                 .ThenInclude(a => a.Doctor)
@@ -339,7 +345,44 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             return RedirectToAction("VisitList", "Home");
         }
 
+        public async Task<IActionResult> PrescriptionDetails(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
 
+            var visit = await _db.Visits
+                .Include(a => a.Reservation)
+                    .ThenInclude(a => a.Doctor)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.VisitId = id;
+
+            var prescriptionDrug = await _db.PrescriptionDrugs
+                .Include(a => a.Prescription)
+                    .ThenInclude(a => a.Visit)
+                        .ThenInclude(a => a.Report)
+                .Include(a => a.Drug)
+                .Where(a => a.Prescription.VisitId.Equals(visit.Id))
+                .ToListAsync();
+
+            ViewBag.DocAssessment = visit.DoctorAssessment;
+            ViewBag.PatientReferral = visit.CauseOfPatientReferral;
+            ViewBag.DocNote = visit.DoctorNote;
+
+            return View(prescriptionDrug);
+        }
+
+        public IActionResult Chat()
+        {
+            return View();
+        }
         #endregion
     }
 }

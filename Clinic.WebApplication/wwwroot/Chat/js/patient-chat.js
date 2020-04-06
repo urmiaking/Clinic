@@ -24,10 +24,10 @@
 });
 
 var me = {};
-me.avatar = "/../../Content/Administrators/assets/images/users/avatar-5.jpg";
+me.avatar = "/../../Administrators/assets/images/users/avatar-5.jpg";
 
 var you = {};
-you.avatar = "/../../Content/Administrators/assets/images/doctors/11b7e72e-eb19-4a16-9a17-c3098b003da5NoorEyeHospital-20180709-064823.png";
+you.avatar = "/../../Administrators/assets/images/doctors/4f8efedc-c55f-4903-8e85-2e75a4e2b2d8.png";
 
 function formatAMPM(date) {
     var hours = date.getHours();

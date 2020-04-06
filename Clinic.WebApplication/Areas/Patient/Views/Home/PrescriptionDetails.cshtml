@@ -1,0 +1,298 @@
+﻿@model List<PrescriptionDrug>
+@{
+    ViewBag.Title = "جزییات نسخه";
+    var finalCost = 0;
+    var status = "";
+    int id = 0;
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="panel panel-custom panel-border">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">دلیل مراجعه بیمار</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    @ViewBag.PatientReferral
+                                </p>
+                            </div>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-4">
+                        <div class="panel panel-border panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">تشخیص پزشک</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    @ViewBag.DocAssessment
+                                </p>
+                            </div>
+                        </div>
+                    </div><!-- end col -->
+                    <div class="col-lg-4">
+                        <div class="panel panel-border panel-pink">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">یادداشت پزشک</h3>
+                            </div>
+                            <div class="panel-body">
+                                <p>
+                                    @ViewBag.DocNote
+                                </p>
+                            </div>
+                        </div>
+                    </div><!-- end col -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                @if (Model.Any())
+                {
+                    <form asp-action="Bill" method="post">
+                        <h4 class="header-title m-t-0 m-b-30">
+                            نسخه تجویز شده
+                            @foreach (var item in Model)
+                            {
+                                id = item.PrescriptionId;
+                                if (item.Prescription.Status.Equals("پرداخت نشده"))
+                                {
+                                    <label class="badge badge-danger">پرداخت نشده</label>
+                                    break;
+                                }
+                                else if (item.Prescription.Status.Equals("تحویل داده شده"))
+                                {
+                                    <label class="badge badge-success">پرداخت شده</label>
+                                    break;
+                                }
+                                if (item.Prescription.Status.Equals("ارسال نشده"))
+                                {
+                                    <label class="badge badge-warning">در حال ارسال</label>
+                                    break;
+                                }
+                            }
+                        </h4>
+
+                        <table class="table table table-hover m-0">
+                            <thead>
+                                <tr>
+                                    <th>نام دارو</th>
+                                    <th>دستورالعمل</th>
+                                    <th>تعداد</th>
+                                    <th>قیمت</th>
+                                    @if (!(Model.FirstOrDefault().Prescription.Status.Equals("تحویل داده شده") || Model.FirstOrDefault().Prescription.Status.Equals("ارسال نشده")))
+                                    {
+                                        <th>تمایل به خرید</th>
+                                    }
+                                    @if ((Model.FirstOrDefault().Prescription.Status.Equals("تحویل داده شده") || Model.FirstOrDefault().Prescription.Status.Equals("ارسال نشده")))
+                                    {
+                                        <th>وضعیت خرید</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{
+                                    int i = 0;
+                                }
+                                @foreach (var prescriptionDrug in Model)
+                                {
+                                    @Html.HiddenFor(m => m[i].PrescriptionId)
+                                    @Html.HiddenFor(m => m[i].DrugId)
+                                    @Html.HiddenFor(m => m[i].Count)
+
+                                    var drugTotalCost = prescriptionDrug.Drug.Cost * prescriptionDrug.Count;
+                                    finalCost += drugTotalCost;
+                                    <tr>
+                                        <td>@prescriptionDrug.Drug.Name</td>
+                                        <td>@prescriptionDrug.Drug.Instruction</td>
+                                        <td>@Html.DisplayFor(m => m[i].Count)</td>
+                                        <td>@drugTotalCost تومان</td>
+                                        @if (!(Model.FirstOrDefault().Prescription.Status.Equals("تحویل داده شده") || Model.FirstOrDefault().Prescription.Status.Equals("ارسال نشده")))
+                                        {
+                                            <td>
+                                                @Html.EditorFor(m => m[i].IsWantToBuy, new { htmlAttributes = new { data_plugin = "switchery", data_color = "#00b19d", data_size = "small", data_switchery = "true", style = "display: none;" } })
+                                            </td>
+
+
+                                        }
+
+                                        @if (Model.FirstOrDefault().Prescription.Status.Equals("تحویل داده شده") || Model.FirstOrDefault().Prescription.Status.Equals("ارسال نشده"))
+                                        {
+                                            <td>
+                                                @Html.EditorFor(m => m[i].IsBought, new { htmlAttributes = new { disabled = "", data_plugin = "switchery", data_color = "#00b19d", data_size = "small", data_switchery = "true", style = "display: none;" } })
+                                            </td>
+                                        }
+                                    </tr>
+                                    i++;
+                                }
+
+                            </tbody>
+
+                        </table>
+                        <br />
+                        <br />
+                        <div class="text-center">
+                            @if (finalCost.Equals(0))
+                            {
+
+                            }
+                            else if (Model.FirstOrDefault().Prescription.Status.Equals("تحویل داده شده"))
+                            {
+
+                            }
+                            else if (Model.FirstOrDefault().Prescription.Status.Equals("ارسال نشده"))
+                            {
+
+                            }
+                            else if (Model.FirstOrDefault().Prescription.Status.Equals("پرداخت شده"))
+                            {
+
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    لطفا، داروهایی را که تمایل به خرید دارید را علامت بزنید و سپس گزینه پرداخت را انتخاب کنید.
+                                </div>
+                                <br />
+                                <input type="submit" class="btn btn-success" value="پرداخت آنلاین" />
+                            }
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center">
+                        دارویی در نسخه شما ثبت نشده است
+                    </div>
+
+                }
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        @{
+            if (Model.Any())
+            {
+                if (Model.FirstOrDefault().Prescription.Visit.Report == null)
+                {
+                    <div class="col-md-12">
+                        <div class="card-box">
+                            <div class="text-center ">
+                                <p>
+                                    در صورت مشاهده تخلف، آن را به ما <a href="#report-modal-post" data-animation="flash" data-plugin="custommodal" data-overlayspeed="100" data-overlaycolor="#36404a"> گزارش </a> کنید
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Modal -->
+                    <div id="report-modal-post" class="modal-demo">
+                        <button type="button" class="close" onclick="Custombox.close();">
+                            <span>&times;</span><span class="sr-only">بستن</span>
+                        </button>
+                        <h4 class="custom-modal-title">گزارش تخلف</h4>
+                        <div class="custom-modal-text">
+                            <form asp-action="MakeComplain" method="post">
+                                <input type="hidden" name="id" value="@Model.FirstOrDefault().Prescription.Visit.Id" />
+                                <div class="card-box">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <div class="col-md-3">
+                                                <label class="control-label">موضوع :</label>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <input type="text" name="reportTitle" class="form-control" />
+                                            </div>
+                                            <br />
+                                            <br />
+                                            <br />
+                                            <div class="col-md-3">
+                                                <label class="control-label">متن شکایت :</label>
+                                            </div>
+                                            <div class="col-md-9">
+                                                <textarea class="form-control" name="reportDesc" rows="3"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <input type="submit" class="btn btn-success" value="ثبت" />
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    if (Model.FirstOrDefault().Prescription.Visit.Report.Status == "در انتظار بررسی")
+                    {
+                        <div class="col-md-12">
+                            <div class="card-box">
+                                <div class="text-center">
+                                    <p>
+                                        کاربر عزیز، گزارش شما در حال بررسی است...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else if (Model.FirstOrDefault().Prescription.Visit.Report.Status == "رد شده")
+                    {
+                        <div class="col-md-12">
+                            <div class="card-box">
+                                <div class="text-center">
+                                    <p>
+                                        کاربر عزیز، گزارش شما وارد نبوده و پس از بررسی، رد شده است.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="col-md-12">
+                            <div class="card-box">
+                                <div class="text-center">
+                                    <p class="">
+                                        کاربر عزیز، پاسخ گزارش شما رسید! لطفا برای مشاهده <a href="#report-modal" data-animation="flash" data-plugin="custommodal" data-overlayspeed="100" data-overlaycolor="#36404a"> اینجا </a> را کلیک کنید.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Modal -->
+                        <div id="report-modal" class="modal-demo">
+                            <button type="button" class="close" onclick="Custombox.close();">
+                                <span>&times;</span><span class="sr-only">بستن</span>
+                            </button>
+                            <h4 class="custom-modal-title">پاسخ مدیریت کلینیک به گزارش شما</h4>
+                            <div class="custom-modal-text">
+                                @Model.FirstOrDefault().Prescription.Visit.Report.Response
+                            </div>
+                        </div>
+                    }
+                }
+            }
+        }
+
+    </div>
+
+</div>
+
+@section Head
+{
+    <link href="/Administrators/assets/plugins/switchery/switchery.min.css" rel="stylesheet" />
+}
+
+
+@section Scripts {
+    <script src="/Administrators/assets/plugins/switchery/switchery.min.js"></script>
+}
