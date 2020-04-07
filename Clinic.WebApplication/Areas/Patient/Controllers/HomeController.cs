@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.Appointment;
+using Clinic.Services.LoginService;
 using Clinic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +19,12 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
     public class HomeController : Controller
     {
         private readonly AppDbContext _db;
+        private readonly ILoginService _loginService;
 
-        public HomeController(AppDbContext db)
+        public HomeController(AppDbContext db, ILoginService loginService)
         {
             _db = db;
+            _loginService = loginService;
         }
 
         public async Task<IActionResult> Index()
@@ -345,6 +348,43 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             return RedirectToAction("VisitList", "Home");
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MakeComplain(string reportTitle, string reportDesc, int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var visit = await _db.Visits.FindAsync(id);
+
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            var newReport = new Report()
+            {
+                ComplainDate = DateTime.Now,
+                Description = reportDesc,
+                Title = reportTitle,
+                Visit = visit,
+                Status = "در انتظار بررسی"
+            };
+
+            await _db.Reports.AddAsync(newReport);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "شکایت شما با موفقیت ثبت شد";
+            return RedirectToAction("PrescriptionDetails", new { id });
+
+        }
+
+        #endregion
+
+        #region Prescription
+
         public async Task<IActionResult> PrescriptionDetails(int id = 0)
         {
             if (id == 0)
@@ -354,7 +394,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
             var visit = await _db.Visits
                 .Include(a => a.Reservation)
-                    .ThenInclude(a => a.Doctor)
+                .ThenInclude(a => a.Doctor)
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
             if (visit == null)
@@ -366,8 +406,8 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
             var prescriptionDrug = await _db.PrescriptionDrugs
                 .Include(a => a.Prescription)
-                    .ThenInclude(a => a.Visit)
-                        .ThenInclude(a => a.Report)
+                .ThenInclude(a => a.Visit)
+                .ThenInclude(a => a.Report)
                 .Include(a => a.Drug)
                 .Where(a => a.Prescription.VisitId.Equals(visit.Id))
                 .ToListAsync();
@@ -379,10 +419,108 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             return View(prescriptionDrug);
         }
 
+        #endregion
+
+        #region EditProfile
+
+        public async Task<IActionResult> EditProfile()
+        {
+            return View(await _db.Patients
+                .FirstOrDefaultAsync(a => 
+                    a.Username.Equals(User.Identity.Name)));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditProfile(Models.DomainClasses.Users.Patient patient, IFormFile profilePic)
+        {
+            var oldPassword = _db.Patients.AsNoTracking().FirstOrDefault(a => a.Id.Equals(patient.Id))?.Password;
+            var oldProfilePic = _db.Patients.AsNoTracking().FirstOrDefault(a => a.Id.Equals(patient.Id))?.ProfilePic;
+
+            if (string.IsNullOrEmpty(oldPassword) || string.IsNullOrEmpty(oldProfilePic))
+            {
+                return NotFound();
+            }
+
+            if (!string.IsNullOrEmpty(patient.Password))
+            {
+                if (patient.Password.Count() < 6)
+                {
+                    ModelState.AddModelError("Password", "کلمه عبور باید حداقل شامل ۶ کاراکتر باشد");
+                }
+                else
+                {
+                    patient.Password = _loginService.GetHash(patient.Password);
+                }
+            }
+            else
+            {
+                patient.Password = oldPassword;
+            }
+
+            if (!ModelState.IsValid)
+            {
+                patient.ProfilePic = oldProfilePic;
+                return View(patient);
+            }
+
+            if (!(profilePic == null || profilePic.Length == 0))
+            {
+                if (profilePic.Length > 0 && profilePic.Length < 500000)
+                    try
+                    {
+                        if (!string.IsNullOrEmpty(oldProfilePic))
+                        {
+                            var oldImage = oldProfilePic;
+                            var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(),
+                                "wwwroot/Administrators/assets/images/patients/", oldImage);
+                            if (System.IO.File.Exists(oldImagePath))
+                            {
+                                System.IO.File.Delete(oldImagePath);
+                            }
+                            else
+                            {
+                                TempData["Error"] = "خطا در حذف عکس";
+                                return RedirectToAction("EditProfile");
+                            }
+                        }
+
+                        patient.ProfilePic = Guid.NewGuid() + Path.GetExtension(profilePic.FileName);
+                        string savePath = Path.Combine(
+                            Directory.GetCurrentDirectory(), "wwwroot/Administrators/assets/images/patients",
+                            patient.ProfilePic
+                        );
+                        await using var stream = new FileStream(savePath, FileMode.Create);
+                        await profilePic.CopyToAsync(stream);
+                    }
+                    catch (Exception ex)
+                    {
+                        //TODO: log error
+                        Console.WriteLine(ex.Message);
+                    }
+                else
+                {
+                    TempData["Error"] = "حجم عکس بارگذاری شده برای پروفایل پزشک بیشتر از 500 کیلوبایت می باشد";
+                    return RedirectToAction("EditProfile");
+                }
+            }
+            else
+            {
+                patient.ProfilePic = oldProfilePic;
+            }
+            _db.Patients.Update(patient);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "پروفایل با موفقیت ذخیره شد";
+            return View(patient);
+        }
+
+        #endregion
+
         public IActionResult Chat()
         {
             return View();
         }
-        #endregion
+       
     }
 }

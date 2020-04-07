@@ -38,8 +38,6 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             ViewBag.VisitCount = await _db.Visits.CountAsync();
             ViewBag.DoctorCount = await _db.Doctors.CountAsync();
 
-            ViewBag.Visits = await _db.Visits.ToListAsync();
-
             var doctors = _db.Doctors.Take(5).OrderByDescending(b => b.Score).ToList();
             DoctorListDoctorViewModel vm = new DoctorListDoctorViewModel(doctors);
 
@@ -315,7 +313,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             if (string.IsNullOrEmpty(reportResponse))
             {
                 report.Status = "رد شده";
-                TempData["Error"] = "شکایت رد شد";
+                TempData["Success"] = "شکایت رد شد";
             }
             else
             {

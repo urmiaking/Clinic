@@ -1,9 +1,11 @@
 ﻿@model DoctorListDoctorViewModel
+@inject AppDbContext DbContext
 @{
     ViewBag.Title = "صفحه اصلی";
-    List<Visit> visits = ViewBag.Visits as List<Visit>;
+    List<Visit> visits = await DbContext.Visits
+        .Include(a => a.Reservation)
+        .ThenInclude(a => a.Doctor).ToListAsync();
 }
-
 @section Links{
     <!-- form Uploads -->
     <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
@@ -224,13 +226,7 @@
                                     int visitCount = 0;
                                     if (visits.Count > 0)
                                     {
-                                        foreach (var visit in visits)
-                                        {
-                                            if (visit.Reservation.Doctor.Equals(doctor))
-                                            {
-                                                visitCount++;
-                                            }
-                                        }
+                                        visitCount += visits.Count(visit => visit.Reservation.Doctor.Equals(doctor));
                                     }
 
                                     <tr>

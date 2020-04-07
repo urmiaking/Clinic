@@ -1,0 +1,150 @@
+﻿@model Patient
+
+@{
+    ViewBag.Title = "ویرایش پروفایل";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card-box">
+                <form asp-action="EditProfile" method="post" enctype="multipart/form-data">
+                    <input asp-for="Id" type="hidden"/>
+                    <input asp-for="UserType" type="hidden"/>
+                    <div class="form-group">
+                        <div class="text-center">
+                            <br />
+                            <br />
+                            <img src="@Url.Content("/Administrators/assets/images/patients/" + Model.ProfilePic)"
+                                 class="img-circle thumb-xl img-thumbnail m-b-10" alt="profile-image">
+                            <h4>@Model.FullName</h4>
+                            <br />
+                            <br />
+                        </div>
+                        <label class="control-label" asp-for="FullName">* نام و نام خانوادگی</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
+                            <input asp-for="FullName" class="form-control" placeholder="نام و نام خانوادگی">
+                        </div>
+                        <span class="text-danger" asp-validation-for="FullName"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Username">* نام کاربری</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+                            <input asp-for="Username" class="form-control" placeholder="نام کاربری">
+                        </div>
+                        <span class="text-danger" asp-validation-for="Username"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Email">* ایمیل</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                            <input asp-for="Email" class="form-control" placeholder="آدرس پست الکترونیکی">
+                        </div>
+                        <span class="text-danger" asp-validation-for="Email"></span>
+
+                        <br />
+
+                        <label class="control-label" asp-for="Gender">* جنسیت</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-male"></i></span>
+                            <select class="form-control" asp-for="Gender" 
+                                    asp-items="new SelectList(Enum.GetValues(typeof(GenderEnum)))"></select>
+                        </div>
+                        <span class="text-danger" asp-validation-for="Gender"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="PhoneNumber">* شماره همراه</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-phone"></i></span>
+                            <input asp-for="PhoneNumber" class="form-control" placeholder="شماره تلفن">
+                        </div>
+                        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Age">* سن</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-sort-numeric-asc"></i></span>
+                            <input asp-for="Age" class="form-control" placeholder="سن">
+                        </div>
+                        <span class="text-danger" asp-validation-for="Age"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="NationalCode">* کد ملی</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-user-secret"></i></span>
+                            <input asp-for="NationalCode" class="form-control" placeholder="کد ملی">
+                        </div>
+                        <span class="text-danger" asp-validation-for="NationalCode"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="ZipCode"></label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-sort-numeric-desc"></i></span>
+                            <input asp-for="ZipCode" class="form-control" placeholder="کد پستی">
+                        </div>
+                        <span class="text-danger" asp-validation-for="ZipCode"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Password"></label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-key"></i></span>
+                            <input asp-for="Password" class="form-control" placeholder="رمز عبور جدید">
+                        </div><span class="font-13 text-muted">در صورت تغییر رمز عبور این فیلد پر شود</span>
+                        <div>
+                            <span class="text-danger" asp-validation-for="Password"></span>
+                        </div>
+                        <br />
+                        <br />
+
+                        <label class="control-label" asp-for="ProfilePic">عکس پروفایل</label>
+                        <input name="profilePic" type="file" class="dropify" 
+                               data-default-file="/../../Administrators/assets/images/patients/@Model.ProfilePic" />
+                        <span class="text-danger" asp-validation-for="ProfilePic"></span>
+                        <br />
+
+                        <label class="control-label" asp-for="Address">آدرس محل سکونت</label>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-home"></i></span>
+                            <textarea asp-for="Address" style="resize: none" class="form-control" rows="2" placeholder="آدرس"></textarea>
+                        </div>
+                        <span class="text-danger" asp-validation-for="Address"></span>
+                        <br />
+
+                        <hr />
+                        <div class="text-center">
+                            <input type="submit" class="btn btn-primary" value="ذخیره تغییرات" />
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Head
+{
+    <!-- form Uploads -->
+    <link href="/Administrators/assets/plugins/fileuploads/css/dropify.min.css" rel="stylesheet" type="text/css" />
+}
+
+
+@section Scripts
+{
+    <!-- file uploads js -->
+    <script src="/Administrators/assets/plugins/fileuploads/js/dropify.min.js"></script>
+    <script type="text/javascript">
+        $('.dropify').dropify({
+            messages: {
+                'default': 'عکس را به اینجا بکشید یا کلیک کنید',
+                'replace': 'برای جایگزینی عکس را به اینجا بکشید یا کلیک کنید',
+                'remove': 'پاک کردن',
+                'error': 'با پوزش فراوان، خطایی رخ داده'
+            },
+            error: {
+                'fileSize': 'حجم عکس بیشتر از حد مجاز است (1M).'
+            }
+        });
+    </script>
+}
