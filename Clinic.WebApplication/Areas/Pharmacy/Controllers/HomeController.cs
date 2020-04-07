@@ -82,6 +82,7 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
 
             foreach (var item in presDrug)
             {
+                item.IsBought = true;
                 item.Drug.Count -= item.Count;
                 if (item.Drug.Count >= 0) continue;
                 TempData["Error"] = "داروهای داروخانه کافی نمی باشند";
@@ -190,6 +191,7 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
         {
             var prescriptions = await _db.Prescriptions
                 .Include(a => a.PrescriptionDrugs)
+                .ThenInclude(a => a.Drug)
                 .Include(a => a.Visit)
                     .ThenInclude(a => a.Reservation)
                         .ThenInclude(a => a.Patient)

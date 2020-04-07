@@ -49,7 +49,8 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             var reserves = await _db.Reservations.Include(a => a.Doctor)
                 .Where(a =>
                     a.PatientId.Equals(patient.Id) &&
-                    a.ReserveDate.Day.Equals(DateTime.Now.Day) &&
+                    a.ReserveDate.Hour > DateTime.Now.Hour &&
+                    a.ReserveDate.Date.Equals(DateTime.Now.Date) &&
                     a.ReserveStatus.Equals("در انتظار ویزیت"))
                 .ToListAsync();
 
@@ -283,6 +284,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                 .Include(a => a.Doctor)
                 .Where(a =>
                     a.Patient.Username.Equals(User.Identity.Name) &&
+                    a.ReserveDate.Date >= DateTime.Now.Date &&
                     a.ReserveStatus.Contains("در انتظار ویزیت"))
                 .ToListAsync();
 
@@ -443,6 +445,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             var prescriptionId = prescriptionDrugs.FirstOrDefault()?.PrescriptionId;
             var postedPrescriptionDrugs = await _db.PrescriptionDrugs
                 .Include(a => a.Drug)
+                .ThenInclude(a => a.DrugCategory)
                 .Include(a => a.Prescription)
                     .ThenInclude(a => a.Visit)
                         .ThenInclude(a => a.Reservation)
@@ -454,6 +457,14 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                     a.PrescriptionId.Equals(prescriptionId) &&
                     a.IsWantToBuy.Equals(true))
                 .ToListAsync();
+
+            if (postedPrescriptionDrugs.Any(a => a.Drug.DrugCategory.Name.Equals("نامشخص")))
+            {
+                TempData["Error"] = "امکان پرداخت آنلاین بدلیل نامشخص بودن یکی از داروهای شما وجود ندارد";
+
+                return RedirectToAction("PrescriptionDetails",
+                    new { id = prescriptionDrugs.FirstOrDefault()?.PrescriptionId });
+            }
 
             return View(postedPrescriptionDrugs);
         }
@@ -591,7 +602,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                 if (profilePic.Length > 0 && profilePic.Length < 500000)
                     try
                     {
-                        if (!string.IsNullOrEmpty(oldProfilePic))
+                        if (!string.IsNullOrEmpty(oldProfilePic) && oldProfilePic != "avatat-11.png")
                         {
                             var oldImage = oldProfilePic;
                             var oldImagePath = Path.Combine(Directory.GetCurrentDirectory(),
@@ -630,6 +641,9 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             {
                 patient.ProfilePic = oldProfilePic;
             }
+
+            patient.IsValidated = true;
+
             _db.Patients.Update(patient);
             await _db.SaveChangesAsync();
 

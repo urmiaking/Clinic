@@ -154,6 +154,7 @@
 
                             var onlinePrescriptions = await DbContext.Prescriptions
                                 .Include(a => a.Visit)
+                                .ThenInclude(a => a.Reservation)
                                 .Where(a => a.PaymentMethod.Equals("غیر نقدی") && a.Status.Equals("ارسال نشده")).ToListAsync();
 
                             if (drugs.Count > 0 || onlinePrescriptions.Count > 0)
