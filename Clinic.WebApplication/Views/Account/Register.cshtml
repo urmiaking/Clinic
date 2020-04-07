@@ -38,51 +38,41 @@
                         <a href="#" class="active">ثبت نام</a>
                     </div>
                     <form method="post" asp-action="Register" asp-controller="Account">
-                        @Html.ValidationMessageFor(model => Model.FullName, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.FullName,
-                            new { @class = "form-control", placeholder = "نام و نام خانوادگی  *", required = "" })
+                        <span class="text-danger" asp-validation-for="FullName"></span>
+                        <input asp-for="FullName" class="form-control" placeholder="نام و نام خانوادگی  *" />
 
-                        @Html.ValidationMessageFor(model => Model.Email, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.Email,
-                            new { @class = "form-control", placeholder = "ایمیل  *", required = "" })
+                        <span class="text-danger" asp-validation-for="Email"></span>
+                        <input asp-for="Email" class="form-control" placeholder = "ایمیل  *" />
 
-                        @Html.ValidationMessageFor(model => Model.Username, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.Username,
-                            new { @class = "form-control", placeholder = "نام کاربری  *", required = "" })
+                        <span class="text-danger" asp-validation-for="Username"></span>
+                        <input asp-for="Username" class="form-control" placeholder="نام کاربری  *" />
 
-                        @Html.ValidationMessageFor(model => Model.Password, "", new { @class = "text-danger" })
-                        @Html.PasswordFor(model => Model.Password,
-                            new { @class = "form-control", placeholder = "رمز عبور  *", required = "", id = "password" })
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                        <input asp-for="Password" id="password" class="form-control" placeholder="رمز عبور  *" />
 
                         <span class="text-danger" id="confirmPassword_validation"></span>
                         <input type="password" required="" id="confirmPassword" class="form-control" placeholder="تکرار رمز عبور  *" />
 
-                        @Html.ValidationMessageFor(model => Model.NationalCode, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.NationalCode,
-                            new { @class = "form-control", placeholder = "کد ملی  *", required = "" })
+                        <span class="text-danger" asp-validation-for="NationalCode"></span>
+                        <input asp-for="NationalCode" class="form-control" placeholder="کد ملی  *" />
 
-                        @Html.ValidationMessageFor(model => Model.Age, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.Age
-                            , new { @class = "form-control", placeholder = "سن  *", required = "" })
+                        <span class="text-danger" asp-validation-for="Age"></span>
+                        <input asp-for="Age" class="form-control" placeholder="سن  *" />
 
-                        @Html.ValidationMessageFor(model => Model.PhoneNumber, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.PhoneNumber,
-                            new { @class = "form-control", placeholder = "شماره تلفن  *", required = "" })
+                        <span class="text-danger" asp-validation-for="PhoneNumber"></span>
+                        <input asp-for="PhoneNumber" class="form-control" placeholder="شماره تلفن  *" />
 
-                        @Html.ValidationMessageFor(model => Model.Address, "", new { @class = "text-danger" })
-                        @Html.TextAreaFor(model => Model.Address,
-                            new { @class = "form-control", placeholder = "آدرس", style = "text-align:right;" })
+                        <span class="text-danger" asp-validation-for="Address"></span>
+                        <input asp-for="Address" class="form-control" placeholder="آدرس" />
 
-                        @Html.ValidationMessageFor(model => Model.ZipCode, "", new { @class = "text-danger" })
-                        @Html.TextBoxFor(model => Model.ZipCode,
-                            new { @class = "form-control", placeholder = "کد پستی" })
+                        <span class="text-danger" asp-validation-for="ZipCode"></span>
+                        <input asp-for="ZipCode" class="form-control" placeholder="کد پستی" />
 
-                        @Html.ValidationMessageFor(model => Model.Gender, "", new { @class = "text-danger" })
-                        @Html.DropDownListFor(model => Model.Gender,
-                            new SelectList(Enum.GetValues(typeof(GenderEnum))),
-                            "*  جنسیت",
-                            new { dir = "rtl", @class = "form-control" })
-
+                        <span class="text-danger" asp-validation-for="Gender"></span>
+                        <select class="form-control" dir="rtl" asp-for="Gender"
+                                asp-items="new SelectList(Enum.GetValues(typeof(GenderEnum)))">
+                            <option>جنسیت *</option>
+                        </select>
 
                         <div class="form-button">
                             <button id="submit" type="submit" class="ibtn">ثبت نام</button>

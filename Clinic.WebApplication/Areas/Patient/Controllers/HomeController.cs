@@ -643,6 +643,5 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
         {
             return View();
         }
-       
     }
 }
