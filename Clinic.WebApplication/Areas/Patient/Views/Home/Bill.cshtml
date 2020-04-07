@@ -1,0 +1,126 @@
+﻿@model IEnumerable<PrescriptionDrug>
+
+@{
+    ViewBag.Title = "صورت حساب";
+    int i = 1;
+    var finalCost = 0;
+    var payCost = 0;
+    var discountPercent = 0;
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="clearfix">
+                        <div class="pull-left">
+                            <h3 class="logo"><span> صورت حساب پرداخت</span></h3>
+                        </div>
+                        <div class="pull-right">
+                            <h4>
+                                شماره نسخه # <br>
+                                <strong>@Model.FirstOrDefault()?.PrescriptionId</strong>
+                            </h4>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="pull-left m-t-30">
+                                <address>
+                                    <strong>@Model.FirstOrDefault()?.Prescription.Visit.Reservation.Patient.FullName</strong><br>
+                                    <strong>آدرس</strong>: @Model.FirstOrDefault()?.Prescription.Visit.Reservation.Patient.Address<br>
+
+                                    <abbr title="Phone">شماره تماس:</abbr> @Model.FirstOrDefault()?.Prescription.Visit.Reservation.Patient.PhoneNumber
+                                </address>
+                            </div>
+                            <div class="pull-right m-t-30">
+                                <p><strong>تاریخ خرید: </strong>@DateTime.Now.ToHijriFarsiWithHourAndMinute()</p>
+                                <p class="m-t-10"><strong>وضعیت: </strong> <span class="label label-pink">در انتظار تایید</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="m-h-50"></div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="table-responsive">
+                                <table class="table m-t-30">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>نام دارو</th>
+                                            <th>دسته بندی</th>
+                                            <th>تعداد</th>
+                                            <th>قیمت واحد</th>
+                                            <th>مجموع</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            var drugTotalCost = item.Drug.Cost * item.Count;
+                                            finalCost += drugTotalCost;
+                                            payCost += drugTotalCost;
+                                            <tr>
+                                                <td>
+                                                    @i
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Drug.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Drug.DrugCategory.Name)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Count)
+                                                </td>
+                                                <td>
+                                                    @Html.DisplayFor(modelItem => item.Drug.Cost) تومان
+                                                </td>
+                                                <td>
+                                                    @drugTotalCost تومان
+                                                </td>
+                                            </tr>
+                                            var discount = 0;
+                                            if (item.Prescription.Visit.InsuranceProvider != null)
+                                            {
+                                                discountPercent = Model.FirstOrDefault()?.Prescription.Visit.InsuranceProvider.Discount ?? 0;
+                                                discount += item.Drug.Cost * item.Count * (item.Prescription.Visit.InsuranceProvider.Discount) / 100;
+                                                payCost -= discount;
+                                            }
+                                            i++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="clearfix m-t-40">
+                                <h5 class="small text-inverse font-600">متن قرارداد پرداخت</h5>
+                                <small>کاربر گرامی، سفارش شما، پس از پرداخت هزینه آن، در کمتر از 48 ساعت، به درب منزل شما ارسال خواهد شد. ما هیچ مسئولیتی در مقابل نامعتبر بودن آدرس شما نداریم. لذا از درستی آدرس خود در <a href="/Patient/Home/EditProfile">پروفایل</a> خود اطمینان حاصل کنید. در صورتی که پس از 48 ساعت نسخه خود را دریافت نکردید به داروخانه مراجعه کنید و نسخه خود را از تحویل دار، دریافت کنید</small>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-6 col-md-offset-3">
+                            <p class="text-right"><b>مجموع خرید:</b> @finalCost تومان</p>
+                            <p class="text-right">مقدار تخفیف : @discountPercent%</p>
+                            <p class="text-right">مالیات: 0%</p>
+                            <hr>
+                            <h4 class="text-right">مقدار قابل پرداخت: @payCost تومان</h4>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="hidden-print">
+                        <div class="pull-right">
+                            <a href="javascript:window.print()" class="btn btn-inverse waves-effect waves-light"><i class="fa fa-print"></i></a>
+                            <a asp-action="OnlinePayment" asp-route-id="@Model.FirstOrDefault()?.PrescriptionId" class="btn btn-primary waves-effect waves-light">پرداخت</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

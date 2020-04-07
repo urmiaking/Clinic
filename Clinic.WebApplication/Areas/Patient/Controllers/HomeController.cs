@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -294,6 +295,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
         public async Task<IActionResult> VisitList()
         {
             var visitList = await _db.Visits
+                .Include(a => a.Prescription)
                 .Include(a => a.Reservation)
                 .ThenInclude(a => a.Doctor)
                 .Where(a => a.Reservation.Patient.Username.Equals(User.Identity.Name))
@@ -393,16 +395,15 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             }
 
             var visit = await _db.Visits
+                .Include(a => a.Prescription)
                 .Include(a => a.Reservation)
                 .ThenInclude(a => a.Doctor)
-                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+                .FirstOrDefaultAsync(a => a.Prescription.Id.Equals(id));
 
             if (visit == null)
             {
                 return NotFound();
             }
-
-            ViewBag.VisitId = id;
 
             var prescriptionDrug = await _db.PrescriptionDrugs
                 .Include(a => a.Prescription)
@@ -417,6 +418,127 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             ViewBag.DocNote = visit.DoctorNote;
 
             return View(prescriptionDrug);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Bill(List<PrescriptionDrug> prescriptionDrugs)
+        {
+            foreach (var prescriptionDrug in prescriptionDrugs)
+            {
+                _db.PrescriptionDrugs.Update(prescriptionDrug);
+                await _db.SaveChangesAsync();
+            }
+
+            var isThereAnyWantedList = prescriptionDrugs.Any(a => a.IsWantToBuy.Equals(true));
+
+            if (!isThereAnyWantedList)
+            {
+                TempData["Error"] = "لطفا حداقل یک دارو را انتخاب کنید";
+
+                return RedirectToAction("PrescriptionDetails",
+                    new { id = prescriptionDrugs.FirstOrDefault()?.PrescriptionId });
+            }
+
+            var prescriptionId = prescriptionDrugs.FirstOrDefault()?.PrescriptionId;
+            var postedPrescriptionDrugs = await _db.PrescriptionDrugs
+                .Include(a => a.Drug)
+                .Include(a => a.Prescription)
+                    .ThenInclude(a => a.Visit)
+                        .ThenInclude(a => a.Reservation)
+                            .ThenInclude(a => a.Patient)
+                .Include(a => a.Prescription)
+                    .ThenInclude(a => a.Visit)
+                        .ThenInclude(a => a.InsuranceProvider)
+                .Where(a => 
+                    a.PrescriptionId.Equals(prescriptionId) &&
+                    a.IsWantToBuy.Equals(true))
+                .ToListAsync();
+
+            return View(postedPrescriptionDrugs);
+        }
+
+        public async Task<IActionResult> OnlinePayment(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var prescription = await _db.Prescriptions
+                .Include(a => a.PrescriptionDrugs)
+                .Include(a => a.Visit)
+                .ThenInclude(a => a.InsuranceProvider)
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
+
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+
+            var drugs = await _db.PrescriptionDrugs
+                .Include(a => a.Prescription)
+                .ThenInclude(a => a.Visit)
+                .ThenInclude(a => a.InsuranceProvider)
+                .Include(a => a.Drug)
+                .Where(a =>
+                    a.PrescriptionId.Equals(prescription.Id) &&
+                    a.IsWantToBuy.Equals(true))
+                .ToListAsync();
+
+            var discount = 0;
+            var totalCost = drugs.Sum(drug => drug.Drug.Cost * drug.Count);
+
+            if (prescription.Visit.InsuranceProvider != null)
+            {
+                discount += drugs.Sum(drug => drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100);
+
+                totalCost -= discount;
+            }
+
+            ViewBag.TotalCost = totalCost;
+            return View(prescription);
+
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Pay(int id = 0)
+        {
+            if (id == 0)
+            {
+                return NotFound();
+            }
+
+            var prescription = await _db.Prescriptions.FindAsync(id);
+
+            if (prescription == null)
+            {
+                return NotFound();
+            }
+
+            var drugs = await _db.PrescriptionDrugs
+                .Include(a => a.Drug)
+                .Where(a =>
+                    a.PrescriptionId.Equals(prescription.Id) &&
+                    a.IsWantToBuy.Equals(true))
+                .ToListAsync();
+
+            foreach (var drug in drugs)
+            {
+                drug.IsBought = true;
+                _db.PrescriptionDrugs.Update(drug);
+                await _db.SaveChangesAsync();
+            }
+
+            prescription.Status = "ارسال نشده";
+            prescription.PaymentMethod = "غیر نقدی";
+
+            _db.Prescriptions.Update(prescription);
+            await _db.SaveChangesAsync();
+
+            TempData["Success"] = "پرداخت با موفقیت انجام شد";
+            return RedirectToAction("PrescriptionDetails", "Home", new { id = prescription.Id });
         }
 
         #endregion

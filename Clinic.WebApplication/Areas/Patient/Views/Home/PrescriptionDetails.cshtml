@@ -203,7 +203,7 @@
                         <h4 class="custom-modal-title">گزارش تخلف</h4>
                         <div class="custom-modal-text">
                             <form asp-action="MakeComplain" method="post">
-                                <input type="hidden" name="id" value="@Model.FirstOrDefault().Prescription.Visit.Id" />
+                                <input type="hidden" name="id" value="@Model.FirstOrDefault()?.Prescription.Visit.Id" />
                                 <div class="card-box">
                                     <div class="row">
                                         <div class="form-group">
