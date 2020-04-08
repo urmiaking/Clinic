@@ -112,30 +112,7 @@ namespace Clinic.WebApplication.Controllers
         public async Task<IActionResult> Register(Patient patient)
         {
             patient.Username = patient.Username.Trim();
-
-            var existUsername = await _db.Users.FirstOrDefaultAsync(a => a.Username.Equals(patient.Username));
-
-            var existNationalCode =
-                await _db.Patients.FirstOrDefaultAsync(a => a.NationalCode.Equals(patient.NationalCode));
-
-            var existEmail = await _db.Users.FirstOrDefaultAsync(a => a.Email.Equals(patient.Email));
-
             patient.ProfilePic = "avatat-11.png";
-
-            if (existUsername != null)
-            {
-                ModelState.AddModelError("Username", "کاربری با این نام کاربری موجود می باشد");
-            }
-
-            if (existNationalCode != null)
-            {
-                ModelState.AddModelError("NationalCode", "کاربری با این کد ملی موجود می باشد");
-            }
-
-            if (existEmail != null)
-            {
-                ModelState.AddModelError("Email", "کاربری با این ایمیل موجود می باشد");
-            }
 
             if (string.IsNullOrEmpty(patient.Password))
             {
@@ -278,6 +255,48 @@ namespace Clinic.WebApplication.Controllers
         {
             ViewBag.ReturnUrl = returnUrl;
             return View();
+        }
+
+        #endregion
+
+        #region RemoteValidation
+
+        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> IsEmailInUse(string email)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userEmail = _db.Users.FirstOrDefault(a => a.Username.Equals(User.Identity.Name))?.Email;
+                if (email.Equals(userEmail))
+                {
+                    return Json(true);
+                }
+                var isAvailableEmail = await _db.Users.AnyAsync(a => a.Email.Equals(email));
+                return isAvailableEmail ? Json($"ایمیل {email} قبلا استفاده شده است") : Json(true);
+            }
+
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Email.Equals(email));
+            return user == null ? Json(true) : Json($"قبلا استفاده شده است {email} ایمیل");
+        }
+
+        [HttpPost]
+        [HttpGet]
+        public async Task<IActionResult> IsUsernameInUse(string username)
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                var userUsername = _db.Users.FirstOrDefault(a => a.Username.Equals(User.Identity.Name))?.Username;
+                if (username.Equals(userUsername))
+                {
+                    return Json(true);
+                }
+                var isAvailableUsername = await _db.Users.AnyAsync(a => a.Username.Equals(username));
+                return isAvailableUsername ? Json($"نام کاربری {username} قبلا استفاده شده است") : Json(true);
+            }
+
+            var user = await _db.Users.FirstOrDefaultAsync(a => a.Username.Equals(username));
+            return user == null ? Json(true) : Json($"قبلا استفاده شده است {username} نام کاربری");
         }
 
         #endregion
