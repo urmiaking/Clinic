@@ -88,15 +88,18 @@
     </div>
 </div>
 
-<script src="/Login/js/prevent-non-numbers.js"></script>
-<script>
-    $(function () {
-        $('#submit').click(function (event) {
-            if ($('#password').val() != $('#confirmPassword').val()) {
-                $('#confirmPassword_validation').text("رمز عبور با تکرار آن مطابقت ندارد");
-                // Prevent form submission
-                event.preventDefault();
-            }
+@section Scripts{ 
+    <script src="/Login/js/prevent-non-numbers.js"></script>
+    <script>
+        $(function () {
+            $('#submit').click(function (event) {
+                if ($('#password').val() != $('#confirmPassword').val()) {
+                    $('#confirmPassword_validation').text("رمز عبور با تکرار آن مطابقت ندارد");
+                    // Prevent form submission
+                    event.preventDefault();
+                }
+            });
         });
-    });
-</script>
+    </script>
+}
+

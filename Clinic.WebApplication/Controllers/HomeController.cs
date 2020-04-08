@@ -114,7 +114,7 @@ namespace Clinic.WebApplication.Controllers
 
             var doctors = _db.Doctors;
 
-            int pageSize = 9;
+            int pageSize = 6;
             int pageNumber = (page ?? 1);
 
             if (string.IsNullOrEmpty(searchString))

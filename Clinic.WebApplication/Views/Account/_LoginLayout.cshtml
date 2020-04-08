@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="/Login/css/fontawesome-all.min.css">
     <link rel="stylesheet" type="text/css" href="/Login/css/iofrm-style.css">
     <link rel="stylesheet" type="text/css" href="/Login/css/iofrm-theme7.css">
+    <script src="/Login/js/jquery.min.js"></script>
     <title>@ViewBag.Title</title>
     @RenderSection("Head", false)
 </head>
@@ -16,12 +17,11 @@
 
     @RenderBody()
 
-    <script src="/Login/js/jquery.min.js"></script>
     <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
     <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
     <script src="/Login/js/popper.min.js"></script>
     <script src="/Login/js/bootstrap.min.js"></script>
-<script src="/Login/js/main.js"></script>
-@RenderSection("Scripts", false)
+    <script src="/Login/js/main.js"></script>
+    @RenderSection("Scripts", false)
 </body>
 </html>

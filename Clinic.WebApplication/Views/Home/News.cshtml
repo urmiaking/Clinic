@@ -257,27 +257,29 @@
                                         {
 
                                             <div class="comment">
-                                                @if (reply.User is SiteAdmin)
-                                                {
-                                                    <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/admin.png">
-                                                }
-                                                else if (reply.User is ClinicManager)
-                                                {
-                                                    <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
-                                                }
-                                                else if (reply.User is Pharmacy)
-                                                {
-                                                    <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
-                                                }
-                                                else if (reply.User is Doctor doctor)
-                                                {
-                                                    var profilePic = doctor.ProfilePic;
-                                                    <img src="/Administrators/assets/images/doctors/@profilePic" alt="64x64" class="comment-avatar">
-                                                }
-                                                else if (reply.User is Patient patient)
-                                                {
-                                                    var profilePic = patient.ProfilePic;
-                                                    <img src="/Administrators/assets/images/patients/@profilePic" alt="64x64" class="comment-avatar">
+                                                @{
+                                                    if (reply.User is SiteAdmin)
+                                                    {
+                                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/admin.png">
+                                                    }
+                                                    else if (reply.User is ClinicManager)
+                                                    {
+                                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/manager.jpg">
+                                                    }
+                                                    else if (reply.User is Pharmacy)
+                                                    {
+                                                        <img class="comment-avatar" alt="64x64" src="/Administrators/assets/images/users/pharmacy.png">
+                                                    }
+                                                    else if (reply.User is Doctor doctor)
+                                                    {
+                                                        var profilePic = doctor.ProfilePic;
+                                                        <img src="/Administrators/assets/images/doctors/@profilePic" alt="64x64" class="comment-avatar">
+                                                    }
+                                                    else if (reply.User is Patient patient)
+                                                    {
+                                                        var profilePic = patient.ProfilePic;
+                                                        <img src="/Administrators/assets/images/patients/@profilePic" alt="64x64" class="comment-avatar">
+                                                    }
                                                 }
                                                 <div class="comment-body">
                                                     <div class="comment-text">
@@ -285,38 +287,39 @@
                                                             @if (reply.User is Doctor || reply.User is Pharmacy || reply.User is ClinicManager || reply.User is SiteAdmin)
                                                             {
                                                                 <i class="fa fa-check-circle">&nbsp;</i>
-                                                            }<a href="#" title="">@reply.User.FullName</a><span>@reply.DateTime.ElapsedTime()</span>
+                                                            }
+                                                            <a href="#" title="">@reply.User.FullName</a><span>@reply.DateTime.ElapsedTime()</span>
                                                         </div>@reply.Content
                                                     </div>
                                                     <div class="comment-footer">
                                                         @if (!User.Identity.IsAuthenticated)
                                                         {
-                                                            <label>برای جواب دادن باید <a style="color:#009dad" asp-controller="Home" asp-action="LoginRegisterPanel">وارد</a> شوید</label>
+                                                            <label>برای جواب دادن باید <a style="color: #009dad" asp-controller="Home" asp-action="LoginRegisterPanel">وارد</a> شوید</label>
                                                         }
                                                         else
                                                         {
                                                             <label id="@replyReplyButton">جواب دادن</label>
                                                             <form id="@formReplyId" asp-controller="Home" asp-action="AddReply" method="post">
-                                                                <input type="hidden" name="commentId" value="@comment.Id" />
-                                                                <input type="hidden" name="id" value="@ViewBag.UserId" />
-                                                                <input type="hidden" name="newsId" value="@Model.Id" />
+                                                                <input type="hidden" name="commentId" value="@comment.Id"/>
+                                                                <input type="hidden" name="id" value="@ViewBag.UserId"/>
+                                                                <input type="hidden" name="newsId" value="@Model.Id"/>
                                                                 <div class="row">
                                                                     <div class="col-md-3">
-                                                                        <input type="submit" class="btn btn-info btn-sm" value="ثبت" />
+                                                                        <input type="submit" class="btn btn-info btn-sm" value="ثبت"/>
                                                                     </div>
                                                                     <div class="col-md-9">
-                                                                        <input type="text" class="form-control" id="@replyInput" name="content" />
+                                                                        <input type="text" class="form-control" id="@replyInput" name="content"/>
                                                                     </div>
                                                                 </div>
                                                             </form>
                                                             <script>
-                                                            $(document).ready(function() {
-                                                                $("#@formReplyId").hide();
-                                                                $("#@replyReplyButton").on('click',
-                                                                    function() {
-                                                                        $("#@formReplyId").toggle(1000);
-                                                                    });
-                                                            });
+                                                                $(document).ready(function() {
+                                                                    $("#@formReplyId").hide();
+                                                                    $("#@replyReplyButton").on('click',
+                                                                        function() {
+                                                                            $("#@formReplyId").toggle(1000);
+                                                                        });
+                                                                });
                                                             </script>
                                                         }
 

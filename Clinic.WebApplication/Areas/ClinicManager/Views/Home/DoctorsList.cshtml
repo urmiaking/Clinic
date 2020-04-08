@@ -119,6 +119,18 @@
                                                                             closeOnConfirm: true
                                                                         }
                                                                     );
+                                                                },
+                                                                403: function () {
+                                                                    swal({
+                                                                        title: "ناموفق!",
+                                                                        text: "حذف اطلاعات پزشک دارای سابقه طبابت امکان پذیر نیست!",
+                                                                        type: "error",
+                                                                        showCancelButton: false,
+                                                                        confirmButtonClass: 'btn-danger waves-effect waves-light',
+                                                                        confirmButtonText: 'باشه!',
+                                                                        closeOnConfirm: true
+                                                                    }
+                                                                    );
                                                                 }
                                                             }
                                                         });

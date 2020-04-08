@@ -213,6 +213,19 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             }
 
             await _db.SaveChangesAsync();
+
+            var oldImage = doctor.ProfilePic;
+            string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(),
+                "wwwroot/Administrators/assets/images/doctors/", oldImage);
+            if (System.IO.File.Exists(oldImagePath))
+            {
+                System.IO.File.Delete(oldImagePath);
+            }
+            else
+            {
+                //TODO: log error
+            }
+
             return StatusCode(200);
         }
 
