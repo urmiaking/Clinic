@@ -195,7 +195,10 @@ namespace Clinic.WebApplication.Controllers
 
             var news = await _db.News
                 .Include(a => a.Comments)
+                    .ThenInclude(a => a.User)
+                .Include(a => a.Comments)
                     .ThenInclude(a => a.Replies)
+                    .ThenInclude(a => a.User)
                 .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
             if (news == null)

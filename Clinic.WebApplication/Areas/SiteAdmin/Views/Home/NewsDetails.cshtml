@@ -173,10 +173,7 @@
                 @foreach (var comment in Model.Comments)
                 {
                     totalComments += 1;
-                    foreach (var reply in comment.Replies)
-                    {
-                        totalComments += 1;
-                    }
+                    totalComments += comment.Replies.Count();
                 }
                 <script>
                     var totalCm = @totalComments;
