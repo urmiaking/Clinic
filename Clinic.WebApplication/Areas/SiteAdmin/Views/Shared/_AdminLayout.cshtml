@@ -148,14 +148,25 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            var messages = await DbContext.ManagerMessages.ToListAsync();
+                            var messages = await DbContext.ManagerMessages.Where(a => a.Seen.Equals(false)).ToListAsync();
 
-                            if (messages.Count > 0)
+                            var unverifiedComments = await DbContext.Comments
+                                .Include(a => a.User)
+                                .Include(a => a.News)
+                                .Where(a => a.IsConfirmed.Equals(false)).ToListAsync();
+
+                            var unverifiedReplies = await DbContext.Replies
+                                .Include(a => a.User)
+                                .Include(a => a.Comment)
+                                .ThenInclude(a => a.News)
+                                .Where(a => a.IsConfirmed.Equals(false)).ToListAsync();
+
+                            if (messages.Any() || unverifiedReplies.Any() || unverifiedComments.Any())
                             {
                                 foreach (var message in messages)
                                 {
                                     <li class="list-group-item">
-                                        <a asp-action="Message" asp-route-id="@message.Id" class="user-list-item">
+                                        <a asp-action="Messages" class="user-list-item">
                                             <div class="icon bg-pink">
                                                 <i class="zmdi zmdi-email"></i>
                                             </div>
@@ -163,6 +174,36 @@
                                                 <span class="name">پیام جدید</span>
                                                 <span class="desc">@message.Title</span>
                                                 <span class="time">@message.DateTime.ElapsedTimeNotification()</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                                foreach (var comment in unverifiedComments)
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-action="NewsDetails" asp-route-id="@comment.News.Id" class="user-list-item">
+                                            <div class="icon bg-pink">
+                                                <i class="zmdi zmdi-comment"></i>
+                                            </div>
+                                            <div class="user-desc">
+                                                <span class="name">نظر جدید</span>
+                                                <span class="desc">@comment.User.FullName</span>
+                                                <span class="time">@comment.DateTime.ElapsedTimeNotification()</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                }
+                                foreach (var reply in unverifiedReplies)
+                                {
+                                    <li class="list-group-item">
+                                        <a asp-action="NewsDetails" asp-route-id="@reply.Comment.News.Id" class="user-list-item">
+                                            <div class="icon bg-pink">
+                                                <i class="zmdi zmdi-comment"></i>
+                                            </div>
+                                            <div class="user-desc">
+                                                <span class="name">نظر جدید</span>
+                                                <span class="desc">@reply.User.FullName</span>
+                                                <span class="time">@reply.DateTime.ElapsedTimeNotification()</span>
                                             </div>
                                         </a>
                                     </li>
