@@ -272,6 +272,15 @@ namespace Clinic.WebApplication.Controllers
 
         #endregion
 
+        #region AccessDenied
+
+        public IActionResult AccessDenied(string returnUrl)
+        {
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+        #endregion
         public async Task<IActionResult> LogOut()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);

@@ -4,11 +4,10 @@
     var patient = await DbContext.Patients.FindAsync(Model.Reservation.PatientId);
     ViewBag.Title = "نوشتن ویزیت برای " + patient.FullName;
 
-    List<SelectListItem> insuranceList = new List<SelectListItem>();
-    foreach (var insurance in await DbContext.InsuranceProviders.ToListAsync())
-    {
-        insuranceList.Add(new SelectListItem { Text = insurance.InsuranceName, Value = insurance.InsuranceName });
-    }
+    List<SelectListItem> insuranceList = (from insurance 
+                                            in await DbContext.InsuranceProviders.ToListAsync() 
+                                            select new 
+                                                SelectListItem {Text = insurance.InsuranceName, Value = insurance.InsuranceName}).ToList();
 }
 
 

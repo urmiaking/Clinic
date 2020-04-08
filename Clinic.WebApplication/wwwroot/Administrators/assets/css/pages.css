@@ -1769,7 +1769,7 @@ div.hopscotch-bubble {
    Accounts pages
 ============= */
 .account-pages {
-    background: url("../images/big/bg-new.jpg") center;
+    background: url("../images/big/datacenter.jpg") center;
     position: absolute;
     height: 100%;
     width: 100%;
@@ -1825,8 +1825,8 @@ div.hopscotch-bubble {
     }
 
 .ex-page-content .text-error {
-    color: #71b6f9;
-    text-shadow: rgba(113, 182, 249, 0.3) 5px 1px, rgba(113, 182, 249, 0.2) 12px 3px, rgba(113, 182, 249, 0.3) 6px 4px;
+    color: #FF0004;
+    text-shadow: rgba(255, 112, 114, 0.3) 5px 1px, rgba(255, 123, 125, 0.2) 12px 3px, rgba(255, 150, 151, 0.3) 6px 4px;
     font-size: 98px;
     font-weight: 700;
     line-height: 150px;

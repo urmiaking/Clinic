@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Views\Shared\" />
-    <Folder Include="wwwroot\" />
     <Folder Include="wwwroot\Administrators\assets\images\news\" />
   </ItemGroup>
 
