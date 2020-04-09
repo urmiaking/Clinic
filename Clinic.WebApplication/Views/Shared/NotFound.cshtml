@@ -1,0 +1,45 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- App Favicon -->
+    <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
+    <title>صفحه یافت نشد</title>
+    <link type="text/css" href="/Error/css/bootstrap-rtl.css" rel="stylesheet" />
+    <link type="text/css" href="/Error/css/style.css" rel="stylesheet" />
+</head>
+<body>
+<div class="error">
+        <div class="container-floud">
+            <div class="col-12 ground-color text-center">
+                <div class="container-error-404">
+                    <div class="clip"><div class="shadow"><span class="digit firstDigit"></span></div></div>
+                    <div class="clip"><div class="shadow"><span class="digit secondDigit"></span></div></div>
+                    <div class="clip"><div class="shadow"><span class="digit thirdDigit"></span></div></div>
+                </div>
+                <br>
+                <br>
+                <h2 class="h1">@ViewBag.ErrorMessage</h2>
+                <div>
+                    <a class="btn btn-primary" asp-action="Index" asp-controller="Home" asp-area="">بازگشت به صفحه نخست</a>
+                    <a class="btn btn-primary" onclick="goBack()">بازگشت به عقب</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/Error/js/scripts-not-found.js"></script>
+    <script>
+    function goBack() {
+        window.history.back();
+    }
+    </script>
+</body>
+</html>

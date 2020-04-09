@@ -1,80 +1,45 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
 <!DOCTYPE html>
-<html lang="en" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
-    <meta name="author" content="Coderthemes">
-
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- App Favicon -->
-    <link rel="shortcut icon" href="/HomePage/images/logo4.png">
-
-    <!-- App title -->
+    <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
     <title>دسترسی غیر مجاز</title>
-
-    <!-- App CSS -->
-    <link href="/Administrators/assets/css/bootstrap-rtl.min.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/core.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/components.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/icons.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/pages.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/menu.css" rel="stylesheet" type="text/css" />
-    <link href="/Administrators/assets/css/responsive.css" rel="stylesheet" type="text/css" />
-
-    <!-- HTML5 Shiv and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-
-    <script src="/Administrators/assets/js/modernizr.min.js"></script>
-
+    <link type="text/css" href="/Error/css/bootstrap-rtl.css" rel="stylesheet" />
+    <link type="text/css" href="/Error/css/style.css" rel="stylesheet" />
 </head>
 <body>
 
-    <div class="account-pages"></div>
-    <div class="clearfix"></div>
-    <div class="wrapper-page">
-        <div class="ex-page-content text-center">
-            <div class="text-error">403</div>
-            <h2 class="text-error" style="font-size: 48px !important;">دسترسی غیر مجاز</h2>
+<div class="error">
+    <div class="container-floud">
+        <div class="col-12 ground-color text-center">
+            <div class="container-error-404">
+                <div class="clip"><div class="shadow"><span class="digit firstDigit"></span></div></div>
+                <div class="clip"><div class="shadow"><span class="digit secondDigit"></span></div></div>
+                <div class="clip"><div class="shadow"><span class="digit thirdDigit"></span></div></div>
+            </div>
             <br>
-            <h4>
-                شما مجاز به دسترسی به این صفحه نمی باشید.<br /><br /> لطفا به صفحه اصلی سایت و یا به پنل خود بازگردید
-            </h4>
             <br>
-            <div class="row">
-                <a class="btn btn-primary waves-effect waves-light" asp-controller="Home" asp-action="Index">بازگشت به صفحه اصلی</a>
-                <a class="btn btn-success waves-effect waves-light" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl">بازگشت به پنل شخصی</a>
+            <h2 class="h1">دسترسی غیر مجاز!</h2>
+            <div>
+                <a class="btn btn-primary" asp-action="Index" asp-controller="Home" asp-area="">بازگشت به صفحه نخست</a>
+                <a class="btn btn-primary" onclick="goBack()">بازگشت به عقب</a>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-            var resizefunc = [];
-    </script>
-
-    <!-- jQuery  -->
-    <script src="/Administrators/assets/js/jquery.min.js"></script>
-    <script src="/Administrators/assets/js/bootstrap-rtl.min.js"></script>
-    <script src="/Administrators/assets/js/detect.js"></script>
-    <script src="/Administrators/assets/js/fastclick.js"></script>
-    <script src="/Administrators/assets/js/jquery.slimscroll.js"></script>
-    <script src="/Administrators/assets/js/jquery.blockUI.js"></script>
-    <script src="/Administrators/assets/js/waves.js"></script>
-    <script src="/Administrators/assets/js/wow.min.js"></script>
-    <script src="/Administrators/assets/js/jquery.nicescroll.js"></script>
-    <script src="/Administrators/assets/js/jquery.scrollTo.min.js"></script>
-
-    <!-- App js -->
-    <script src="/Administrators/assets/js/jquery.core.js"></script>
-    <script src="/Administrators/assets/js/jquery.app.js"></script>
-
+<script  src="/Error/js/scripts.js"></script>
+<script>
+    function goBack() {
+        window.history.back();
+    }
+</script>
 </body>
 </html>
