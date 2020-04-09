@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Clinic.WebApplication.Controllers
 {
@@ -16,11 +17,13 @@ namespace Clinic.WebApplication.Controllers
     {
         private readonly AppDbContext _db;
         private readonly ILoginService _loginService;
+        private readonly ILogger<AccountController> _logger;
 
-        public AccountController(AppDbContext db, ILoginService loginService)
+        public AccountController(AppDbContext db, ILoginService loginService, ILogger<AccountController> logger)
         {
             _db = db;
             _loginService = loginService;
+            _logger = logger;
         }
         #region Login
         public IActionResult Login(string returnUrl)
@@ -140,6 +143,7 @@ namespace Clinic.WebApplication.Controllers
 
             if (!isSucceed)
             {
+                _logger.LogError("Email Activation Link Does not send.");
                 TempData["Error"] =
                     "مشکلی در ارسال لینک فعالسازی پیش آمد، لطفا با مدیر کلینیک تماس بگیرید.";
                 return RedirectToAction("Login", "Account");
@@ -253,6 +257,7 @@ namespace Clinic.WebApplication.Controllers
 
         public IActionResult AccessDenied(string returnUrl)
         {
+            _logger.LogWarning("Unauthorized request");
             ViewBag.ReturnUrl = returnUrl;
             return View();
         }

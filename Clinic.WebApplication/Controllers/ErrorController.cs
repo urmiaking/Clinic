@@ -28,8 +28,13 @@ namespace Clinic.WebApplication.Controllers
                     _logger.LogError($"404 Error occured. Path = {statusCodeResult.OriginalPath}" +
                                      $" and Query string = {statusCodeResult.OriginalQueryString}");
                     break;
+                case 500:
+                    ViewBag.ErrorMessage = "عدم پاسخگویی سرور. لطفا صبر کنید یا دوباره امتحان کنید";
+                    _logger.LogError($"500 Error occured. Path = {statusCodeResult.OriginalPath}" +
+                                     $" and Query string = {statusCodeResult.OriginalQueryString}");
+                    break;
             }
-            return View("NotFound");
+            return View("NotFound", statusCode);
         }
     }
 }

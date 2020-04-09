@@ -1,4 +1,4 @@
-﻿
+﻿@model int
 @{
     Layout = null;
 }
@@ -11,12 +11,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- App Favicon -->
     <link rel="shortcut icon" type="image/ico" href="/HomePage/images/logo1.png" />
-    <title>صفحه یافت نشد</title>
+    <title>خطا</title>
     <link type="text/css" href="/Error/css/bootstrap-rtl.css" rel="stylesheet" />
     <link type="text/css" href="/Error/css/style.css" rel="stylesheet" />
 </head>
 <body>
-<div class="error">
+    <div class="error">
         <div class="container-floud">
             <div class="col-12 ground-color text-center">
                 <div class="container-error-404">
@@ -34,12 +34,19 @@
             </div>
         </div>
     </div>
-
-    <script src="/Error/js/scripts-not-found.js"></script>
-    <script>
-    function goBack() {
-        window.history.back();
+    @if (Model == 404)
+    {
+        <script src="/Error/js/scripts-not-found.js"></script>
     }
+    else if (Model == 500)
+    {
+        <script src="/Error/js/scripts-server-down.js"></script>
+    }
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
     </script>
 </body>
 </html>
