@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
@@ -25,12 +26,17 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
         private readonly AppDbContext _db;
         private readonly ILoginService _loginService;
         private readonly IInitializerService _initializerService;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(AppDbContext db, ILoginService loginService, IInitializerService initializerService)
+        public HomeController(AppDbContext db, 
+            ILoginService loginService, 
+            IInitializerService initializerService,
+            ILogger<HomeController> logger)
         {
             _db = db;
             _loginService = loginService;
             _initializerService = initializerService;
+            _logger = logger;
         }
         public async Task<IActionResult> Index()
         {
@@ -71,8 +77,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
                     }
                     catch (Exception ex)
                     {
-                        //TODO: Log error
-                        Console.WriteLine(ex.Data);
+                        _logger.LogError($"Image Upload incomplete. error = {ex.Message}");
                     }
                 }
                 else
@@ -144,6 +149,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
                         }
                         else
                         {
+                            _logger.LogError($"The old image path cannot be found. Path = {oldImagePath}");
                             TempData["Error"] = "خطا در حذف عکس";
                             return RedirectToAction("DoctorsList");
                         }
@@ -157,8 +163,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
                     }
                     catch (Exception ex)
                     {
-                        //TODO: log error
-                        Console.WriteLine(ex.Message);
+                        _logger.LogError($"Image replacement incomplete. error = {ex.Message}");
                     }
                 else
                 {
@@ -223,7 +228,7 @@ namespace Clinic.WebApplication.Areas.ClinicManager.Controllers
             }
             else
             {
-                //TODO: log error
+                _logger.LogError($"Image could not be deleted in deleting doctor image. The path is {oldImagePath}");
             }
 
             return StatusCode(200);

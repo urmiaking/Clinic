@@ -10,6 +10,7 @@ using Clinic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
 {
@@ -19,11 +20,13 @@ namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
     {
         private readonly AppDbContext _db;
         private readonly ILoginService _loginService;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(AppDbContext db, ILoginService loginService)
+        public HomeController(AppDbContext db, ILoginService loginService, ILogger<HomeController> logger)
         {
             _db = db;
             _loginService = loginService;
+            _logger = logger;
         }
 
         #region News
@@ -82,7 +85,7 @@ namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
                 }
                 catch (Exception ex)
                 {
-                    //TODO: Log error
+                    _logger.LogError($"Image upload incomplete. error = {ex.Message}");
                     Console.WriteLine(ex.Data);
                 }
             }
@@ -174,7 +177,7 @@ namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
             }
             else
             {
-                //TODO: log this
+                _logger.LogError($"The image path cannot be found. Path = {oldImagePath}");
                 return StatusCode(402);
             }
 

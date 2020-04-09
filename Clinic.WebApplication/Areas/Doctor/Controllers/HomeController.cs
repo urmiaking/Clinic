@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Clinic.WebApplication.Areas.Doctor.Controllers
 {
@@ -22,11 +23,13 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
     {
         private readonly AppDbContext _db;
         private readonly ILoginService _loginService;
+        private readonly ILogger<HomeController> _logger;
 
-        public HomeController(AppDbContext db, ILoginService loginService)
+        public HomeController(AppDbContext db, ILoginService loginService, ILogger<HomeController> logger)
         {
             _db = db;
             _loginService = loginService;
+            _logger = logger;
         }
 
         public async Task<IActionResult> Index()
@@ -189,6 +192,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                             }
                             else
                             {
+                                _logger.LogError($"The old image path cannot be found. Path = {oldImagePath}");
                                 TempData["Error"] = "خطا در حذف عکس";
                                 return RedirectToAction("EditProfile");
                             }
@@ -204,7 +208,7 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
                     }
                     catch (Exception ex)
                     {
-                        //TODO: log error
+                        _logger.LogError($"Image replacement incomplete. error = {ex.Message}");
                         Console.WriteLine(ex.Message);
                     }
                 else
