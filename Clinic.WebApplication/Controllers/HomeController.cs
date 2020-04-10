@@ -7,6 +7,8 @@ using Clinic.Models.DomainClasses.Users;
 using Clinic.Services.CaptchaService;
 using Clinic.Services.FeedBackService;
 using Clinic.Utilities.Pagination;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -343,6 +345,14 @@ namespace Clinic.WebApplication.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("News", new { id = newsId });
+        }
+
+
+        [Route("OnlineChat/{doctorId}")]
+        [Authorize(Roles = "Patient,Doctor")]
+        public IActionResult OnlineChat(int doctorId)
+        {
+            return View();
         }
     }
 }

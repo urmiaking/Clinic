@@ -4,6 +4,7 @@ using Clinic.Services.FeedBackService;
 using Clinic.Services.InitService;
 using Clinic.Services.LoginService;
 using Clinic.Services.MailService;
+using Clinic.WebApplication.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -41,6 +42,7 @@ namespace Clinic.WebApplication
                 options.LoginPath = "/Account/Login";
                 options.Cookie.Name = "_ua";
             });
+            services.AddSignalR();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -84,7 +86,10 @@ namespace Clinic.WebApplication
                 endpoints.MapControllerRoute(
                     name: "defualt",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<ChatHub>("/OnlineChat");
+
             });
+
         }
     }
 }
