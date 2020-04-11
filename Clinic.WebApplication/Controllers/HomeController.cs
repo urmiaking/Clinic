@@ -7,6 +7,7 @@ using Clinic.Models.DomainClasses.Users;
 using Clinic.Services.CaptchaService;
 using Clinic.Services.FeedBackService;
 using Clinic.Utilities.Pagination;
+using Clinic.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http;
@@ -62,7 +63,7 @@ namespace Clinic.WebApplication.Controllers
             string gRecaptchaResponse = form["g-recaptcha-response"];
 
             var success = await _reCaptchaService.ValidateRecaptchaAsync(gRecaptchaResponse);
-            
+
             if (!success)
             {
                 ViewBag.Message = "مشکلی پیش آمد! لطفا گزینه من ربات نیستم را انتخاب کنید";
@@ -185,7 +186,7 @@ namespace Clinic.WebApplication.Controllers
                 .Distinct()
                 .OrderByDescending(a => a.ReleaseDate);
 
-            return View(await PaginatedList<News>.CreateAsync(newsResult,pageNumber, pageSize));
+            return View(await PaginatedList<News>.CreateAsync(newsResult, pageNumber, pageSize));
         }
 
         public async Task<IActionResult> News(int id = 0)
@@ -348,11 +349,15 @@ namespace Clinic.WebApplication.Controllers
         }
 
 
-        [Route("OnlineChat/{doctorId}")]
+        [Route("OnlineChat/{doctorId}/{patientId}")]
         [Authorize(Roles = "Patient,Doctor")]
-        public IActionResult OnlineChat(int doctorId)
+        public async Task<IActionResult> OnlineChat(int doctorId, int patientId)
         {
-            return View();
+            var doctor = await _db.Doctors.FindAsync(doctorId);
+            var patient = await _db.Patients.FindAsync(patientId);
+
+            DoctorPatientViewModel doctorPatient = new DoctorPatientViewModel(doctor, patient);
+            return View(doctorPatient);
         }
     }
 }

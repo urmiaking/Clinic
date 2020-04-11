@@ -12,7 +12,7 @@ namespace Clinic.Services.MailService
     public class MyMailService : IMailService
     {
         private readonly AppDbContext _db;
-
+        
         public MyMailService(AppDbContext db)
         {
             _db = db;

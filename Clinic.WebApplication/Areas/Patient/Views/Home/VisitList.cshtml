@@ -125,7 +125,7 @@
                                     </td>
                                     <td>
                                         <div class="margin-top-button">
-                                            <a asp-action="Chat" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
+                                            <a asp-action="Chat" asp-route-patientId="@visit.Reservation.PatientId" asp-route-doctorId="@visit.Reservation.DoctorId" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
                                         </div>
 
                                     </td>

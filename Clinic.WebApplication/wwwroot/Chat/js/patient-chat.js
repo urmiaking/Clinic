@@ -1,6 +1,7 @@
 ﻿$(function () {
     $('#chatCardBox').hide();
     $('#startChat').click(function () {
+        window.location.href = "/OnlineChat/15";
         $('#ruleBox').hide();
         $('#chatBox').hide();
         $("#chatCardBox").fadeIn();

@@ -656,8 +656,10 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
         #endregion
 
-        public IActionResult Chat()
+        public IActionResult Chat(int doctorId, int patientId)
         {
+            ViewBag.DoctorId = doctorId;
+            ViewBag.PatientId = patientId;
             return View();
         }
     }

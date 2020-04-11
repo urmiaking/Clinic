@@ -14,7 +14,8 @@
                             <p class="text-muted">
                                 کاربر گرامی، لطفا قبل از شروع گفتگو قوانین زیر را مطالعه فرمایید.
                             </p>
-                            <button id="startChat" type="button" class="btn btn-success waves-effect waves-light m-t-10">شروع گفتگو</button>
+                            <a asp-controller="Home" asp-area="" asp-action="OnlineChat" asp-route-doctorId="@ViewBag.DoctorId" asp-route-patientId="@ViewBag.PatientId" class="btn btn-success waves-effect waves-light m-t-10">شروع گفتگو</a>
+                            
                         </div>
                     </div>
                 </div>

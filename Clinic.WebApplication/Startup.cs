@@ -86,8 +86,8 @@ namespace Clinic.WebApplication
                 endpoints.MapControllerRoute(
                     name: "defualt",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
-                endpoints.MapHub<ChatHub>("/OnlineChat");
 
+                endpoints.MapHub<ChatHub>("/OnlineChat");
             });
 
         }
