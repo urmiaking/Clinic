@@ -124,10 +124,18 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div class="margin-top-button">
-                                            <a asp-action="Chat" asp-route-patientId="@visit.Reservation.PatientId" asp-route-doctorId="@visit.Reservation.DoctorId" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
-                                        </div>
-
+                                        @if (visit.ChatFlag)
+                                        {
+                                            <div class="margin-top-td">
+                                                این امکان وجود ندارد
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="margin-top-button">
+                                                <a asp-action="Chat" asp-route-patientId="@visit.Reservation.PatientId" asp-route-doctorId="@visit.Reservation.DoctorId" asp-route-reserveDate="@visit.Reservation.ReserveDate" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
+                                            </div>
+                                        }
                                     </td>
                                     <td>
                                         <div class="margin-top-button">

@@ -736,14 +736,5 @@ namespace Clinic.WebApplication.Areas.Doctor.Controllers
         }
 
         #endregion
-
-        #region Chat
-
-        public IActionResult Chat()
-        {
-            return View();
-        }
-
-        #endregion
     }
 }

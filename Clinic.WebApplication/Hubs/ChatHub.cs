@@ -16,16 +16,11 @@ namespace Clinic.WebApplication.Hubs
         private static readonly ConnectionMapping<string> Connections =
             new ConnectionMapping<string>();
         private readonly AppDbContext _db;
-        public readonly List<string> GroupsList;
-        public readonly List<string> ConnectionIds;
-
+        
         public ChatHub(AppDbContext db)
         {
             _db = db;
-            GroupsList = new List<string>();
-            ConnectionIds = new List<string>();
         }
-
 
         public async Task SendChatMessage(string who, string message)
         {
@@ -79,13 +74,6 @@ namespace Clinic.WebApplication.Hubs
         //        _connections.Add(name, Context.ConnectionId);
         //    }
         //}
-        public async Task BeginChat(string doctorConnectionId, string patientConnectionId)
-        {
-            var groupName = patientConnectionId + "mio" + doctorConnectionId;
-            await Groups.AddToGroupAsync(doctorConnectionId, groupName);
-            await Groups.AddToGroupAsync(patientConnectionId, groupName);
-            GroupsList.Add(groupName);
-            await Clients.Group(groupName).SendAsync("receiveMessage", "چت آغاز شد");
-        }
+        
     }
 }

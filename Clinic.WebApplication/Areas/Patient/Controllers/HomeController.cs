@@ -36,6 +36,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             var patient = await _db.Patients.FirstOrDefaultAsync(a => a.Username.Equals(User.Identity.Name));
 
             var visits = await _db.Visits
+                .Include(a => a.Prescription)
                 .Include(a => a.Reservation)
                 .ThenInclude(a => a.Doctor)
                 .Where(a => a.Reservation.PatientId.Equals(patient.Id)).ToListAsync();
@@ -230,7 +231,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             {
                 return StatusCode(401);
             }
-            
+
             if (isCandidateReserveDateTimeBusyPatient)
             {
                 return StatusCode(403);
@@ -325,7 +326,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
             visit.GivenScore = rate;
 
-            _db.Visits.Update(visit); 
+            _db.Visits.Update(visit);
             await _db.SaveChangesAsync();
 
             var doctor = visit.Reservation.Doctor;
@@ -336,8 +337,8 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             }
 
             var scores = await _db.Visits
-                .Where(a => 
-                    a.GivenScore.HasValue && 
+                .Where(a =>
+                    a.GivenScore.HasValue &&
                     a.Reservation.Doctor.Id.Equals(doctor.Id))
                 .Select(a => a.GivenScore)
                 .ToListAsync();
@@ -456,7 +457,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                 .Include(a => a.Prescription)
                     .ThenInclude(a => a.Visit)
                         .ThenInclude(a => a.InsuranceProvider)
-                .Where(a => 
+                .Where(a =>
                     a.PrescriptionId.Equals(prescriptionId) &&
                     a.IsWantToBuy.Equals(true))
                 .ToListAsync();
@@ -562,7 +563,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
         public async Task<IActionResult> EditProfile()
         {
             return View(await _db.Patients
-                .FirstOrDefaultAsync(a => 
+                .FirstOrDefaultAsync(a =>
                     a.Username.Equals(User.Identity.Name)));
         }
 
@@ -656,11 +657,44 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
         #endregion
 
-        public IActionResult Chat(int doctorId, int patientId)
+        public async Task<IActionResult> Chat(string reserveDate, int doctorId = 0, int patientId = 0)
         {
+            if (doctorId == 0 || patientId == 0 || string.IsNullOrEmpty(reserveDate))
+            {
+                return NotFound();
+            }
+
+            if (!DateTime.TryParse(reserveDate, out var reservDateTime))
+            {
+                return NotFound();
+            }
+
+            var doctor = await _db.Doctors.FindAsync(doctorId);
+            var patient = await _db.Patients.FindAsync(patientId);
+
+            if (doctor == null || patient == null)
+            {
+                return NotFound();
+            }
+
+            var isQualified = await _db.Visits
+                .AnyAsync(a =>
+                    a.ReservationDoctorId.Equals(doctorId) &&
+                    a.ReservationPatientId.Equals(patientId) &&
+                    a.ReservationReserveDate.Equals(reservDateTime) &&
+                    a.ChatFlag.Equals(false));
+
+            if (!isQualified)
+            {
+                TempData["Error"] = "شما نمی توانید بیش از یک بار به ازای هر ویزیت، گفتگوی آنلاین داشته باشید";
+                return RedirectToAction("VisitList");
+            }
+
+            var viewModel = new DoctorPatientViewModel(doctor, patient);
+
             ViewBag.DoctorId = doctorId;
             ViewBag.PatientId = patientId;
-            return View();
+            return View(viewModel);
         }
     }
 }

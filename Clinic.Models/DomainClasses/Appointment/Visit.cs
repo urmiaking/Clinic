@@ -23,6 +23,8 @@ namespace Clinic.Models.DomainClasses.Appointment
         [Display(Name = "امتیاز داده شده")]
         public float? GivenScore { get; set; }
 
+        public bool ChatFlag { get; set; }
+
         public virtual Report Report { get; set; }
         public virtual Prescription Prescription { get; set; }
 
