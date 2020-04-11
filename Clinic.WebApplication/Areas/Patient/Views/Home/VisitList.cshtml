@@ -133,7 +133,10 @@
                                         else
                                         {
                                             <div class="margin-top-button">
-                                                <a asp-action="Chat" asp-route-patientId="@visit.Reservation.PatientId" asp-route-doctorId="@visit.Reservation.DoctorId" asp-route-reserveDate="@visit.Reservation.ReserveDate" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
+                                                <a asp-action="Chat"
+                                                   asp-route-patientId="@visit.Reservation.PatientId"
+                                                   asp-route-doctorId="@visit.Reservation.DoctorId"
+                                                   asp-route-reserveDate="@visit.Reservation.ReserveDate" class="btn btn-purple">شروع گفتگو <i class="fa fa-user"></i></a>
                                             </div>
                                         }
                                     </td>

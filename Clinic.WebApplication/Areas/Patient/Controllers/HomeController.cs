@@ -694,6 +694,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
             ViewBag.DoctorId = doctorId;
             ViewBag.PatientId = patientId;
+            ViewBag.ReserveDateTime = reservDateTime;
             return View(viewModel);
         }
     }

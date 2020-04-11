@@ -349,12 +349,46 @@ namespace Clinic.WebApplication.Controllers
         }
 
 
-        [Route("OnlineChat/{doctorId}/{patientId}")]
+        [Route("OnlineChat/{doctorId}/{patientId}/{reserveDateTime}")]
         [Authorize(Roles = "Patient,Doctor")]
-        public async Task<IActionResult> OnlineChat(int doctorId, int patientId)
+        public async Task<IActionResult> OnlineChat(int doctorId, int patientId, string reserveDateTime)
         {
+            if (doctorId == 0 || patientId == 0 || string.IsNullOrEmpty(reserveDateTime))
+            {
+                return NotFound();
+            }
+
             var doctor = await _db.Doctors.FindAsync(doctorId);
             var patient = await _db.Patients.FindAsync(patientId);
+
+            if (doctor == null || patient == null)
+            {
+                return NotFound();
+            }
+
+            if (!DateTime.TryParse(reserveDateTime, out var reserveDateTimeResult))
+            {
+                return NotFound();
+            }
+
+            var visit = await _db.Visits.FirstOrDefaultAsync(a => a.ReservationDoctorId.Equals(doctorId) &&
+                                                            a.ReservationPatientId.Equals(patientId) &&
+                                                            a.ReservationReserveDate.Equals(reserveDateTimeResult) &&
+                                                            a.ChatFlag.Equals(false));
+
+            if (visit == null)
+            {
+                return NotFound();
+            }
+
+            if (User.IsInRole("Doctor"))
+            {
+                //visit.ChatFlag = true; TODO: deleted for experimental actions
+                //_db.Visits.Update(visit); 
+                //await _db.SaveChangesAsync();
+            }
+            
+            ViewBag.ReserveDateTime = reserveDateTimeResult;
 
             DoctorPatientViewModel doctorPatient = new DoctorPatientViewModel(doctor, patient);
             return View(doctorPatient);

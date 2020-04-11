@@ -8,10 +8,11 @@
 $(function () {
 
     var doctorName = $('#doctorUserName').text();
+    var reserveDateTime = $('#reserveDateTime').text();
 
     connection.start().then(function () {
         console.log("connected!");
-        connection.invoke("SendChatRequestToDoctor", doctorName).then(function() {
+        connection.invoke("SendChatRequestToDoctor", doctorName, reserveDateTime).then(function() {
             console.log("Chat request sent...!");
         }).catch(function(err) {
             console.log(err.exception);

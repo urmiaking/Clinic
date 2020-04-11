@@ -32,14 +32,16 @@ namespace Clinic.WebApplication.Hubs
             }
         }
 
-        public async Task SendChatRequestToDoctor(string doctorName)
+        public async Task SendChatRequestToDoctor(string doctorName, string reserveDateTime)
         {
+            DateTime.TryParse(reserveDateTime, out var reserveDateTimeResult);
+
             string name = Context.User.Identity.Name;
             var patientId = _db.Patients.FirstOrDefault(a => a.Username.Equals(name))?.Id;
             var doctorId = _db.Doctors.FirstOrDefault(a => a.Username.Equals(doctorName))?.Id;
             foreach (var connectionId in Connections.GetConnections(doctorName))
             {
-                await Clients.Client(connectionId).SendAsync("patientRequest", doctorId, patientId);
+                await Clients.Client(connectionId).SendAsync("patientRequest", doctorId, patientId, reserveDateTimeResult);
             }
         }
 
