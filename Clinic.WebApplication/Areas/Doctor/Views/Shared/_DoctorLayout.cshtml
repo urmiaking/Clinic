@@ -160,9 +160,40 @@
                 <h4 class="">اعلانات</h4>
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
-                        <div class="text-center">
-                            در دست تولید
-                        </div>
+                        @{
+                            var chatRequests = await DbContext.ChatRequests
+                                .Include(a => a.Doctor)
+                                .Where(a =>
+                                    a.Doctor.Username.Equals(User.Identity.Name)).ToListAsync();
+
+                            if (chatRequests.Any())
+                            {
+                                foreach (var chatRequest in chatRequests)
+                                {
+                                    <li class="list-group-item">
+                                        <a class="user-list-item">
+                                            <div class="icon bg-purple">
+                                                <i class="fa fa-comment"></i>
+                                            </div>
+                                            <div class="user-desc">
+                                                <span class="name">درخواست گفتگو</span>
+                                                <span class="desc">@chatRequest.PatientUsername</span>
+                                            </div>
+                                        </a>
+                                        <script>
+
+                                        </script>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    هیچ اعلانی وجود ندارد
+                                </div>
+                            }
+                        }
+                        
                     </ul>
                 </div>
             </div>
@@ -200,53 +231,53 @@
     <script src="~/Chat/js/signalr.layout.doctor.js"></script>
 
     <script>
-    $(function() {
-        if ("@TempData["Error"]" != "")
-        {
-            toastr["error"]("@TempData["Error"]", "خطا");
+        $(function() {
+            if ("@TempData["Error"]" != "")
+            {
+                toastr["error"]("@TempData["Error"]", "خطا");
 
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-bottom-left",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "500",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-bottom-left",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
             }
-        }
-        if ("@TempData["Success"]" != "")
-        {
-            toastr["success"]("@TempData["Success"]", "موفق")
+            if ("@TempData["Success"]" != "")
+            {
+                toastr["success"]("@TempData["Success"]", "موفق")
 
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": false,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "500",
-                "hideDuration": "1000",
-                "timeOut": "5000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
+                toastr.options = {
+                    "closeButton": false,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": false,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "500",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                }
             }
-        }
 
-    });
+        });
     </script>
 
     @RenderSection("Scripts", false)

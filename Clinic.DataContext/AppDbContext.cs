@@ -35,6 +35,7 @@ namespace Clinic.DataContext
 
         public virtual DbSet<ManagerMessage> ManagerMessages { get; set; }
         public virtual DbSet<DrugCategory> DrugCategories { get; set; }
+        public virtual DbSet<ChatRequest> ChatRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

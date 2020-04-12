@@ -29,7 +29,7 @@ namespace Clinic.WebApplication.Controllers
                                      $" and Query string = {statusCodeResult.OriginalQueryString}");
                     break;
                 case 500:
-                    ViewBag.ErrorMessage = "عدم پاسخگویی سرور. لطفا صبر کنید یا دوباره امتحان کنید";
+                    ViewBag.ErrorMessage = "عدم پاسخگویی سرور. تیم فنی در حال بررسی مشکل است";
                     _logger.LogError($"500 Error occured. Path = {statusCodeResult.OriginalPath}" +
                                      $" and Query string = {statusCodeResult.OriginalQueryString}");
                     break;

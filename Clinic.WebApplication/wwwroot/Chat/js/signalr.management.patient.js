@@ -9,10 +9,11 @@ $(function () {
 
     var doctorName = $('#doctorUserName').text();
     var reserveDateTime = $('#reserveDateTime').text();
+    var patientName = $('#patientUserName').text();
 
     connection.start().then(function () {
         console.log("connected!");
-        connection.invoke("SendChatRequestToDoctor", doctorName, reserveDateTime).then(function () {
+        connection.invoke("SendChatRequestToDoctor", doctorName, reserveDateTime, patientName).then(function () {
             console.log("Chat request sent...!");
         }).catch(function (err) {
             console.log(err.exception);
@@ -76,7 +77,7 @@ $(function () {
                 if (isConfirm) {
                     connection.invoke("ExitPatient", doctorName)
                         .then(function () {
-                            window.history.back();
+                            window.location.href = "/Patient/Home/Index";
                         })
                         .catch(err => console.log(err.exception));
                 }
@@ -85,10 +86,29 @@ $(function () {
 
     connection.on("doctorExited",
         () => {
-            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            $.playSound('/Chat/error.mp3');
             swal({
                 title: "پزشک از گفتگو خارج شد",
                 text: "",
+                type: "error",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه برگردیم به پنل!',
+                closeOnConfirm: false,
+                showCancelButton: false
+            },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.location.href = "/Patient/Home/Index";
+                    }
+                });
+        });
+
+    connection.on("doctorOffline",
+        () => {
+            $.playSound('/Chat/error.mp3');
+            swal({
+                title: "متاسفانه پزشک آنلاین نیست!",
+                text: "لطفا صبور باشید. ما در صورت آنلاین شدن پزشک به شما خبر خواهیم داد!",
                 type: "error",
                 confirmButtonClass: 'btn-primary waves-effect waves-light',
                 confirmButtonText: 'باشه برگردیم به پنل!',
@@ -104,7 +124,7 @@ $(function () {
 
     connection.on("disconnected",
         () => {
-            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            $.playSound('/Chat/error.mp3');
             swal({
                 title: "قطع ارتباط پزشک",
                 text: "ارتباط پزشک قطع شده است و پیام شما را دریافت  نخواهد کرد",
