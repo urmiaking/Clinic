@@ -24,6 +24,11 @@ namespace Clinic.WebApplication.Hubs
 
         public async Task SendChatMessage(string who, string message)
         {
+            if (!Connections.GetConnections(who).Any())
+            {
+                await Clients.Caller.SendAsync("disconnected");
+            }
+
             string name = Context.User.Identity.Name;
 
             foreach (var connectionId in Connections.GetConnections(who))
@@ -51,6 +56,26 @@ namespace Clinic.WebApplication.Hubs
             {
                 await Clients.Client(connectionId).SendAsync("doctorConnected");
             }
+        }
+
+        public async Task ExitPatient(string doctorName)
+        {
+            foreach (var connectionId in Connections.GetConnections(doctorName))
+            {
+                await Clients.Client(connectionId).SendAsync("patientExited");
+            }
+
+            await OnDisconnectedAsync(new Exception("Patient Exited"));
+        }
+
+        public async Task ExitDoctor(string patientName)
+        {
+            foreach (var connectionId in Connections.GetConnections(patientName))
+            {
+                await Clients.Client(connectionId).SendAsync("doctorExited");
+            }
+
+            await OnDisconnectedAsync(new Exception("Doctor Exited"));
         }
 
         public override Task OnConnectedAsync()

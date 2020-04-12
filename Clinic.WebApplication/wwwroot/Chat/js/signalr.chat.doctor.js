@@ -7,18 +7,22 @@
     var patientName = $('#patientUserName').text();
 
     connection.start().then(function () {
-        connection.invoke("SendConnectedNotificationToPatient", patientName).then(function() {
+        connection.invoke("SendConnectedNotificationToPatient", patientName).then(function () {
             console.log("notification sent...!");
-        }).catch(function(err) {
+        }).catch(function (err) {
             console.log(err.exception);
         });
     }).catch(err => console.error(err));
 
     $('#send').on('click',
-        function() {
+        function () {
+            if ($('#messageInput').val().length === 0) {
+                return;
+            }
             var message = $('#messageInput').val();
             var to = $('#patientUserName').text();
-            connection.invoke("SendChatMessage", to, message).then(function() {
+            $('#messageInput').val('');
+            connection.invoke("SendChatMessage", to, message).then(function () {
                 insertChat("me", message);
                 $('#send').val('');
             }).catch(err => console.log(err.exception));
@@ -29,10 +33,49 @@
             insertChat("patient", message);
         });
 
+    connection.on("patientExited",
+        () => {
+            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            swal({
+                title: "بیمار از گفتگو خارج شد",
+                text: "",
+                type: "error",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه برگردیم به پنل!',
+                closeOnConfirm: false,
+                showCancelButton: false
+            },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.history.back();
+                    }
+                });
+        });
+
+    $('#exit').on('click',
+        function () {
+            swal({
+                title: "مطمئنی؟؟",
+                text: "با خروج از صفحه، ارتباط شما قطع و به پنل خود بازمیگردید!",
+                type: "info",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه!',
+                closeOnConfirm: false,
+                showCancelButton: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    connection.invoke("ExitDoctor", patientName)
+                        .then(function () {
+                            window.history.back();
+                        })
+                        .catch(err => console.log(err.exception));
+                }
+            });
+        });
 
     connection.on("patientDisconnected",
         () => {
-            $.playSound('/Chat/just-saying.mp3'); //change it with an error sound
+            $.playSound('/Chat/error.mp3'); //change it with an error sound
             swal({
                 title: "قطع ارتباط بیمار",
                 text: "",
@@ -41,6 +84,24 @@
                 confirmButtonText: 'باشه برگردیم به پنل!',
                 closeOnConfirm: false
             },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.history.back();
+                    }
+                });
+        });
+
+    connection.on("disconnected",
+        () => {
+            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            swal({
+                    title: "قطع ارتباط بیمار",
+                    text: "ارتباط بیمار قطع شده است و پیام شما را دریافت  نخواهد کرد",
+                    type: "error",
+                    confirmButtonClass: 'btn-primary waves-effect waves-light',
+                    confirmButtonText: 'باشه برگردیم به پنل!',
+                    closeOnConfirm: false
+                },
                 function (isAccepted) {
                     if (isAccepted) {
                         window.history.back();

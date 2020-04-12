@@ -12,9 +12,9 @@ $(function () {
 
     connection.start().then(function () {
         console.log("connected!");
-        connection.invoke("SendChatRequestToDoctor", doctorName, reserveDateTime).then(function() {
+        connection.invoke("SendChatRequestToDoctor", doctorName, reserveDateTime).then(function () {
             console.log("Chat request sent...!");
-        }).catch(function(err) {
+        }).catch(function (err) {
             console.log(err.exception);
         });
         $('#send').attr('disabled', false);
@@ -23,12 +23,13 @@ $(function () {
     });
     //Disabling Chat functionality and showing a loading box
     $('#send').prop('disabled', true);
-    $('.direct-chat-messages').empty();
+    $('.direct-chat-messages').hide();
     $('#loadingbox').show();
 
     connection.on("doctorConnected",
         function () {
             $('#loadingbox').hide();
+            $('.direct-chat-messages').show();
             $('#send').prop('disabled', false);
             $.playSound('/Chat/just-saying.mp3');
             swal({
@@ -42,10 +43,14 @@ $(function () {
         });
 
     $('#send').on('click',
-        function() {
+        function () {
+            if ($('#messageInput').val().length === 0) {
+                return;
+            }
             var message = $('#messageInput').val();
             var to = $('#doctorUserName').text();
-            connection.invoke("SendChatMessage", to, message).then(function() {
+            $('#messageInput').val('');
+            connection.invoke("SendChatMessage", to, message).then(function () {
                 insertChat("me", message);
                 $('#send').val('');
             }).catch(err => console.log(err.exception));
@@ -55,6 +60,64 @@ $(function () {
     connection.on("receiveMessage",
         (message) => {
             insertChat("doctor", message);
+        });
+
+    $('#exit').on('click',
+        function () {
+            swal({
+                title: "مطمئنی؟؟",
+                text: "با خروج از صفحه، ارتباط شما قطع و به پنل خود بازمیگردید!",
+                type: "info",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه!',
+                closeOnConfirm: false,
+                showCancelButton: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    connection.invoke("ExitPatient", doctorName)
+                        .then(function () {
+                            window.history.back();
+                        })
+                        .catch(err => console.log(err.exception));
+                }
+            });
+        });
+
+    connection.on("doctorExited",
+        () => {
+            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            swal({
+                title: "پزشک از گفتگو خارج شد",
+                text: "",
+                type: "error",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه برگردیم به پنل!',
+                closeOnConfirm: false,
+                showCancelButton: false
+            },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.history.back();
+                    }
+                });
+        });
+
+    connection.on("disconnected",
+        () => {
+            $.playSound('/Chat/error.mp3'); //change it with an error sound
+            swal({
+                title: "قطع ارتباط پزشک",
+                text: "ارتباط پزشک قطع شده است و پیام شما را دریافت  نخواهد کرد",
+                type: "error",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه برگردیم به پنل!',
+                closeOnConfirm: false
+            },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.history.back();
+                    }
+                });
         });
 
     connection.on("doctorUnavailable",
