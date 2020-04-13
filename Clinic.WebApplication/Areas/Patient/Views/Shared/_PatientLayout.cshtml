@@ -1,4 +1,17 @@
 ﻿@inject AppDbContext DbContext
+
+@{
+    var patientId = DbContext.Patients.FirstOrDefault(a => a.Username.Equals(User.Identity.Name))?.Id;
+    var postPonedVisit = await DbContext
+        .Reservations
+        .Include(a => a.Doctor)
+        .Where(a =>
+            a.ReserveStatus.Contains("تعویق افتاده") &&
+            a.PatientId.Equals(patientId) &&
+            a.ReserveDate.Date > DateTime.Today.Date)
+    .ToListAsync();
+}
+
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -68,10 +81,13 @@
                                         <a href="javascript:void(0);" class="right-bar-toggle">
                                             <i class="zmdi zmdi-notifications-none"></i>
                                         </a>
-                                        <div class="noti-dot">
-                                            <span class="dot"></span>
-                                            <span class="pulse"></span>
-                                        </div>
+                                        @if (postPonedVisit.Any())
+                                        {
+                                            <div class="noti-dot">
+                                                <span class="dot"></span>
+                                                <span class="pulse"></span>
+                                            </div>
+                                        }
                                     </li>
                                 </ul>
                             </div>
@@ -144,9 +160,31 @@
                 <h4 class="">اعلانات</h4>
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
-                        <div class="text-center">
-                            در دست تولید
-                        </div>
+                        @if (postPonedVisit.Any())
+                        {
+                            foreach (var reservation in postPonedVisit)
+                            {
+                                <li class="list-group-item">
+                                    <a class="user-list-item" asp-action="ReserveList">
+                                        <div class="icon bg-purple">
+                                            <i class="fa fa-info"></i>
+                                        </div>
+                                        <div class="user-desc">
+                                            <span class="name">تغییر وقت ملاقات</span>
+                                            <span class="desc">دکتر @reservation.Doctor.FullName</span>
+                                        </div>
+                                    </a>
+                                </li>
+                            }
+                            
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                هیچ اعلانی وجود ندارد
+                            </div>
+                        }
+
                     </ul>
                 </div>
             </div>

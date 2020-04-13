@@ -1,4 +1,8 @@
 ﻿@inject AppDbContext DbContext
+
+@{
+    List<Report> reports = await DbContext.Reports.Where(a => a.Status.Equals("در انتظار بررسی")).ToListAsync();
+}
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -82,10 +86,13 @@
                                         <a href="javascript:void(0);" class="right-bar-toggle">
                                             <i class="zmdi zmdi-notifications-none"></i>
                                         </a>
-                                        <div class="noti-dot">
-                                            <span class="dot"></span>
-                                            <span class="pulse"></span>
-                                        </div>
+                                        @if (reports.Any())
+                                        {
+                                            <div class="noti-dot">
+                                                <span class="dot"></span>
+                                                <span class="pulse"></span>
+                                            </div>
+                                        }
                                     </li>
                                 </ul>
                             </div>
@@ -183,8 +190,6 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            List<Report> reports = await DbContext.Reports.Where(a => a.Status.Equals("در انتظار بررسی")).ToListAsync();
-
                             if (reports.Count > 0)
                             {
                                 foreach (var report in reports)

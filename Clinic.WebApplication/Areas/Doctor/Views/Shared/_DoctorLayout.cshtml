@@ -1,4 +1,12 @@
 ﻿@inject AppDbContext DbContext
+
+@{
+    var chatRequests = await DbContext.ChatRequests
+        .Include(a => a.Doctor)
+        .Where(a =>
+            a.Doctor.Username.Equals(User.Identity.Name)).ToListAsync();
+}
+
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -75,10 +83,13 @@
                                         <a href="javascript:void(0);" class="right-bar-toggle">
                                             <i class="zmdi zmdi-notifications-none"></i>
                                         </a>
-                                        <div class="noti-dot">
-                                            <span class="dot"></span>
-                                            <span class="pulse"></span>
-                                        </div>
+                                        @if (chatRequests.Any())
+                                        {
+                                            <div class="noti-dot">
+                                                <span class="dot"></span>
+                                                <span class="pulse"></span>
+                                            </div>
+                                        }
                                     </li>
                                 </ul>
                             </div>
@@ -161,11 +172,6 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            var chatRequests = await DbContext.ChatRequests
-                                .Include(a => a.Doctor)
-                                .Where(a =>
-                                    a.Doctor.Username.Equals(User.Identity.Name)).ToListAsync();
-
                             if (chatRequests.Any())
                             {
                                 foreach (var chatRequest in chatRequests)
@@ -180,9 +186,6 @@
                                                 <span class="desc">@chatRequest.PatientUsername</span>
                                             </div>
                                         </a>
-                                        <script>
-
-                                        </script>
                                     </li>
                                 }
                             }
