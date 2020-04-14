@@ -268,10 +268,32 @@ namespace Clinic.WebApplication.Controllers
 
         [HttpPost]
         [HttpGet]
-        public async Task<IActionResult> IsEmailInUse(string email)
+        public async Task<IActionResult> IsEmailInUse(string email, DoctorListDoctorViewModel vm)
         {
+            if (vm != null)
+            {
+                if (vm.Doctor != null)
+                {
+                    email = vm.Doctor.Email;
+                }
+
+                if (vm.Doctors != null)
+                {
+                    foreach (var doctor in vm.Doctors.Where(doctor => doctor.Email != null))
+                    {
+                        email = doctor.Email;
+                        break;
+                    }
+                }
+            }
+
             if (User.Identity.IsAuthenticated)
             {
+                if (User.IsInRole("ClinicManager"))
+                {
+                    return Json(true);
+                }
+
                 var userEmail = _db.Users.FirstOrDefault(a => a.Username.Equals(User.Identity.Name))?.Email;
                 if (email.Equals(userEmail))
                 {
@@ -287,15 +309,37 @@ namespace Clinic.WebApplication.Controllers
 
         [HttpPost]
         [HttpGet]
-        public async Task<IActionResult> IsUsernameInUse(string username)
+        public async Task<IActionResult> IsUsernameInUse(string username, DoctorListDoctorViewModel vm)
         {
+            if (vm != null)
+            {
+                if (vm.Doctor != null)
+                {
+                    username = vm.Doctor.Username;
+                }
+
+                if (vm.Doctors != null)
+                {
+                    foreach (var doctor in vm.Doctors.Where(doctor => doctor.Username != null))
+                    {
+                        username = doctor.Username;
+                        break;
+                    }
+                }
+            }
+            
             if (User.Identity.IsAuthenticated)
             {
+                if (User.IsInRole("ClinicManager"))
+                {
+                    return Json(true);
+                }
                 var userUsername = _db.Users.FirstOrDefault(a => a.Username.Equals(User.Identity.Name))?.Username;
                 if (username.Equals(userUsername))
                 {
                     return Json(true);
                 }
+
                 var isAvailableUsername = await _db.Users.AnyAsync(a => a.Username.Equals(username));
                 return isAvailableUsername ? Json($"نام کاربری {username} قبلا استفاده شده است") : Json(true);
             }
