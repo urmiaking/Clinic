@@ -15,11 +15,24 @@
                 showCancelButton: true,
                 confirmButtonClass: 'btn-primary waves-effect waves-light',
                 confirmButtonText: 'قبول میکنم!',
-                closeOnConfirm: false
+                cancelButtonText: "نه  . بیخیال!",
+                closeOnConfirm: false,
+                closeOnCancel: false
             },
                 function (isAccepted) {
                     if (isAccepted) {
                         window.location.href = "/OnlineChat/" + doctorId + "/" + patientId + "/" + reserveDateTime;
+                    } else {
+                        connection.invoke("DoctorRejected", patientId)
+                            .then(function () {
+                                swal({
+                                    title: "درخواست بیمار برای گفتگو لغو شد!",
+                                    text: "",
+                                    type: "info",
+                                    timer: 4000,
+                                    showConfirmButton: false
+                                });
+                            }).catch(err => console.log(err.exception));
                     }
                 });
         });

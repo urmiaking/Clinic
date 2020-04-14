@@ -272,7 +272,7 @@ namespace Clinic.WebApplication.Controllers
         {
             if (vm != null)
             {
-                if (vm.Doctor != null)
+                if (vm.Doctor.Email != null)
                 {
                     email = vm.Doctor.Email;
                 }
@@ -313,7 +313,7 @@ namespace Clinic.WebApplication.Controllers
         {
             if (vm != null)
             {
-                if (vm.Doctor != null)
+                if (vm.Doctor.Email != null)
                 {
                     username = vm.Doctor.Username;
                 }

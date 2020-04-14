@@ -113,6 +113,15 @@ namespace Clinic.WebApplication.Hubs
             await OnDisconnectedAsync(new Exception("Doctor Exited"));
         }
 
+        public async Task DoctorRejected(int patientId)
+        {
+            var patient = await _db.Users.FindAsync(patientId);
+            foreach (var connectionId in Connections.GetConnections(patient.Username))
+            {
+                await Clients.Client(connectionId).SendAsync("doctorRejected");
+            }
+        }
+
         public override async Task OnConnectedAsync()
         {
             if (Context.User.IsInRole("Doctor"))

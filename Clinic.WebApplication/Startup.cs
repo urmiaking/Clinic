@@ -8,6 +8,7 @@ using Clinic.WebApplication.Hubs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.ApplicationModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -54,8 +55,9 @@ namespace Clinic.WebApplication
             else
             {
                 app.UseStatusCodePagesWithReExecute("/Error/{0}");
+                app.UseHsts();
             }
-
+            app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

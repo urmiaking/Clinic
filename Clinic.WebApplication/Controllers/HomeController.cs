@@ -189,7 +189,7 @@ namespace Clinic.WebApplication.Controllers
             return View(await PaginatedList<News>.CreateAsync(newsResult, pageNumber, pageSize));
         }
 
-        public async Task<IActionResult> News(int id = 0)
+        public async Task<IActionResult> News(string newsTitle, int id = 0)
         {
             if (id == 0)
             {

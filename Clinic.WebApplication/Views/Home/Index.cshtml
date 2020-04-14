@@ -439,7 +439,7 @@
                                 <div class="sm-title">@item.ShortDescription</div>
                             </div>
                             <div class="blog-read-more-icon">
-                                <a asp-controller="Home" asp-action="News" asp-route-id="@item.Id"><i class="flaticon-right-arrow"></i></a> <!--TODO-->
+                                <a asp-controller="Home" asp-action="News" asp-route-id="@item.Id" asp-route-newsTitle="@item.Title"><i class="flaticon-right-arrow"></i></a> <!--TODO-->
                             </div>
                         </div>
                     </div>

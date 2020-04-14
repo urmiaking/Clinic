@@ -140,9 +140,22 @@ $(function () {
                 });
         });
 
-    connection.on("doctorUnavailable",
+    connection.on("doctorRejected",
         () => {
-
+            $.playSound('/Chat/error.mp3');
+            swal({
+                title: "رد درخواست",
+                text: "متاسفانه پزشک مشغول است. لطفا بعدا مراجعه کنید",
+                type: "error",
+                confirmButtonClass: 'btn-primary waves-effect waves-light',
+                confirmButtonText: 'باشه برگردیم به پنل!',
+                closeOnConfirm: false
+            },
+                function (isAccepted) {
+                    if (isAccepted) {
+                        window.history.back();
+                    }
+                });
         });
 });
 
