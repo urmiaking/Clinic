@@ -5,16 +5,19 @@ using System.Threading.Tasks;
 using Clinic.DataContext;
 using Clinic.Models.DomainClasses.Appointment;
 using Clinic.Models.DomainClasses.Users;
+using Microsoft.Extensions.Logging;
 
 namespace Clinic.Services.InitService
 {
     public class MyInitializerService: IInitializerService
     {
         private readonly AppDbContext _db;
+        private readonly ILogger<MyInitializerService> _logger;
 
-        public MyInitializerService(AppDbContext db)
+        public MyInitializerService(AppDbContext db, ILogger<MyInitializerService> logger)
         {
             _db = db;
+            _logger = logger;
         }
         public async Task<bool> InitializeDoctorWeekdaysAsync(Doctor doctor)
         {
@@ -87,9 +90,9 @@ namespace Clinic.Services.InitService
                 await _db.WeekDays.AddAsync(thursday);
                 await _db.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                //TODO: log
+                _logger.LogCritical($"Exception occured when adding doctor's weekdays message = {e.Message}");
                 return false;
             }
             return true;
