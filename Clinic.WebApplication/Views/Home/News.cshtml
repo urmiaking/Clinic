@@ -179,10 +179,8 @@
                                 var replyInput = "reply-input-" + i;
                                 var replyButton = "reply-button-" + i;
                                 var formId = "form-" + i;
-                                var replyReplyButton = "reply-reply-button-" + i;
-                                var formReplyId = "form-reply" + i;
                                 i++;
-                                
+
                             <div class="comment">
                                 @if (comment.User is SiteAdmin)
                                 {
@@ -298,6 +296,8 @@
                                                         }
                                                         else
                                                         {
+                                                            var replyReplyButton = "reply-reply-button-" + i;
+                                                            var formReplyId = "form-reply" + i;
                                                             <label id="@replyReplyButton">جواب دادن</label>
                                                             <form id="@formReplyId" asp-controller="Home" asp-action="AddReply" method="post">
                                                                 <input type="hidden" name="commentId" value="@comment.Id"/>
@@ -313,8 +313,8 @@
                                                                 </div>
                                                             </form>
                                                             <script>
-                                                                $(document).ready(function() {
-                                                                    $("#@formReplyId").hide();
+                                                                $(document).ready(function () {
+                                                                    $('#@formReplyId').hide();
                                                                     $("#@replyReplyButton").on('click',
                                                                         function() {
                                                                             $("#@formReplyId").toggle(1000);
@@ -326,6 +326,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            i++;
                                         }
                                     }
                                 }
