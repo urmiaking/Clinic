@@ -1,5 +1,17 @@
 ﻿
 @inject AppDbContext DbContext
+
+@{
+    var drugs = await DbContext.Drugs
+        .Include(a => a.DrugCategory)
+        .Where(a => a.DrugCategory.Name.Equals("نامشخص"))
+        .ToListAsync();
+
+    var onlinePrescriptions = await DbContext.Prescriptions
+        .Include(a => a.Visit)
+        .ThenInclude(a => a.Reservation)
+        .Where(a => a.PaymentMethod.Equals("غیر نقدی") && a.Status.Equals("ارسال نشده")).ToListAsync();
+}
 <!DOCTYPE html>
 
 <html lang="en" dir="rtl">
@@ -66,10 +78,13 @@
                                         <a href="javascript:void(0);" class="right-bar-toggle">
                                             <i class="zmdi zmdi-notifications-none"></i>
                                         </a>
-                                        <div class="noti-dot">
-                                            <span class="dot"></span>
-                                            <span class="pulse"></span>
-                                        </div>
+                                        @if (onlinePrescriptions.Any() || drugs.Any())
+                                        {
+                                            <div class="noti-dot">
+                                                <span class="dot"></span>
+                                                <span class="pulse"></span>
+                                            </div>
+                                        }
                                     </li>
                                 </ul>
                             </div>
@@ -147,16 +162,6 @@
                 <div class="notification-list nicescroll">
                     <ul class="list-group list-no-border user-list">
                         @{
-                            var drugs = await DbContext.Drugs
-                                .Include(a => a.DrugCategory)
-                                .Where(a => a.DrugCategory.Name.Equals("نامشخص"))
-                                .ToListAsync();
-
-                            var onlinePrescriptions = await DbContext.Prescriptions
-                                .Include(a => a.Visit)
-                                .ThenInclude(a => a.Reservation)
-                                .Where(a => a.PaymentMethod.Equals("غیر نقدی") && a.Status.Equals("ارسال نشده")).ToListAsync();
-
                             if (drugs.Count > 0 || onlinePrescriptions.Count > 0)
                             {
                                 foreach (var drug in drugs)

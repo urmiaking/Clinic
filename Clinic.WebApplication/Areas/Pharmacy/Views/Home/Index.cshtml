@@ -60,7 +60,7 @@
                     <span style="margin-right: 5px;">بیشتر</span>
                     <i class="fa fa-arrow-left m-l-5"></i>
                 </a>
-                <h4 class="header-title m-t-0 m-b-30">نسخه های امروز</h4>
+                <h4 class="header-title m-t-0 m-b-30">نسخه های نقدی</h4>
                 @if (Model.Prescriptions.Any(a => a.PaymentMethod.Equals("نقدی")))
                 {
                     <table class="table table table-hover m-0">
@@ -197,7 +197,7 @@
                     <span style="margin-right: 5px;">بیشتر</span>
                     <i class="fa fa-arrow-left m-l-5"></i>
                 </a>
-                <h4 class="header-title m-t-0 m-b-30">نسخه های پستی امروز</h4>
+                <h4 class="header-title m-t-0 m-b-30">نسخه های پستی</h4>
                 @if (Model.Prescriptions.Any(a => a.PaymentMethod.Equals("غیر نقدی") &&
                                               a.Status.Equals("ارسال نشده")))
                 {

@@ -52,10 +52,10 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
 
             var reserves = await _db.Reservations.Include(a => a.Doctor)
                 .Where(a =>
-                    a.PatientId.Equals(patient.Id) &&
-                    a.ReserveDate.Hour > DateTime.Now.Hour &&
-                    a.ReserveDate.Date.Equals(DateTime.Now.Date) &&
-                    a.ReserveStatus.Equals("در انتظار ویزیت"))
+                    a.Patient.Username.Equals(User.Identity.Name) &&
+                    a.ReserveDate.Hour >= DateTime.Now.Hour &&
+                    a.ReserveDate.Day == DateTime.Now.Day &&
+                    a.ReserveStatus.Contains("در انتظار ویزیت"))
                 .ToListAsync();
 
             var reserveVisitViewModel = new ReserveVisitViewModel()

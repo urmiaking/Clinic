@@ -170,7 +170,9 @@
                                                     </div>
                                                     <div class="modal-footer">
                                                         <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">بستن</button>
-                                                        <a href="" class="btn btn-info waves-effect waves-light">مشاهده سوابق</a>
+                                                        <a asp-action="VisitedPatient"
+                                                           asp-route-patientId="@reserve.PatientId"
+                                                           asp-route-docId="@reserve.DoctorId" class="btn btn-info waves-effect waves-light">مشاهده سوابق</a>
                                                     </div>
                                                 </div>
                                             </div>

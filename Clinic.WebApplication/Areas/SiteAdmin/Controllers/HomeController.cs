@@ -38,7 +38,7 @@ namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
                 .Take(6)
                 .ToListAsync();
 
-            ViewBag.NewsCount = news.Count;
+            ViewBag.NewsCount = _db.News.Count();
 
             int newsVisitCountAll = 0;
             int newsVisitCountThisMonth = 0;
