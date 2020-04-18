@@ -207,7 +207,7 @@
                                 <th>عکس پزشک</th>
                                 <th>نام پزشک</th>
                                 <th>تاریخ ملاقات</th>
-                                <th>مشاهده نسخه</th>
+                                <th>مشاهده جزییات ویزیت</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -226,7 +226,7 @@
                                     </td>
                                     <td>
                                         <div class="margin-top-td">
-                                            <a asp-action="PrescriptionDetails" asp-route-id="@visit.Prescription.Id" 
+                                            <a asp-action="PrescriptionDetails" asp-route-id="@visit.Id" 
                                                class="btn btn-info label label-info">
                                                 <i class="fa fa-eye"></i>
                                             </a>

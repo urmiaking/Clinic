@@ -404,7 +404,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
                 .Include(a => a.Prescription)
                 .Include(a => a.Reservation)
                 .ThenInclude(a => a.Doctor)
-                .FirstOrDefaultAsync(a => a.Prescription.Id.Equals(id));
+                .FirstOrDefaultAsync(a => a.Id.Equals(id));
 
             if (visit == null)
             {
