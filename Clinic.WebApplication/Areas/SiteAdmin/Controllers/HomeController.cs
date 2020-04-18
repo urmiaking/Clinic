@@ -153,7 +153,7 @@ namespace Clinic.WebApplication.Areas.SiteAdmin.Controllers
                 return StatusCode(404);
             }
 
-            foreach (var comment in newsItem.Comments)
+            foreach (var comment in newsItem.Comments.ToList())
             {
                 foreach (var reply in comment.Replies.ToList())
                 {

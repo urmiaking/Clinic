@@ -69,9 +69,10 @@
                 foreach (var item in Model)
                 {
                     var deleteBtnId = "danger-alert" + i;
+                    var boxId = "box-" + i;
                     i++;
 
-                    <div class="bg-picture card-box" id="@i">
+                    <div class="bg-picture card-box" id="@boxId">
 
                         <div class="dropdown pull-right">
                             <a href="#" class="dropdown-toggle card-drop" data-toggle="dropdown" aria-expanded="false">
@@ -114,9 +115,9 @@
                                                         swal("انجام شد!",
                                                             "خبر مورد نظر با موفقت حذف شد!",
                                                             "success");
-                                                        $("#@i").hide("slow",
+                                                        $("#@boxId").hide("slow",
                                                             function() {
-                                                                $("#@i").remove();
+                                                                $("#@boxId").remove();
                                                             });
                                                     },
                                                     statusCode: {
