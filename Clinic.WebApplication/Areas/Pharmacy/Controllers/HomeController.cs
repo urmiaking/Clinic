@@ -82,8 +82,20 @@ namespace Clinic.WebApplication.Areas.Pharmacy.Controllers
 
             foreach (var item in presDrug)
             {
-                item.IsBought = true;
-                item.Drug.Count -= item.Count;
+                if (item.Prescription.PaymentMethod.Equals("غیر نقدی"))
+                {
+                    if (item.IsWantToBuy.Equals(true))
+                    {
+                        item.IsBought = true;
+                        item.Drug.Count -= item.Count;
+                    }
+                }
+                else
+                {
+                    item.IsBought = true;
+                    item.Drug.Count -= item.Count;
+                }
+
                 if (item.Drug.Count >= 0) continue;
                 TempData["Error"] = "داروهای داروخانه کافی نمی باشند";
                 return RedirectToAction("Index");

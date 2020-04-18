@@ -109,10 +109,8 @@
                                                             var discountCost = 0;
                                                             if (prescription.Visit.InsuranceProvider != null)
                                                             {
-                                                                foreach (var drug in prescription.PrescriptionDrugs)
-                                                                {
-                                                                    discountCost += drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100;
-                                                                }
+                                                                discountCost += prescription.PrescriptionDrugs
+                                                                    .Sum(drug => drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100);
                                                             }
                                                             foreach (var drug in prescription.PrescriptionDrugs)
                                                             {
@@ -230,15 +228,6 @@
                                                         <div class="row">
                                                             <div class="col-md-12">
                                                                 <div class="form-group">
-                                                                    <label for="userNationalCode" class="control-label">کد ملی</label>
-                                                                    <input type="text" readonly="" class="form-control" id="userNationalCode" value="@prescription.Visit.Reservation.Patient.NationalCode">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="row">
-                                                            <div class="col-md-12">
-                                                                <div class="form-group">
                                                                     <label for="userFullName" class="control-label">نام و نام خانوادگی بیمار</label>
                                                                     <input type="text" readonly="" class="form-control" id="userFullName" value="@prescription.Visit.Reservation.Patient.FullName">
                                                                 </div>
@@ -275,6 +264,14 @@
                                                                 <div class="form-group">
                                                                     <label for="userZipCode" class="control-label">کد پستی بیمار</label>
                                                                     <input type="text" readonly="" class="form-control" id="userZipCode" value="@prescription.Visit.Reservation.Patient.ZipCode">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row">
+                                                            <div class="col-md-12">
+                                                                <div class="form-group">
+                                                                    <label for="userPhoneNumber" class="control-label">شماره همراه بیمار</label>
+                                                                    <input type="text" readonly="" class="form-control" id="userPhoneNumber" value="@prescription.Visit.Reservation.Patient.PhoneNumber">
                                                                 </div>
                                                             </div>
                                                         </div>

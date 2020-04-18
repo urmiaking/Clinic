@@ -25,7 +25,6 @@
                             {
                                 var modalId = "edit-modal" + prescription.Id;
                                 var dataTarget = "#" + modalId;
-                                var totalCostTable = 0;
                                 <!--Begin Modal-->
                                 <div id=@modalId class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
                                     <div class="modal-dialog">
@@ -36,15 +35,6 @@
                                                     <h4 class="modal-title">مشاهده نسخه بیمار @prescription.Visit.Reservation.Patient.FullName</h4>
                                                 </div>
                                                 <div class="modal-body">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="form-group">
-                                                                <label for="userNationalCode" class="control-label">کد ملی</label>
-                                                                <input type="text" readonly="" class="form-control" id="userNationalCode" value="@prescription.Visit.Reservation.Patient.NationalCode">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
                                                     <div class="row">
                                                         <div class="col-md-12">
                                                             <div class="form-group">
@@ -87,6 +77,14 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="row">
+                                                        <div class="col-md-12">
+                                                            <div class="form-group">
+                                                                <label for="userPhoneNumber" class="control-label">شماره همراه بیمار</label>
+                                                                <input type="text" readonly="" class="form-control" id="userPhoneNumber" value="@prescription.Visit.Reservation.Patient.PhoneNumber">
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <input type="hidden" name="id" value="@prescription.Id" />
@@ -105,19 +103,19 @@
                                     <td>@prescription.Id</td>
                                     <td>@prescription.Visit.Reservation.Patient.NationalCode</td>
                                     <td>@prescription.Visit.Reservation.Patient.FullName</td>
-                                    @foreach (var drug in prescription.PrescriptionDrugs)
-                                    {
-                                        totalCostTable += drug.Drug.Cost * drug.Count;
-                                    }
+
                                     @{
+                                        var totalCostTable = prescription.PrescriptionDrugs
+                                            .Where(a => a.IsWantToBuy.Equals(true))
+                                            .Sum(drug => drug.Drug.Cost * drug.Count);
+
                                         var discountCost = 0;
 
                                         if (prescription.Visit.InsuranceProvider != null)
                                         {
-                                            foreach (var drug in prescription.PrescriptionDrugs)
-                                            {
-                                                discountCost += drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100;
-                                            }
+                                            discountCost += prescription.PrescriptionDrugs
+                                                .Where(a => a.IsWantToBuy.Equals(true))
+                                                .Sum(drug => drug.Drug.Cost * drug.Count * (prescription.Visit.InsuranceProvider.Discount) / 100);
                                             totalCostTable = totalCostTable - discountCost;
                                         }
                                     }
