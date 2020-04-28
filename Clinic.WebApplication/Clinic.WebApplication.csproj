@@ -703,6 +703,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Logs\AppLogs\" />
+    <Folder Include="Logs\WebServerLogs\" />
     <Folder Include="wwwroot\Administrators\assets\images\news\" />
   </ItemGroup>
 
