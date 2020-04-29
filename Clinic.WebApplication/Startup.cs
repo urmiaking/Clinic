@@ -30,7 +30,19 @@ namespace Clinic.WebApplication
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(context =>
             {
-                context.UseSqlServer(_configuration.GetConnectionString("AppConnectionString"));
+                var server = _configuration["Server"] ?? "localhost";
+                var userId = _configuration["UserId"] ?? "SA";
+                var password = _configuration["Password"] ?? "Ma$oud7559";
+                var port = _configuration["Port"] ?? "1433";
+                var dbName = _configuration["DbName"];
+
+                var connectionString = _configuration.GetConnectionString("AppConnectionString") ??
+                                       $"Server={server},{port};" +
+                                       $"Initial Catalog={dbName};" +
+                                       $"User Id={userId};" +
+                                       $"Password={password};";
+                 
+                context.UseSqlServer(connectionString);
             });
             services.AddScoped<IMailService, MyMailService>();
             services.AddScoped<ILoginService, MyLoginService>();
