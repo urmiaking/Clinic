@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Clinic.DataContext\Clinic.DataContext.csproj" />
-    <ProjectReference Include="..\Clinic.VIewModels\Clinic.ViewModels.csproj" />
+    <ProjectReference Include="..\Clinic.ViewModels\Clinic.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

@@ -8,7 +8,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
 COPY ["Clinic.WebApplication/Clinic.WebApplication.csproj", "Clinic.WebApplication/"]
-COPY ["Clinic.VIewModels/Clinic.ViewModels.csproj", "Clinic.VIewModels/"]
+COPY ["Clinic.ViewModels/Clinic.ViewModels.csproj", "Clinic.ViewModels/"]
 COPY ["Clinic.Models/Clinic.Models.csproj", "Clinic.Models/"]
 COPY ["Clinic.Utilities/Clinic.Utilities.csproj", "Clinic.Utilities/"]
 COPY ["Clinic.DataContext/Clinic.DataContext.csproj", "Clinic.DataContext/"]
