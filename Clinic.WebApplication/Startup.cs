@@ -30,9 +30,9 @@ namespace Clinic.WebApplication
             services.AddControllersWithViews();
             services.AddDbContextPool<AppDbContext>(context =>
             {
-                var server = _configuration["Server"] ?? "localhost";
-                var userId = _configuration["UserId"] ?? "SA";
-                var password = _configuration["Password"] ?? "Ma$oud7559";
+                var server = _configuration["Server"] ?? "mssqlserver";
+                var userId = _configuration["UserId"] ?? "sa";
+                var password = _configuration["Password"] ?? "Masoud&7559";
                 var port = _configuration["Port"] ?? "1433";
                 var dbName = _configuration["DbName"];
 

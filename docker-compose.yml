@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  clinic.webapplication:
+    image: ${DOCKER_REGISTRY-}clinicwebapplication
+    build:
+      context: .
+      dockerfile: Clinic.WebApplication/Dockerfile
