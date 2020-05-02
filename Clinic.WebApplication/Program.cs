@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Clinic.DataContext;
@@ -39,6 +40,12 @@ namespace Clinic.WebApplication
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.ConfigureKestrel(serverOptions => {
+                        serverOptions.Listen(IPAddress.Loopback, 5000);
+                        serverOptions.Listen(IPAddress.Loopback, 5001, listenOptions => {
+                            listenOptions.UseHttps("certs/localhost.pfx", "masoud");
+                        });
+                    });
                     webBuilder.UseStartup<Startup>();
                 })
                 .ConfigureLogging(logging =>
