@@ -40,12 +40,12 @@ namespace Clinic.WebApplication
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.ConfigureKestrel(serverOptions => {
+                    /*webBuilder.ConfigureKestrel(serverOptions => {
                         serverOptions.Listen(IPAddress.Loopback, 5000);
                         serverOptions.Listen(IPAddress.Loopback, 5001, listenOptions => {
-                            listenOptions.UseHttps("app/certs/localhost.pfx", "masoud");
+                            listenOptions.UseHttps("/app/certs/localhost.pfx", "masoud");
                         });
-                    });
+                    });*/
                     webBuilder.UseStartup<Startup>();
                 })
                 .ConfigureLogging(logging =>
