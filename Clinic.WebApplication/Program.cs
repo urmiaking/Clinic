@@ -43,7 +43,7 @@ namespace Clinic.WebApplication
                     webBuilder.ConfigureKestrel(serverOptions => {
                         serverOptions.Listen(IPAddress.Loopback, 5000);
                         serverOptions.Listen(IPAddress.Loopback, 5001, listenOptions => {
-                            listenOptions.UseHttps("certs/localhost.pfx", "masoud");
+                            listenOptions.UseHttps("app/certs/localhost.pfx", "masoud");
                         });
                     });
                     webBuilder.UseStartup<Startup>();
