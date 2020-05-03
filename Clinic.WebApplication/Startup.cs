@@ -34,7 +34,7 @@ namespace Clinic.WebApplication
                 var userId = _configuration["UserId"] ?? "sa";
                 var password = _configuration["Password"] ?? "Masoud&7559";
                 var port = _configuration["Port"] ?? "1433";
-                var dbName = _configuration["DbName"];
+                var dbName = _configuration["DbName"] ?? "Clinic";
 
                 var connectionString = _configuration.GetConnectionString("AppConnectionString") ??
                                        $"Server={server},{port};" +
