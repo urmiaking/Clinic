@@ -1,8 +1,9 @@
-version: '3.4'
+version: "3.4"
 
 services:
   clinic.webapplication:
-    image: ${DOCKER_REGISTRY-}clinicwebapplication
+    image: urmiaking/clinic-image:latest
+    container_name: clinicwebapplication
     build:
       context: .
       dockerfile: Clinic.WebApplication/Dockerfile
