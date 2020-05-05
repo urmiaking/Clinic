@@ -12,11 +12,12 @@ services:
       - "443"
     volumes:
       # Windows volumes:
-      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
-      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
-      - ${APPSOURCEPATH}/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/root/app/Clinic.WebApplication/wwwroot/Administrators/assets/images
+      # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      # - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+      # - ${APPSOURCEPATH}/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/root/app/Clinic.WebApplication/wwwroot/Administrators/assets/images
       # Linux volumes:
-      # - ${HOME}/.aspnet/https:/https/
+      - ${HOME}/.aspnet/https:/https/
+      - ${HOME}/ClinicWebApp/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/app/wwwroot/Administrators/assets/images
     depends_on:
       - mssqlserver
   mssqlserver:
