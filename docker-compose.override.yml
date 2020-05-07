@@ -15,9 +15,11 @@ services:
       # - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
       # - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
       # - ${APPSOURCEPATH}/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/root/app/Clinic.WebApplication/wwwroot/Administrators/assets/images
+      # - ${APPSOURCEPATH}/Clinic/Clinic.WebApplication/Logs:/app/Logs
       # Linux volumes:
       - ${HOME}/.aspnet/https:/https/
       - ${HOME}/ClinicWebApp/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/app/wwwroot/Administrators/assets/images
+      - ${HOME}/ClinicWebApp/Clinic/Clinic.WebApplication/Logs:/app/Logs
     depends_on:
       - mssqlserver
   mssqlserver:
