@@ -706,9 +706,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Logs\AppLogs\" />
-    <Folder Include="Logs\WebServerLogs\" />
+    <Folder Include="Logs\AllFiles\" />
+    <Folder Include="Logs\App\" />
+    <Folder Include="wwwroot\Administrators\assets\images\doctors\" />
     <Folder Include="wwwroot\Administrators\assets\images\news\" />
+    <Folder Include="wwwroot\Administrators\assets\images\patients\" />
   </ItemGroup>
 
   <ItemGroup>

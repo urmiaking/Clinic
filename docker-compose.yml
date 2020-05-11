@@ -1,9 +1,38 @@
-version: "3.4"
+version: '3.4'
 
 services:
   clinic.webapplication:
     image: urmiaking/clinic-image:latest
     container_name: clinicwebapplication
-    build:
-      context: .
-      dockerfile: Clinic.WebApplication/Dockerfile
+    ports:
+      - "80"
+      - "443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=masoud
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/clinicapp.pfx
+    volumes:
+      # linux environment:
+      # - ~/.aspnet/https:/https:ro
+      # windows environment:
+      - ${USERDIR}/.aspnet/https:/https:ro
+      - ${HOME}/Clinic/Clinic.WebApplication/wwwroot/Administrators/assets/images:/app/wwwroot/Administrators/assets/images
+      - ${HOME}/Clinic/Clinic.WebApplication/Logs:/app/Logs
+    depends_on:
+      - mssqlserver
+  mssqlserver:
+    image: "mcr.microsoft.com/mssql/server:2017-latest-ubuntu"
+    container_name: mssqldatabase
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Masoud&7559"
+      MSSQL_PID: Express
+      TZ: "Asia/Tehran"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+
+volumes:
+  sqlvolume:
