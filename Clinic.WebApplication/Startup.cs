@@ -78,23 +78,7 @@ namespace Clinic.WebApplication
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
-                    name: "Doctor",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                    );
-                endpoints.MapControllerRoute(
-                    name: "SiteAdmin",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
-                endpoints.MapControllerRoute(
-                    name: "ClinicManager",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
-                endpoints.MapControllerRoute(
-                    name: "Patient",
-                    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
-                );
-                endpoints.MapControllerRoute(
-                    name: "Pharmacy",
+                    name: "areas",
                     pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
                 );
                 endpoints.MapControllerRoute(
