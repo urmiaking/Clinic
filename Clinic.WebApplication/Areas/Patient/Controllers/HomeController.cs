@@ -553,7 +553,7 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             await _db.SaveChangesAsync();
 
             TempData["Success"] = "پرداخت با موفقیت انجام شد";
-            return RedirectToAction("PrescriptionDetails", "Home", new { id = prescription.Id });
+            return RedirectToAction("PrescriptionDetails", "Home", new { id = prescription.VisitId });
         }
 
         #endregion
