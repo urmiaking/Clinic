@@ -44,7 +44,8 @@ namespace Clinic.WebApplication.Areas.Patient.Controllers
             ViewBag.TotalVisitsCount = visits.Count;
             ViewBag.TotalReservesCount = await _db.Reservations
                 .Where(a =>
-                    a.PatientId.Equals(patient.Id) && a.ReserveStatus.Contains("در انتظار ویزیت"))
+                    a.PatientId.Equals(patient.Id) && a.ReserveStatus.Contains("در انتظار ویزیت")
+                    && a.ReserveDate >= DateTime.Now)
                 .CountAsync();
 
             ViewBag.MonthlyVisitsCount =
